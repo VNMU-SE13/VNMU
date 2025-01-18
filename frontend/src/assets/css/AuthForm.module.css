@@ -611,7 +611,7 @@ label.valid {
     }
     
     .input-field:focus {
-      border-bottom: 1px solid #000; /* Đổi màu đường kẻ dưới khi focus */
+      border-bottom: 1px solid #000; 
     }
     
     .social-icon {
@@ -621,21 +621,21 @@ label.valid {
     
     .sign-in,
     .signup {
-      background-color: #f8f8f8; /* Đặt màu nền thành #f8f8f8 */
-      min-height: 100vh; /* Đảm bảo khung chiếm toàn bộ chiều cao màn hình */
+      background-color: #f8f8f8; 
+      min-height: 100vh; 
       display: flex;
       align-items: center;
       justify-content: center;
     }
     
     .container {
-      background-color: white; /* Nền của khung bên trong */
+      background-color: white; 
       padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
       max-width: 900px;
       width: 100%;
     }
        
 
-/*# sourceMappingURL=style.css.map */
+
