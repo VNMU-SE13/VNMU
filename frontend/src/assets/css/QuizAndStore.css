@@ -1,0 +1,89 @@
+.quiz-store-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.quiz-section,
+.store-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-content,
+.store-content {
+    flex: 1;
+    text-align: center; /* Căn giữa nội dung */
+    padding: 0 20px;
+}
+
+.quiz-content h2,
+.store-content h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.quiz-content p,
+.store-content p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.quiz-start-button,
+.store-shop-button {
+    background-color: #8b0000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.quiz-start-button:hover,
+.store-shop-button:hover {
+    background-color: #a00d22;
+}
+
+
+.store-image {
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
+    height: 100%; /* Đảm bảo chiều cao khớp với nội dung */
+    text-align: center; /* Căn giữa nội dung ảnh */
+    display: flex; /* Đảm bảo ảnh căn giữa */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    margin-right: -10px; /* Kéo ảnh ra bên phải */
+}
+
+.store-img {
+    width: 100%; /* Chiếm toàn bộ chiều ngang */
+    height: auto; /* Tự động căn chỉnh chiều cao */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    border-radius: 10px; /* Nếu cần bo góc */
+}
+
+.quiz-image {
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
+    height: 100%; /* Đảm bảo chiều cao khớp với nội dung */
+    text-align: center; /* Căn giữa nội dung ảnh */
+    display: flex; /* Đảm bảo ảnh căn giữa */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+.quiz-img {
+    width: 100%; /* Chiếm toàn bộ chiều ngang */
+    height: auto; /* Tự động căn chỉnh chiều cao */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    border-radius: 10px; /* Nếu cần bo góc */
+}

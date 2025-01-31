@@ -1,0 +1,160 @@
+/* Reset cơ bản */
+body, h1, h2, h3, p, a, div {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header */
+.homepage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #c8102e;
+  color: white;
+  position: fixed; /* Giữ cố định */
+  top: 0;
+  left: 0;
+  width: 100%; /* Đảm bảo phủ hết chiều ngang */
+  z-index: 100; /* Luôn nằm trên các phần tử khác */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 90px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-image {
+  width: 150px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  gap: 30px;
+  position: relative;
+}
+
+.navbar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #f8f8f8;
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  color: #f8f8f8;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  display: none; /* Ẩn menu con */
+  position: absolute;
+  top: 100%; /* Hiển thị ngay bên dưới menu chính */
+  left: 0;
+  background-color: white; /* Màu nền sáng để nổi bật */
+  color: #333; /* Màu chữ đậm hơn để dễ đọc */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 0;
+  min-width: 220px; /* Độ rộng tối thiểu */
+  z-index: 10;
+  animation: fadeIn 0.3s ease-in-out;
+  opacity: 0; /* Ẩn ban đầu */
+  visibility: hidden;
+  transform: translateY(-10px); /* Dịch lên trên một chút để hiệu ứng mượt */
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  flex-direction: column; /* Hiển thị dạng cột */
+  gap: 0; /* Xóa khoảng cách giữa các mục */
+}
+
+.dropdown:hover .dropdown-menu {
+  display: flex;
+  opacity: 1; /* Hiển thị khi trỏ chuột */
+  visibility: visible;
+  transform: translateY(0); /* Trả về vị trí ban đầu */
+}
+
+.dropdown-menu .dropdown-item {
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: left; /* Căn trái nội dung */
+  color: #333; /* Màu chữ đậm */
+  background-color: #ffe4e4; /* Màu nền sáng */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Đường phân cách nhẹ */
+}
+
+.dropdown-menu .dropdown-item:last-child {
+  border-bottom: none; /* Xóa đường kẻ ở mục cuối */
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f0f0f0; /* Màu nền khi hover */
+  color: #c8102e; /* Màu chữ khi hover */
+}
+
+
+/* Animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .homepage-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .dropdown-menu {
+    flex-direction: column;
+    min-width: 100%;
+  }
+}

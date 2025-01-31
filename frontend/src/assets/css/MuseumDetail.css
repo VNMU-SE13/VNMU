@@ -1,0 +1,176 @@
+.museum-detail {
+    padding: 20px;
+    background-color: #f8f8f8;
+}
+
+.museum-detail-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.museum-detail h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+.museum-detail-info {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    animation: fadeInUp 1.2s ease-in-out;
+}
+
+.museum-detail-text {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
+.museum-detail-text h2 {
+    font-size: 24px;
+    margin-bottom: 10px; /* Tạo khoảng cách giữa tiêu đề và nội dung */
+    color: #c8102e;
+    position: relative;
+    text-align: left; /* Đảm bảo tiêu đề luôn căn trái */
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+
+
+.museum-detail-text p {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 15px;
+    line-height: 1.8;
+    text-align: justify;
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
+.museum-detail-image {
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
+.museum-detail-image img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.breadcrumb {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #666;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.breadcrumb a {
+    color: #0073e6;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.museum-artifacts {
+    margin-top: 40px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .museum-artifacts h2 {
+    font-size: 24px;
+    color: #c8102e;
+    margin-bottom: 20px;
+  }
+  
+  .artifacts-slider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .artifact-item {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .artifact-item img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .artifact-item p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .arrow {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #c8102e;
+    transition: color 0.3s ease;
+  }
+  
+  .arrow:hover {
+    color: #a00c1d;
+  }
+  

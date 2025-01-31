@@ -1,0 +1,95 @@
+.museum-artifacts {
+    margin-top: 40px;
+    background-color: #ffffff; /* Nền trắng tinh khôi */
+    border-radius: 15px; /* Góc bo tròn lớn hơn */
+    padding: 30px; /* Tăng khoảng cách bên trong */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Đổ bóng mềm mại */
+  }
+  
+  .museum-artifacts h2 {
+    font-size: 28px; /* Tăng kích thước tiêu đề */
+    color: #c8102e; /* Màu đỏ nổi bật */
+    margin-bottom: 30px; /* Khoảng cách rộng hơn với phần nội dung */
+    text-align: center; /* Canh giữa tiêu đề */
+    font-weight: bold;
+    letter-spacing: 1px; /* Tạo khoảng cách giữa các chữ */
+  }
+  
+  .artifacts-slider {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .artifacts-slider .arrow {
+    background: white;
+    border: none; /* Loại bỏ viền */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Đổ bóng đẹp hơn */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .artifacts-slider .arrow:hover {
+    background-color: #f0f0f0; /* Màu hover sáng hơn */
+    transform: translateY(-50%) scale(1.1); /* Phóng to nhẹ khi hover */
+  }
+  
+  .artifacts-slider .left-arrow {
+    left: -25px; /* Điều chỉnh vị trí */
+  }
+  
+  .artifacts-slider .right-arrow {
+    right: -25px; /* Điều chỉnh vị trí */
+  }
+  
+  .artifacts-list {
+    display: flex;
+    gap: 20px; /* Tăng khoảng cách giữa các hiện vật */
+    flex: 1;
+    overflow: hidden;
+    scroll-behavior: smooth; /* Hiệu ứng chuyển động mượt */
+  }
+  
+  .artifact-item {
+    text-align: center;
+    width: 180px; /* Kích thước cân đối hơn */
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .artifact-item:hover {
+    transform: scale(1.1); /* Phóng to hơn khi hover */
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2); /* Bóng nổi bật hơn khi hover */
+  }
+  
+  .artifact-item img {
+    width: 100%;
+    height: 120px; /* Kích thước hình ảnh cân đối hơn */
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Bóng đẹp hơn */
+    transition: transform 0.3s ease;
+  }
+  
+  .artifact-item img:hover {
+    transform: scale(1.05); /* Phóng to hình ảnh khi hover */
+  }
+  
+  .artifact-item p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #555; /* Màu chữ mềm hơn */
+    font-weight: 600; /* Tăng độ đậm */
+    text-align: center; /* Văn bản canh giữa */
+  }
+  

@@ -1,24 +1,30 @@
 .news-events-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     background: #f5f5dc; /* Màu nền nhẹ */
     padding: 40px;
     border-radius: 10px;
     margin-top: 40px;
+    gap: 20px;
 }
 
 .news-header {
-    text-align: center;
-    margin-bottom: 20px;
+    flex: 1; /* Cột bên trái */
+    max-width: 300px; /* Giới hạn chiều rộng */
+    text-align: left;
 }
 
 .news-header h2 {
     font-size: 24px;
     color: #8b0000;
+    margin-bottom: 10px;
 }
 
 .news-header p {
     font-size: 16px;
     color: #555;
-    margin: 10px 0;
+    margin-bottom: 20px;
 }
 
 .see-all-button {
@@ -30,6 +36,7 @@
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: inline-block;
 }
 
 .see-all-button:hover {
@@ -37,10 +44,22 @@
     color: white;
 }
 
+.news-content {
+    flex: 2; /* Chiếm không gian còn lại */
+    display: flex;
+    align-items: center; /* Căn giữa dọc */
+    justify-content: space-between; /* Căn đều hai bên */
+    position: relative;
+    min-height: 360px; /* Đảm bảo chiều cao cố định cho slider */
+}
+
 .news-slider {
     display: flex;
-    overflow-x: auto;
     gap: 20px;
+    overflow: hidden; /* Ẩn các mục không hiển thị */
+    flex: 1;
+    min-width: 900px; /* Đặt chiều rộng cố định cho slider */
+    position: relative;
 }
 
 .news-card {
@@ -48,20 +67,27 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-width: 300px;
+    width: 300px;
+    height: 300px;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .news-card h3 {
-    font-size: 18px;
+    font-size: 16px;
     color: #8b0000;
     margin-bottom: 10px;
+    line-height: 1.2;
 }
 
 .news-card p {
     font-size: 14px;
     color: #555;
+    flex-grow: 1;
     margin-bottom: 10px;
+    text-align: justify;
 }
 
 .read-more {
@@ -69,9 +95,59 @@
     text-decoration: none;
     font-size: 14px;
     font-weight: bold;
+    align-self: flex-start;
     transition: color 0.3s ease;
 }
 
 .read-more:hover {
     color: #555;
 }
+
+.scroll-button {
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: 50%; /* Cố định giữa chiều cao slider */
+    transform: translateY(-50%);
+    z-index: 10; /* Luôn nằm trên slider */
+}
+
+.scroll-button.prev {
+    left: -60px; /* Vị trí cố định nút trái */
+}
+
+.scroll-button.next {
+    right: -60px; /* Vị trí cố định nút phải */
+}
+
+.scroll-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.scroll-button:hover:not(:disabled) {
+    background-color: #a00d22;
+}
+.news-card p {
+    font-size: 14px;
+    color: #555;
+    flex-grow: 1;
+    margin-bottom: 10px;
+    text-align: justify;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Hiển thị tối đa 5 dòng */
+    -webkit-box-orient: vertical;
+  }
+  

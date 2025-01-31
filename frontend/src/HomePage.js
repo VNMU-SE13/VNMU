@@ -1,13 +1,20 @@
 import React, { useState } from "react";
+import Header from "./components/Home/Header"; 
 import Museum from "./components/Home/Museum";
-import NewsEvents from "./components/Home/NewsEvents"; 
+import NewsEvents from "./components/Home/NewsEvents";
 import "./assets/css/HomePage.css";
+import QuizAndStore from "./components/Home/QuizAndStore";
+import Footer from "./components/Home/Footer";
 
 const HomePage = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const toggleSearchBar = () => {
     setIsSearchOpen(!isSearchOpen);
+  };
+
+  const closeSearchModal = () => {
+    setIsSearchOpen(false);
   };
 
   return (
@@ -21,40 +28,28 @@ const HomePage = () => {
       </div>
 
       {/* Header */}
-      <header className="homepage-header">
-        <div className="logo">VNMU</div>
-        <nav className="navbar">
-          <a href="#intro" className="nav-link">Giới Thiệu</a>
-          <a href="#museum" className="nav-link">Bảo Tàng</a>
-          <a href="#news" className="nav-link">Tin Tức và Sự Kiện</a>
-          <a href="#quiz" className="nav-link">Đố vui</a>
-          <a href="#support" className="nav-link">Hỗ Trợ</a>
-        </nav>
-        <div className="actions">
-          <div className="top-actions">
-            <button className="action-button">Trở Thành Thành Viên</button>
-            <button className="action-button">Ủng Hộ Hệ Thống</button>
-          </div>
-          <button className="search-button" onClick={toggleSearchBar}>
-            Tìm Kiếm
-          </button>
-        </div>
-      </header>
+      <Header toggleSearchBar={toggleSearchBar} />
 
-      {/* Search Bar */}
+      {/* Search Modal */}
       {isSearchOpen && (
-        <div className="search-bar-container">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Tìm kiếm bảo tàng..."
-          />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Tìm kiếm sự kiện..."
-          />
-          <button className="search-submit-button">Tìm kiếm</button>
+        <div className="modal">
+          <div className="modal-content">
+            <button className="close-modal" onClick={closeSearchModal}>✖</button>
+            <h2>Tìm Kiếm</h2>
+            <div className="search-input-container">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Tìm kiếm bảo tàng..."
+              />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Tìm kiếm hiện vật..."
+              />
+              <button className="search-submit-button">Tìm kiếm</button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -74,6 +69,14 @@ const HomePage = () => {
       <section className="news-events-container" id="news">
         <NewsEvents />
       </section>
+
+      {/* Quiz and Store Section */}
+      <section className="quiz-store-container" id="quiz">
+        <QuizAndStore />
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

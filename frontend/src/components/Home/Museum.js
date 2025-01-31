@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import '../../assets/css/Museum.css';
 
 const Museum = () => {
+  const navigate = useNavigate(); // Khởi tạo navigate
+
   const museums = [
     {
       id: 1,
@@ -21,8 +24,12 @@ const Museum = () => {
     },
   ];
 
+  const handleTitleClick = (id) => {
+    navigate(`/museums/${id}`); // Điều hướng tới trang chi tiết bảo tàng với ID
+  };
+
   const handleSeeAll = () => {
-    alert("Redirecting to See All Museums...");
+    navigate("/all-museums"); // Điều hướng đến trang AllMuseum
   };
 
   return (
@@ -36,7 +43,12 @@ const Museum = () => {
           <div key={museum.id} className="museum-item">
             <img src={museum.image} alt={museum.title} className="museum-image" />
             <div className="museum-info">
-              <h3>{museum.title}</h3>
+              <h3
+                onClick={() => handleTitleClick(museum.id)} // Điều hướng khi nhấn vào tiêu đề
+                style={{ cursor: "pointer", color: "#c8102e" }} // Thêm style để người dùng biết có thể click
+              >
+                {museum.title}
+              </h3>
               <p>{museum.description}</p>
               <p>{museum.hours}</p>
               <p>{museum.closed}</p>
