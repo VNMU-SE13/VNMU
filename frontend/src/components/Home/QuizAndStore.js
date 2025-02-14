@@ -1,5 +1,6 @@
 import React from "react";
 import "../../assets/css/QuizAndStore.css";
+import SouvenirProducts from "./SouvenirProducts";
 
 const QuizAndStore = () => {
   return (
@@ -9,37 +10,32 @@ const QuizAndStore = () => {
         <div className="quiz-content">
           <h2>Đố vui lịch sử</h2>
           <p>
-            Thử tài hiểu biết của bạn về các sự kiện lịch sử và bảo vật quý giá tại
-            bảo tàng.
+            Thử tài hiểu biết của bạn về các sự kiện lịch sử và bảo vật quý giá tại bảo tàng.
           </p>
           <button className="quiz-start-button">Bắt đầu ngay</button>
         </div>
         <div className="quiz-image">
-          <img
-            src="/image/Quiz.png"
-            alt="Quiz Illustration"
-            className="quiz-img"
-          />
+          <img src="/image/Quiz.png" alt="Quiz Illustration" className="quiz-img" />
         </div>
       </div>
 
-      {/* Phần Cửa hàng lưu niệm */}
+      {/* 🛍 Cửa hàng lưu niệm + Danh sách sản phẩm */}
       <div className="store-section">
-        <div className="store-image">
-          <img
-            src="image\Luuniem.png"
-            alt="Store Illustration"
-            className="store-img"
-          />
+        <div className="store-header reverse-layout"> {/* Thêm class reverse-layout */}
+          <div className="store-image">
+            <img src="/image/Luuniem.png" alt="Store Illustration" className="store-img" />
+          </div>
+          <div className="store-content">
+            <h2>Cửa hàng lưu niệm</h2>
+            <p>
+              Khám phá hàng trăm sản phẩm độc đáo lấy cảm hứng từ nghệ thuật, từ trang sức, sách đến đồ trang trí nhà cửa.
+            </p>
+            <button className="store-shop-button">Mua ngay</button>
+          </div>
         </div>
-        <div className="store-content">
-          <h2>Cửa hàng lưu niệm</h2>
-          <p>
-            Khám phá hàng trăm sản phẩm độc đáo lấy cảm hứng từ nghệ thuật, từ
-            trang sức, sách đến đồ trang trí nhà cửa.
-          </p>
-          <button className="store-shop-button">Mua ngay</button>
-        </div>
+
+        {/* 🛍 Hiển thị danh sách sản phẩm lưu niệm */}
+        <SouvenirProducts />
       </div>
     </div>
   );

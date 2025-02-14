@@ -1,0 +1,54 @@
+.souvenir-section {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.souvenir-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.souvenir-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.souvenir-item {
+    width: 200px; 
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.souvenir-item:hover {
+    transform: translateY(-5px);
+}
+
+/* 📌 Đảm bảo tất cả ảnh sản phẩm có cùng kích thước */
+.souvenir-img {
+    width: 100%;
+    height: 180px; /* Chiều cao cố định cho ảnh */
+    object-fit: cover; /* Cắt ảnh để giữ tỷ lệ mà không bị méo */
+    border-radius: 5px;
+}
+
+.souvenir-name {
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.souvenir-price {
+    color: #c8102e;
+    font-weight: bold;
+    margin-top: 5px;
+    text-align: center;
+}

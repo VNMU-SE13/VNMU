@@ -52,16 +52,17 @@ const Header = ({ toggleSearchBar }) => {
         </div>
       </nav>
       <div className="actions">
-        <div className="top-actions">
-          <button className="action-button" onClick={goToLogin}>
-            Trở Thành Thành Viên
-          </button>
-          <button className="action-button">Ủng Hộ Hệ Thống</button>
-        </div>
-        <button className="search-button" onClick={toggleSearchBar}>
-          Tìm Kiếm
-        </button>
-      </div>
+  <div className="top-actions">
+    <button className="action-button" onClick={goToLogin}>
+      Trở Thành Thành Viên
+    </button>
+    <button className="action-button">Ủng Hộ Hệ Thống</button>
+    <button className="search-button" onClick={toggleSearchBar}>
+      Tìm Kiếm
+    </button>
+  </div>
+</div>
+
     </header>
   );
 };

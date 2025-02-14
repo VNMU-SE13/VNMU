@@ -55,7 +55,7 @@ const Footer = () => {
         <ul className="social-media-list">
           <li>
             <a
-              href="https://www.facebook.com"
+              href="https://www.facebook.com/chitu.bangha.1"
               target="_blank"
               rel="noopener noreferrer"
             >
