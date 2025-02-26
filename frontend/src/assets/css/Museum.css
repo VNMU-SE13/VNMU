@@ -1,12 +1,13 @@
 .museum-container {
     padding: 40px;
     background-color: #f8f8f8;
+    display: block;
 }
 
 .museum-header {
     display: flex;
-    justify-content: space-between; /* Đưa tiêu đề và nút sang 2 bên */
-    align-items: center; /* Căn giữa dọc */
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -28,12 +29,12 @@
 }
 
 .see-all-button:hover {
-    background-color: #a00d22; /* Màu tối hơn khi hover */
+    background-color: #a00d22;
 }
 
 .museum-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Tăng kích thước tối thiểu cho cột */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 20px;
 }
 
@@ -42,51 +43,54 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    text-align: center; /* Căn giữa */
+    text-align: center;
     display: flex;
-    flex-direction: column; /* Chuyển nội dung thành dạng dọc */
+    flex-direction: column;
 }
 
 .museum-image {
     width: 100% !important;
-    height: 500px !important; /* Tăng chiều cao ảnh */
-    object-fit: cover !important; /* Đảm bảo ảnh không bị méo */
+    height: 500px !important;
+    object-fit: cover !important;
     margin-bottom: 10px !important;
 }
 
-
+/* Đảm bảo phần .museum-info nằm dưới tiêu đề và căn chỉnh đúng */
 .museum-info {
     padding: 10px;
-    margin-top: -20px;
-    text-align: left; /* Văn bản căn trái */
+    margin-top: -10px; /* Thêm khoảng cách từ tiêu đề xuống */
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* Đảm bảo nội dung không bị hiển thị dọc */
 }
+
 .museum-info h3 {
     margin-bottom: 8px;
-    font-size: 18px; /* Kích thước tiêu đề */
-    color: #c8102e; /* Màu đỏ nổi bật */
-    position: relative; /* Để sử dụng pseudo-element */
-    cursor: pointer; /* Hiển thị con trỏ chuột để người dùng biết có thể click */
-    display: inline-block; /* Giới hạn kích thước theo nội dung */
+    font-size: 18px;
+    color: #c8102e;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .museum-info h3::after {
-    content: ""; /* Pseudo-element để tạo gạch ngang */
+    content: "";
     position: absolute;
-    bottom: 0; /* Gạch sát chân ký tự */
+    bottom: 0;
     left: 0;
-    width: 0; /* Gạch ngang ban đầu có độ rộng 0 */
-    height: 2px; /* Độ dày của gạch */
-    background-color: #c8102e; /* Màu gạch trùng với tiêu đề */
-    transition: width 0.3s ease; /* Hiệu ứng mở rộng */
+    width: 0;
+    height: 2px;
+    background-color: #c8102e;
+    transition: width 0.3s ease;
 }
 
 .museum-info h3:hover::after {
-    width: 100%; /* Gạch ngang mở rộng chỉ dưới phần chữ */
+    width: 100%;
 }
-
 
 .museum-info p {
     margin-bottom: 6px;
-    font-size: 12px; /* Giảm kích thước văn bản */
+    font-size: 12px;
     color: #555;
+    display: block; /* Đảm bảo các đoạn văn bản không bị lỗi hiển thị dọc */
 }

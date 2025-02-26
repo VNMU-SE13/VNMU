@@ -1,0 +1,44 @@
+/* ArtifactDescription.css */
+.artifact-description {
+    font-size: 16px;
+    margin-top: 15px;
+    color: #444;
+    line-height: 1.6;
+    background-color: #fff; /* Thêm nền trắng cho toàn bộ phần mô tả */
+  padding: 15px; /* Thêm padding cho phần mô tả */
+  border-radius: 10px; /* Bo tròn góc */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .artifact-description h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .artifact-description p {
+    margin-bottom: 15px;
+  }
+  
+  .artifact-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  
+  .artifact-details-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .artifact-details-table .detail-label {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .artifact-details-table .detail-value {
+    color: #ff5722;
+  }
+  

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../../assets/css/ArtifactsCarousel.css";
 
 const ArtifactsCarousel = ({ artifacts }) => {
@@ -32,10 +33,10 @@ const ArtifactsCarousel = ({ artifacts }) => {
         </button>
         <div className="artifacts-list">
           {currentArtifacts.map((artifact) => (
-            <div className="artifact-item" key={artifact.id}>
+            <Link to={`/artifact/${artifact.id}`} key={artifact.id} className="artifact-item">
               <img src={artifact.image} alt={artifact.name} />
               <p>{artifact.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
         <button className="arrow right-arrow" onClick={handleNext}>

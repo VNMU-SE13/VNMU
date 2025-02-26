@@ -1,8 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../assets/css/Header.css";
+import axios from "axios";
+
 
 const Header = ({ toggleSearchBar }) => {
+
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token"); // Lấy token từ localStorage
+      if (!token) return; // Nếu không có token, không gọi API
+
+      try {
+        const response = await axios.get("/api/User/Profile", {
+          headers: { Authorization: `Bearer ${token}` }, // Gửi token trong headers
+        });
+
+        if (response.status === 200) {
+          setUser(response.data); // Lưu thông tin user vào state
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thông tin user:", error);
+        localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const navigate = useNavigate();
 
   const goToLogin = () => {
@@ -15,6 +43,13 @@ const Header = ({ toggleSearchBar }) => {
 
   const handleNavigate = (path) => {
     navigate(path); // Điều hướng tới đường dẫn tùy chỉnh
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Xóa token
+    localStorage.removeItem("user"); // Xóa thông tin user
+    setUser(null); // Cập nhật UI
+    navigate("/"); // Điều hướng về trang chủ
   };
 
   return (
@@ -53,9 +88,20 @@ const Header = ({ toggleSearchBar }) => {
       </nav>
       <div className="actions">
   <div className="top-actions">
-    <button className="action-button" onClick={goToLogin}>
-      Trở Thành Thành Viên
-    </button>
+  {user ? (
+            // Nếu đã đăng nhập, hiển thị tên user và nút đăng xuất
+            <div className="user-info">
+              <span className="username">👤 {user.usernmae}</span>
+              <button className="action-button logout-button" onClick={handleLogout}>
+                Đăng Xuất
+              </button>
+            </div>
+          ) : (
+            // Nếu chưa đăng nhập, hiển thị nút đăng nhập
+            <button className="action-button" onClick={goToLogin}>
+              Trở Thành Thành Viên
+            </button>
+          )}
     <button className="action-button">Ủng Hộ Hệ Thống</button>
     <button className="search-button" onClick={toggleSearchBar}>
       Tìm Kiếm

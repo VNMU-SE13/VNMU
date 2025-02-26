@@ -5,7 +5,7 @@ import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
 
-const museums = [
+export const museums = [
     {
       id: 1,
       name: "Bảo tàng Quân khu 5",

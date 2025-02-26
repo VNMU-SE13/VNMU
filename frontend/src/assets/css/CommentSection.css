@@ -1,0 +1,92 @@
+.comment-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.comment-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    max-width: 800px; /* Giới hạn chiều rộng */
+    margin: auto;
+}
+
+.comment-input textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    font-size: 14px;
+    resize: none;
+}
+
+.comment-input button {
+    background-color: #c8102e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.comment-input button:hover {
+    background-color: #a00d22;
+}
+
+.comment-list .comment-item {
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+.comment-list .comment-item p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.comment-list .comment-item strong {
+    color: #c8102e;
+}
+
+.comment-section h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px; /* Khoảng cách dưới tiêu đề */
+}
+
+/* Các nút phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: #c8102e;
+    color: white;
+}
+
+.pagination button.active {
+    background-color: #c8102e;
+    color: white;
+}

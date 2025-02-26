@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../../assets/css/Login.css";
-import googleIcon from "../../assets/images/google.png";
-import facebookIcon from "../../assets/images/facebook.png";
-import twitterIcon from "../../assets/images/twitter.png";
+import "../../assets/css/LoginAdmin.module.scss";
 import userIcon from "../../assets/images/user-icon.png";
 import lockIcon from "../../assets/images/lock-icon.png";
 import eyeIcon from "../../assets/images/eye-icon.png";
@@ -24,8 +21,7 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+    e.preventDefault();    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       toast.error("Vui lòng nhập email.");
@@ -105,17 +101,7 @@ const Login = () => {
         <button className="login-button" onClick={handleSubmit}>Đăng nhập</button>
         <div className="login-social">
           <span>Đăng nhập bằng</span>
-          <div className="social-icons">
-            <a href="https://accounts.google.com" target="_blank" rel="noopener noreferrer">
-              <img src={googleIcon} alt="Google" className="social-icon" />
-            </a>
-            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-              <img src={facebookIcon} alt="Facebook" className="social-icon" />
-            </a>
-            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
-              <img src={twitterIcon} alt="Twitter" className="social-icon" />
-            </a>
-          </div>
+
         </div>
       </div>
     </div>
