@@ -56,7 +56,16 @@ const Login = () => {
       if (response.status === 200) {
         toast.success("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.token);
-        navigate("/");
+
+        // Kiểm tra ID và Role
+        const userRole = response.data.role;
+        if (userRole === "user") {
+          navigate("/");
+        } else if (userRole === "admin") {
+          navigate("/admin");
+        } else {
+          toast.error("Vai trò không hợp lệ.");
+        }
       } else {
         toast.error(response.data.message || "Đăng nhập thất bại.");
       }

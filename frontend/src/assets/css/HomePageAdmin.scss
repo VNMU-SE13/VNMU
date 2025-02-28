@@ -1,0 +1,95 @@
+/* HomePageAdmin.scss */
+
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #b71c1c;
+  color: white;
+  padding: 1rem 2rem;
+}
+
+.logo {
+  height: 40px;
+}
+
+.header-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  width: 100%;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  transition: background 0.3s;
+}
+
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.active-button {
+  background: #b71c1c;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #fff;
+}
+
+.content-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #b71c1c;
+}
+
+.content-text {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #666;
+}
