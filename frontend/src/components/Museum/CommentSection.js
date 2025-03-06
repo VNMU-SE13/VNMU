@@ -4,10 +4,10 @@ import "../../assets/css/CommentSection.css"; // CSS file for styling
 const CommentSection = () => {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([
-    { user: "Người dùng 1", text: "Bình luận 1" },
-    { user: "Người dùng 2", text: "Bình luận 2" },
-    { user: "Người dùng 3", text: "Bình luận 3" },
-    { user: "Người dùng 4", text: "Bình luận 4" },
+    { user: "Người dùng 1", text: "Chiếc xe tăng T-54 này đánh dấu một thời kỳ lịch sử quan trọng." },
+    { user: "Người dùng 2", text: "Một biểu tượng huyền thoại của lực lượng thiết giáp thế giới!" },
+    { user: "Người dùng 3", text: "Với lớp giáp dày, T-54 từng làm đối thủ e ngại." },
+    { user: "Người dùng 4", text: "T-54 minh chứng cho sức mạnh và chiến thuật bọc thép." },
     { user: "Người dùng 5", text: "Bình luận 5" },
     { user: "Người dùng 6", text: "Bình luận 6" },
     { user: "Người dùng 7", text: "Bình luận 7" },

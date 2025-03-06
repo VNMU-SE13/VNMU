@@ -3,27 +3,27 @@ import { useNavigate } from "react-router-dom";
 import "../../assets/css/Header.css";
 import axios from "axios";
 
-
 const Header = ({ toggleSearchBar }) => {
-
-  const [user, setUser] = useState()
+  const [user, setUser] = useState();
+  const [isMuseumDropdownOpen, setIsMuseumDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token"); // Lấy token từ localStorage
-      if (!token) return; // Nếu không có token, không gọi API
+      const token = localStorage.getItem("token"); 
+      if (!token) return; 
 
       try {
         const response = await axios.get("/api/User/Profile", {
-          headers: { Authorization: `Bearer ${token}` }, // Gửi token trong headers
+          headers: { Authorization: `Bearer ${token}` }, 
         });
 
         if (response.status === 200) {
-          setUser(response.data); // Lưu thông tin user vào state
+          setUser(response.data);
         }
       } catch (error) {
         console.error("Lỗi lấy thông tin user:", error);
-        localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
+        localStorage.removeItem("token");
         setUser(null);
       }
     };
@@ -31,25 +31,23 @@ const Header = ({ toggleSearchBar }) => {
     fetchUser();
   }, []);
 
-  const navigate = useNavigate();
-
   const goToLogin = () => {
     navigate("/login");
   };
 
   const goToHome = () => {
-    navigate("/"); // Điều hướng về HomePage
+    navigate("/");
   };
 
   const handleNavigate = (path) => {
-    navigate(path); // Điều hướng tới đường dẫn tùy chỉnh
+    navigate(path);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Xóa token
-    localStorage.removeItem("user"); // Xóa thông tin user
-    setUser(null); // Cập nhật UI
-    navigate("/"); // Điều hướng về trang chủ
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/");
   };
 
   return (
@@ -67,48 +65,57 @@ const Header = ({ toggleSearchBar }) => {
             <a href="#chuc-nang" className="dropdown-item">Chức năng, nhiệm vụ</a>
           </div>
         </div>
-        <a href="#museum" className="nav-link">Bảo Tàng</a>
+
+        {/* ✅ Dropdown cho Bảo Tàng với điều hướng động */}
+        <div 
+          className="dropdown"
+          onMouseEnter={() => setIsMuseumDropdownOpen(true)}
+          onMouseLeave={() => setIsMuseumDropdownOpen(false)}
+        >
+          <a href="#" className="dropdown-toggle">Bảo Tàng</a>
+          {isMuseumDropdownOpen && (
+            <div className="dropdown-menu">
+              <a onClick={() => navigate("/museums/1")} className="dropdown-item">Bảo tàng Quân khu 5</a>
+              <a onClick={() => navigate("/museums/2")} className="dropdown-item">Bảo tàng Điêu khắc Chăm</a>
+              <a onClick={() => navigate("/museums/3")} className="dropdown-item">Bảo Tàng Đà Nẵng</a>
+              <a onClick={() => navigate("/museums/4")} className="dropdown-item">Bảo tàng Mỹ thuật Đà Nẵng</a>
+              <a onClick={() => navigate("/museums/5")} className="dropdown-item">Bảo tàng Đồng Đình</a>
+              <a onClick={() => navigate("/museums/6")} className="dropdown-item">Nhà trưng bày Hoàng Sa</a>
+              <a onClick={() => navigate("/museums/7")} className="dropdown-item">Bảo tàng Tre trúc Sơn Trà Tịnh Viên</a>
+              <a onClick={() => navigate("/museums/8")} className="dropdown-item">Bảo tàng Tranh 3D Art In Paradise</a>
+              <a onClick={() => navigate("/museums/9")} className="dropdown-item">Thế Giới Úp Ngược</a>
+              <a onClick={() => navigate("/museums/10")} className="dropdown-item">Bảo tàng Phật giáo Đà Nẵng</a>
+              <a onClick={() => navigate("/museums/11")} className="dropdown-item">Bảo tàng Sáp Đà Nẵng</a>
+            </div>
+          )}
+        </div>
+
         <a href="#news" className="nav-link">Tin Tức và Sự Kiện</a>
         <a href="#quiz" className="nav-link">Đố vui</a>
         <a href="#support" className="nav-link">Quà Lưu Niệm</a>
         <div className="dropdown">
           <a href="#" className="dropdown-toggle">Khác</a>
           <div className="dropdown-menu">
-            <a
-              onClick={() => handleNavigate("/submit-form")}
-              className="dropdown-item"
-              style={{ cursor: "pointer" }}
-            >
-              Nộp đơn
-            </a>
+            <a onClick={() => handleNavigate("/submit-form")} className="dropdown-item" style={{ cursor: "pointer" }}>Nộp đơn</a>
             <a href="#doc-truyen" className="dropdown-item">Đọc truyện</a>
             <a href="#ho-tro" className="dropdown-item">Hỗ trợ</a>
           </div>
         </div>
       </nav>
       <div className="actions">
-  <div className="top-actions">
-  {user ? (
-            // Nếu đã đăng nhập, hiển thị tên user và nút đăng xuất
+        <div className="top-actions">
+          {user ? (
             <div className="user-info">
-              <span className="username">👤 {user.usernmae}</span>
-              <button className="action-button logout-button" onClick={handleLogout}>
-                Đăng Xuất
-              </button>
+              <span className="username">👤 {user.username}</span>
+              <button className="action-button logout-button" onClick={handleLogout}>Đăng Xuất</button>
             </div>
           ) : (
-            // Nếu chưa đăng nhập, hiển thị nút đăng nhập
-            <button className="action-button" onClick={goToLogin}>
-              Trở Thành Thành Viên
-            </button>
+            <button className="action-button" onClick={goToLogin}>Trở Thành Thành Viên</button>
           )}
-    <button className="action-button">Ủng Hộ Hệ Thống</button>
-    <button className="search-button" onClick={toggleSearchBar}>
-      Tìm Kiếm
-    </button>
-  </div>
-</div>
-
+          <button className="action-button">Ủng Hộ Hệ Thống</button>
+          <button className="search-button" onClick={toggleSearchBar}>Tìm Kiếm</button>
+        </div>
+      </div>
     </header>
   );
 };

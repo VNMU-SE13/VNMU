@@ -1,6 +1,11 @@
-import { useState } from "react";
-import { Users, Package, ClipboardList, FileText, HelpCircle, Calendar, Newspaper, User, MessageSquare, LogOut } from "lucide-react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Users, Package, ClipboardList, FileText, HelpCircle, Calendar, Newspaper, User, MessageSquare, LogOut } from 'lucide-react';
+import styled from 'styled-components';
+import UserManagement from './UserManagement';
+import ArtifactManagement from './ArtifactManagement';
+import BlogManagement from './BlogManagement';
+import EventManagement from './EventManagement';
+import NewsManagement from './NewsManagement';
 
 const Container = styled.div`
   display: flex;
@@ -104,6 +109,7 @@ export default function HomePageAdmin() {
 
   return (
     <Container>
+      {/* Header */}
       <Header>
         <Logo src="/image/VNMUDoc.png" alt="Logo" />
         <HeaderIcons>
@@ -112,30 +118,40 @@ export default function HomePageAdmin() {
           <LogOut size={24} />
         </HeaderIcons>
       </Header>
-      
+
       <MainLayout>
+        {/* Sidebar */}
         <Sidebar>
           <SidebarTitle>Admin Dashboard</SidebarTitle>
           <NavMenu>
             {menuItems.map((item) => (
-              <NavButton
-                key={item.name}
-                active={active === item.name}
-                onClick={() => setActive(item.name)}
-              >
+              <NavButton key={item.name} active={active === item.name} onClick={() => setActive(item.name)}>
                 <item.icon size={20} />
                 {item.name}
               </NavButton>
             ))}
           </NavMenu>
         </Sidebar>
-        
+
+        {/* Content */}
         <Content>
           <ContentTitle>{active}</ContentTitle>
-          <ContentText>Đây là khu vực quản lý: {active}</ContentText>
+          
+          {active === "Quản lý tài khoản" ? (
+            <UserManagement />
+          ) : active === "Quản lý hiện vật" ? (
+            <ArtifactManagement/>
+          ) : active === "Quản lý blog" ? (
+            <BlogManagement/>
+          ) : active === "Quản lý sự kiện" ? (
+            <EventManagement/>
+          ) : active === "Quản lý tin tức" ? (
+            <NewsManagement/>
+          ) : (
+            <ContentText>Đây là khu vực quản lý: {active}</ContentText>
+          )}
         </Content>
       </MainLayout>
     </Container>
   );
 }
-
