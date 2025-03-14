@@ -9,6 +9,7 @@ import MuseumDetail from "./components/Museum/MuseumDetail"; // Chi tiết bảo
 import ArtifactDetail from "./components/Museum/ArtifactDetail"; // Chi tiết hiện vật
 import SubmitForm from "./components/Home/SubmitForm";
 import HomePageAdmin from "./components/Admin/HomePageAdmin";
+import News from "./components/News&Events/News"
 function App() {
   return (
     <Router>
@@ -22,6 +23,7 @@ function App() {
         <Route path="/artifact/:id" element={<ArtifactDetail />} /> {/* Trang Chi Tiết Hiện Vật */}
         <Route path="/submit-form" element={<SubmitForm />} />
         <Route path="/admin" element={<HomePageAdmin />} />
+        <Route path="/news" element={<News/>}/>
       </Routes>
     </Router>
   );
