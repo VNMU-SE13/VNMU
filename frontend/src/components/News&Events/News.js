@@ -39,7 +39,7 @@ const Sidebar = styled.div`
   position: sticky;
   top: 80px;
   height: fit-content;
-  margin-left: 20px; /* Thêm khoảng cách với lề trái */
+  margin-left: -200px; /* Thêm khoảng cách với lề trái */
 `;
 
 

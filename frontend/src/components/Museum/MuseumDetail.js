@@ -1,10 +1,169 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import "../../assets/css/MuseumDetail.css";
+import styled, { keyframes } from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
 
+// Keyframes Animation
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const fadeInUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const fadeInDown = keyframes`
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// Styled Components
+const MuseumDetailContainer = styled.div`
+  margin-top: 80px;
+  padding: 20px;
+  background-color: #f8f8f8;
+`;
+
+const MuseumContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const MuseumTitle = styled.h1`
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  animation: ${fadeInDown} 1s ease-in-out;
+`;
+
+const MuseumInfo = styled.div`
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  animation: ${fadeInUp} 1.2s ease-in-out;
+`;
+
+const MuseumText = styled.div`
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: ${fadeInUp} 1.5s ease-in-out;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #c8102e;
+  text-align: left;
+  animation: ${fadeIn} 1.2s ease-in-out;
+`;
+
+const Text = styled.p`
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 15px;
+  line-height: 1.8;
+  text-align: justify;
+  animation: ${fadeInUp} 1.5s ease-in-out;
+`;
+
+const MuseumImage = styled.div`
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  animation: ${fadeInUp} 1.5s ease-in-out;
+
+  img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const Breadcrumb = styled.div`
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #666;
+  animation: ${fadeIn} 1s ease-in-out;
+
+  a {
+    color: #0073e6;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  span {
+    color: #333;
+    font-weight: bold;
+  }
+`;
+
+const ArtifactsSection = styled.div`
+  margin-top: 40px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const ArtifactsTitle = styled.h2`
+  font-size: 24px;
+  color: #c8102e;
+  margin-bottom: 20px;
+`;
+
+const ArtifactsSlider = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ArtifactItem = styled.div`
+  text-align: center;
+  flex: 1;
+
+  img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+  }
+
+  p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+`;
+
+const ArrowButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #c8102e;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #a00c1d;
+  }
+`;
 export const museums = [
     {
       id: 1,
@@ -16,13 +175,13 @@ export const museums = [
       image: "/image/BT-QK5.jpg",
       longDescription: `Bảo tàng Quân khu 5 là nơi trưng bày và lưu giữ những hiện vật quý giá liên quan đến lịch sử quân sự của khu vực miền Trung. Đây là điểm đến hấp dẫn cho những ai yêu thích lịch sử và muốn tìm hiểu về các giai đoạn kháng chiến chống thực dân và đế quốc.`,
       artifacts: [
-        { id: 1, name: "Xe tăng T-54", image: "/image/artifacts/tank.jpg" },
-        { id: 2, name: "Súng thần công", image: "/image/artifacts/cannon.jpg" },
-        { id: 3, name: "Mũ sắt", image: "/image/artifacts/helmet.jpg" },
-        { id: 4, name: "Bản đồ tác chiến", image: "/image/artifacts/map.jpg" },
-        { id: 5, name: "Huy hiệu quân đội", image: "/image/artifacts/badge.jpg" },
-        { id: 6, name: "Súng AK-47", image: "/image/artifacts/ak47.jpg" },
-        { id: 7, name: "Radio liên lạc", image: "/image/artifacts/radio.jpg" },
+        { id: 1, name: "Xe tăng T-54", image: "/image/artifacts/tank.jpg", category: ["KC chống Mỹ", "KC chống Pháp", "CT biên giới"] },
+        { id: 2, name: "Súng thần công", image: "/image/artifacts/cannon.jpg", category: ["KC chống Pháp", "KC chống Nhật", "CT biên giới"] },
+        { id: 3, name: "Mũ sắt", image: "/image/artifacts/helmet.jpg",category: ["KC chống Mỹ", "KC chống Nhật", "CT biên giới"] },
+        { id: 4, name: "Bản đồ tác chiến", image: "/image/artifacts/map.jpg",category: ["KC chống Mỹ", "KC chống Pháp", "CT biên giới"]  },
+        { id: 5, name: "Huy hiệu quân đội", image: "/image/artifacts/badge.jpg", category: ["KC chống Mỹ", "KC chống Pháp", "CT biên giới"]},
+        { id: 6, name: "Súng AK-47", image: "/image/artifacts/ak47.jpg", category: ["KC chống Mỹ", "KC chống Pháp", "CT biên giới"]},
+        { id: 7, name: "Radio liên lạc", image: "/image/artifacts/radio.jpg", category: ["KC chống Mỹ", "KC chống Pháp", "CT biên giới"] },
       ],
     },
     {
@@ -199,51 +358,54 @@ export const museums = [
   ];
 
   const MuseumDetail = () => {
-    const { id } = useParams();
-    const museum = museums.find((m) => m.id === parseInt(id));
-  
-    if (!museum) {
-      return <p>Bảo tàng không tồn tại.</p>;
-    }
-  
-    return (
-      <div className="museum-detail">
-        <Header />
-  
-        <div className="museum-detail-content">
-          {/* Breadcrumb */}
-          <div className="breadcrumb">
-            <Link to="/">Trang chủ</Link> / <Link to="/all-museums">Các bảo tàng</Link> /{" "}
-            <span>{museum.name}</span>
-          </div>
-  
-          <h1>{museum.name}</h1>
-  
-          {/* Information Section */}
-          <div className="museum-detail-info">
-            <div className="museum-detail-text">
-              <h2>Giờ mở cửa</h2>
-              <p>{museum.hours}</p>
-              <p>
-                <strong>Đóng cửa:</strong> {museum.closed}
-              </p>
-              <h2>Địa chỉ</h2>
-              <p>{museum.address}</p>
-              <h2>Mô tả chi tiết</h2>
-              <p>{museum.longDescription}</p>
-            </div>
-            <div className="museum-detail-image">
-              <img src={museum.image} alt={museum.name} />
-            </div>
-          </div>
-  
-          {/* Artifacts Section */}
-          <ArtifactsCarousel artifacts={museum.artifacts} />
-        </div>
-  
-        <Footer />
-      </div>
-    );
-  };
-  
-  export default MuseumDetail;
+  const { id } = useParams();
+  const museum = museums.find((m) => m.id === parseInt(id));
+
+  if (!museum) {
+    return <p>Bảo tàng không tồn tại.</p>;
+  }
+
+  return (
+    <MuseumDetailContainer>
+      <Header />
+
+      <MuseumContent>
+        <Breadcrumb>
+          <Link to="/">Trang chủ</Link> / <Link to="/all-museums">Các bảo tàng</Link> /{" "}
+          <span>{museum.name}</span>
+        </Breadcrumb>
+
+        <MuseumTitle>{museum.name}</MuseumTitle>
+
+        <MuseumInfo>
+          <MuseumText>
+            <SectionTitle>Giờ mở cửa</SectionTitle>
+            <Text>{museum.hours}</Text>
+            <Text>
+              <strong>Đóng cửa:</strong> {museum.closed}
+            </Text>
+
+            <SectionTitle>Địa chỉ</SectionTitle>
+            <Text>{museum.address}</Text>
+
+            <SectionTitle>Mô tả chi tiết</SectionTitle>
+            <Text>{museum.longDescription}</Text>
+          </MuseumText>
+
+          <MuseumImage>
+            <img src={museum.image} alt={museum.name} />
+          </MuseumImage>
+        </MuseumInfo>
+
+        {/* Sử dụng ArtifactsCarousel thay vì slider cũ */}
+
+            <ArtifactsCarousel artifacts={museum.artifacts} />
+
+      </MuseumContent>
+
+      <Footer />
+    </MuseumDetailContainer>
+  );
+};
+
+export default MuseumDetail;

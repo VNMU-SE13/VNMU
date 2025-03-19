@@ -5,25 +5,25 @@ const souvenirProducts = [
     id: 1,
     name: "Tượng cô gái Việt Nam",
     image: "/image/souvenir/souvenir1.jpg",
-    price: "150.000đ"
+    price: "1.000 điểm"
   },
   {
     id: 2,
     name: "Mô hình nón lá mini",
     image: "/image/souvenir/souvenir2.jpg",
-    price: "120.000đ"
+    price: "2.000 điểm"
   },
   {
     id: 3,
     name: "Bộ bưu thiếp nghệ thuật",
     image: "/image/souvenir/souvenir3.jpg",
-    price: "90.000đ"
+    price: "500 điểm"
   },
   {
     id: 4,
     name: "Lọ gốm sứ Bát Tràng",
     image: "/image/souvenir/souvenir4.jpg",
-    price: "200.000đ"
+    price: "5.000 điểm"
   }
 ];
 

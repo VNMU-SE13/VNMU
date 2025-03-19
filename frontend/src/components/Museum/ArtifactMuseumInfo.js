@@ -7,8 +7,6 @@ const ArtifactMuseumInfo = () => {
     avatar: "/image/BT-QK5.jpg", 
     name: "Bảo tàng Quân khu 5",
     status: "Online 1 Giờ Trước",
-    favoriteButtonText: "Yêu Thích",
-    chatButtonText: "Chat Ngay",
     shopButtonText: "Xem Bảo tàng",
     rating: "5k",
     productCount: 534,
@@ -28,8 +26,6 @@ const ArtifactMuseumInfo = () => {
       </div>
 
       <div className="museum-actions">
-        <button className="btn favorite-btn">{museumInfo.favoriteButtonText}</button>
-        <button className="btn chat-btn">{museumInfo.chatButtonText}</button>
         <button className="btn shop-btn">{museumInfo.shopButtonText}</button>
       </div>
 

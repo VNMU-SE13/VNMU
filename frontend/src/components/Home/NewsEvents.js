@@ -1,48 +1,209 @@
 import React, { useState } from "react";
-import "../../assets/css/NewsEvents.css";
+import styled from "styled-components";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Import useNavigate để điều hướng
 
+// Styled Components
+const NewsEventsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f5f5dc;
+  padding: 40px;
+  border-radius: 10px;
+  margin-top: 40px;
+  gap: 20px;
+`;
+
+const NewsHeader = styled.div`
+  flex: 1;
+  max-width: 300px;
+  text-align: left;
+`;
+
+const Title = styled.h2`
+  font-size: 24px;
+  color: #8b0000;
+  margin-bottom: 10px;
+`;
+
+const Description = styled.p`
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+`;
+
+const SeeAllButton = styled.button`
+  background: none;
+  border: 2px solid #8b0000;
+  color: #8b0000;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+
+  &:hover {
+    background: #8b0000;
+    color: white;
+  }
+`;
+
+const NewsContent = styled.div`
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  min-height: 360px;
+  margin-left: 150px;
+`;
+
+const NewsSlider = styled.div`
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  flex: 1;
+  min-width: 900px;
+  position: relative;
+  transition: transform 0.5s ease-in-out;
+`;
+
+const NewsCard = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  height: 370px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const NewsImage = styled.img`
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+`;
+
+const CardTitle = styled.h3`
+  font-size: 16px;
+  color: #8b0000;
+  margin-bottom: 5px;
+  line-height: 1.2;
+`;
+
+const CardDescription = styled.p`
+  font-size: 14px;
+  color: #555;
+  flex-grow: 1;
+  margin-bottom: 6px;
+  text-align: justify;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+`;
+
+const MuseumName = styled.p`
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 8px;
+`;
+
+const ReadMore = styled.a`
+  color: #8b0000;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  align-self: flex-start;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #555;
+  }
+`;
+
+const ScrollButton = styled.button`
+  background-color: #8b0000;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+
+  &.prev {
+    left: -60px;
+  }
+
+  &.next {
+    right: 90px;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #a00d22;
+  }
+`;
+
+// Component chính
 const NewsEvents = () => {
+  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+
+  const handleSeeAll = () => {
+    navigate("/news"); // Điều hướng đến trang tin tức
+  };
+
   const events = [
     {
       id: 1,
-      title: "Tại Sao Hiện Vật Lịch Sử Là Cửa Sổ Đến Quá Khứ",
-      description: "Hiện vật lịch sử không chỉ đơn thuần là những đồ vật cũ kỹ, mà chúng chứa đựng những giá trị vượt thời gian. Mỗi hiện vật đều mang một câu chuyện độc đáo, từ những cuộc chiến tranh oai hùng, những lễ hội truyền thống rực rỡ, cho đến đời sống thường nhật của con người qua các thời kỳ. Chúng là cánh cửa giúp chúng ta du hành về quá khứ, cảm nhận sự kết nối giữa hiện tại và lịch sử.",
+      image: "/image/new11.jpg",
+      title: "Hiện Vật Lịch Sử Là Cửa Sổ Đến Quá Khứ",
+      description: "Hiện vật lịch sử không chỉ đơn thuần là những đồ vật cũ kỹ, mà chúng chứa đựng những giá trị vượt thời gian...",
+      museum: "Bảo tàng Lịch Sử",
       link: "#"
     },
     {
       id: 2,
+      image: "/image/new22.jpeg",
       title: "Triển Lãm Nghệ Thuật Hiện Đại",
-      description: "Triển lãm nghệ thuật hiện đại là sân chơi dành cho các nghệ sĩ trẻ tài năng, nơi họ thể hiện sự sáng tạo vô biên qua các tác phẩm đầy màu sắc và ý tưởng táo bạo. Không gian triển lãm không chỉ dừng lại ở việc trưng bày, mà còn là nơi để khán giả tương tác trực tiếp, cảm nhận sâu sắc tinh thần nghệ thuật hiện đại. Đây là cơ hội để khám phá sự độc đáo trong từng góc nhìn của nghệ thuật đương đại.",
+      description: "Triển lãm nghệ thuật hiện đại là sân chơi dành cho các nghệ sĩ trẻ tài năng...",
+      museum: "Bảo tàng Mỹ Thuật",
       link: "#"
     },
     {
       id: 3,
+      image: "/image/new33.jpg",
       title: "Khám Phá Di Sản Văn Hóa",
-      description: "Khám phá di sản văn hóa là cơ hội tuyệt vời để chúng ta tìm hiểu sâu hơn về giá trị truyền thống. Qua các hoạt động tương tác như làm đồ thủ công, tham gia trình diễn văn nghệ, và xem các hiện vật quý giá, bạn sẽ có một góc nhìn sâu sắc hơn về lịch sử và văn hóa của dân tộc. Đây cũng là dịp để bạn trải nghiệm một cách chân thực những nét đẹp văn hóa không thể lãng quên.",
-      link: "#"
-    },
-    {
-      id: 4,
-      title: "Lịch Sử Bảo Tàng Việt Nam",
-      description: "Lịch sử bảo tàng tại Việt Nam là một hành trình dài đầy biến động. Từ những bảo tàng đầu tiên được xây dựng trong thời kỳ thuộc địa, đến sự phát triển vượt bậc trong thời kỳ hiện đại, mỗi bảo tàng là một phần của lịch sử. Đây là nơi lưu giữ những hiện vật, tư liệu quý giá, và là cầu nối giữa quá khứ và hiện tại, giúp thế hệ trẻ hiểu hơn về cội nguồn văn hóa.",
-      link: "#"
-    },
-    {
-      id: 5,
-      title: "Bí Mật Của Những Tác Phẩm Nghệ Thuật Cổ",
-      description: "Những tác phẩm nghệ thuật cổ luôn ẩn chứa nhiều bí mật chưa được hé lộ. Từ những nét chạm trổ tinh xảo trên các bức tượng, cho đến ý nghĩa ẩn dụ trong các bức tranh, mỗi tác phẩm đều là một câu chuyện đầy cuốn hút. Qua những khám phá mới, chúng ta dần dần hiểu rõ hơn về ý nghĩa của các tác phẩm này, đồng thời cảm nhận được giá trị trường tồn của nghệ thuật cổ.",
-      link: "#"
-    },
-    {
-      id: 6,
-      title: "Công Nghệ Hiện Đại Tại Bảo Tàng",
-      description: "Công nghệ hiện đại đang thay đổi cách chúng ta trải nghiệm bảo tàng. Từ việc áp dụng thực tế ảo tăng cường (AR) để khám phá các hiện vật, cho đến việc sử dụng AI để phục hồi những hiện vật bị hư hại, công nghệ đang mang lại trải nghiệm tương tác đầy thú vị cho khách tham quan. Bảo tàng không còn là nơi trưng bày tĩnh lặng, mà là một không gian sống động để học hỏi và khám phá.",
+      description: "Khám phá di sản văn hóa là cơ hội tuyệt vời để tìm hiểu sâu hơn...",
+      museum: "Bảo tàng Văn Hóa",
       link: "#"
     }
   ];
 
-  const [startIndex, setStartIndex] = useState(0); // Index bắt đầu hiển thị
-  const itemsPerPage = 3; // Số ô vuông hiển thị mỗi lượt
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 3;
 
   const handleNext = () => {
     if (startIndex + itemsPerPage < events.length) {
@@ -59,37 +220,37 @@ const NewsEvents = () => {
   const visibleEvents = events.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="news-events-container">
-      <div className="news-header">
-        <h2>Tin Tức & Sự Kiện</h2>
-        <p>
+    <NewsEventsContainer>
+      <NewsHeader>
+        <Title>Tin Tức & Sự Kiện</Title>
+        <Description>
           Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.
-        </p>
-        <button className="see-all-button">See All</button>
-      </div>
-      <div className="news-content">
-        {/* Nút mũi tên trái */}
-        <button className="scroll-button prev" onClick={handlePrev} disabled={startIndex === 0}>
-          &lt;
-        </button>
+        </Description>
+        <SeeAllButton onClick={handleSeeAll}>See All</SeeAllButton> {/* Điều hướng đến trang /news */}
+      </NewsHeader>
+      
+      <NewsContent>
+        <ScrollButton className="prev" onClick={handlePrev} disabled={startIndex === 0}>
+          <FaChevronLeft />
+        </ScrollButton>
 
-        {/* Slider */}
-        <div className="news-slider">
+        <NewsSlider>
           {visibleEvents.map((event) => (
-            <div key={event.id} className="news-card">
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <a href={event.link} className="read-more">Read More</a>
-            </div>
+            <NewsCard key={event.id}>
+              <NewsImage src={event.image} alt={event.title} />
+              <CardTitle>{event.title}</CardTitle>
+              <CardDescription>{event.description}</CardDescription>
+              <MuseumName>{event.museum}</MuseumName>
+              <ReadMore href={event.link}>Read More</ReadMore>
+            </NewsCard>
           ))}
-        </div>
+        </NewsSlider>
 
-        {/* Nút mũi tên phải */}
-        <button className="scroll-button next" onClick={handleNext} disabled={startIndex + itemsPerPage >= events.length}>
-          &gt;
-        </button>
-      </div>
-    </div>
+        <ScrollButton className="next" onClick={handleNext} disabled={startIndex + itemsPerPage >= events.length}>
+          <FaChevronRight />
+        </ScrollButton>
+      </NewsContent>
+    </NewsEventsContainer>
   );
 };
 

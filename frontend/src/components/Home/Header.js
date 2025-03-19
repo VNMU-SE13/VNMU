@@ -97,7 +97,7 @@ const Header = ({ toggleSearchBar }) => {
           <a href="#" className="dropdown-toggle">Khác</a>
           <div className="dropdown-menu">
             <a onClick={() => handleNavigate("/submit-form")} className="dropdown-item" style={{ cursor: "pointer" }}>Nộp đơn</a>
-            <a href="#doc-truyen" className="dropdown-item">Đọc truyện</a>
+            <a href="#doc-truyen" className="dropdown-item">Blog</a>
             <a href="#ho-tro" className="dropdown-item">Hỗ trợ</a>
           </div>
         </div>
