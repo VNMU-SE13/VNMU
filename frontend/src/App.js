@@ -10,6 +10,10 @@ import ArtifactDetail from "./components/Museum/ArtifactDetail"; // Chi tiết h
 import SubmitForm from "./components/Home/SubmitForm";
 import HomePageAdmin from "./components/Admin/HomePageAdmin";
 import News from "./components/News&Events/News"
+import NewsDetail from "./components/News&Events/NewsDetail";
+import HashtagPage from './components/News&Events/HashtagPage';
+import QuizHome from './components/Quizz/QuizHome';
+import QuizStart from './components/Quizz/QuizStart';
 function App() {
   return (
     <Router>
@@ -19,11 +23,15 @@ function App() {
         <Route path="/register" element={<Register />} /> {/* Trang Đăng Ký */}
         <Route path="/museum" element={<Museum />} /> {/* Trang Bảo Tàng */}
         <Route path="/all-museums" element={<AllMuseum />} /> {/* Trang All Museum */}
-        <Route path="/museums/:id" element={<MuseumDetail />} /> {/* Trang Chi Tiết Bảo Tàng */}
-        <Route path="/artifact/:id" element={<ArtifactDetail />} /> {/* Trang Chi Tiết Hiện Vật */}
+        <Route path="/museums/:slug" element={<MuseumDetail />} /> {/* Trang Chi Tiết Bảo Tàng */}
+        <Route path="/artifact/:slug" element={<ArtifactDetail />} /> {/* Trang Chi Tiết Hiện Vật */}
         <Route path="/submit-form" element={<SubmitForm />} />
         <Route path="/admin" element={<HomePageAdmin />} />
         <Route path="/news" element={<News/>}/>
+        <Route path="/news/:slug" element={<NewsDetail />} />
+        <Route path="/tags/:tagName" element={<HashtagPage />} />
+        <Route path="/quiz" element={<QuizHome />} />
+        <Route path="/quiz/start" element={<QuizStart />} />
       </Routes>
     </Router>
   );

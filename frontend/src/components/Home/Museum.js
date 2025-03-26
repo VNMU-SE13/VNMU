@@ -124,6 +124,7 @@ export default function Museum() {
   const museums = [
     {
       id: 1,
+      slug: "bao-tang-quan-khu-5",
       image: "/image/BT-QK5.jpg",
       title: "Bảo tàng Quân khu 5",
       description: "Khám phá lịch sử quân sự khu vực miền Trung Việt Nam.",
@@ -132,6 +133,7 @@ export default function Museum() {
     },
     {
       id: 2,
+      slug: "bao-tang-dieu-khac-cham",
       image: "/image/BT-Cham.jpg",
       title: "Bảo tàng Điêu khắc Chăm",
       description: "Nơi lưu giữ tinh hoa văn hóa Chăm Pa cổ đại.",
@@ -140,6 +142,7 @@ export default function Museum() {
     },
     {
       id: 3,
+      slug: "bao-tang-da-nang",
       image: "/image/BaoTangDaNang.jpg",
       title: "Bảo tàng Đà Nẵng",
       description: "Tìm hiểu về lịch sử, văn hóa và sự phát triển của thành phố Đà Nẵng.",
@@ -148,8 +151,8 @@ export default function Museum() {
     },
   ];
  
-  const handleTitleClick = (id) => {
-    navigate(`/museums/${id}`);
+  const handleTitleClick = (slug) => {
+    navigate(`/museums/${slug}`);
   };
 
   const handleSeeAll = () => {
@@ -164,10 +167,10 @@ export default function Museum() {
       </MuseumHeader>
       <MuseumGrid>
         {museums.map((museum) => (
-          <MuseumItem key={museum.id}>
+          <MuseumItem key={museum.slug}>
             <MuseumImage src={museum.image} alt={museum.title} />
             <MuseumInfo>
-              <MuseumTitle onClick={() => handleTitleClick(museum.id)}>
+              <MuseumTitle onClick={() => handleTitleClick(museum.slug)}>
                 {museum.title}
               </MuseumTitle>
               <MuseumText>{museum.description}</MuseumText>

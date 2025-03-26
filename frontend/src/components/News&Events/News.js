@@ -1,16 +1,17 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { FaNewspaper, FaCalendarAlt } from "react-icons/fa";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
+import Sidebar from "./Sidebar";
+import { Link } from "react-router-dom";
 
+// Styled Components
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-top: 80px; /* Tạo khoảng trống dưới header */
+  padding-top: 80px;
 `;
-
 
 const MainWrapper = styled.div`
   display: flex;
@@ -19,45 +20,12 @@ const MainWrapper = styled.div`
   width: 100%;
   margin: auto;
   padding: 20px;
-  gap: 20px; /* Tạo khoảng cách giữa sidebar và nội dung */
-`;
+  gap: 20px;
 
-const FooterWrapper = styled.div`
- margin-top: auto;
-  width: 100%;
-  position: relative;
-  bottom: 0;
-`;
-
-const Sidebar = styled.div`
-  width: 250px;
-  background: #343a40;
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 80px;
-  height: fit-content;
-  margin-left: -200px; /* Thêm khoảng cách với lề trái */
-`;
-
-
-const SidebarItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  background: ${({ active }) => (active ? "#dc3545" : "transparent")};
-  &:hover {
-    background: #dc3545;
+  @media (max-width: 768px) {  
+    flex-direction: column;
+    padding: 10px;
   }
-`;
-
-const SubMenu = styled.div`
-  margin-left: 20px;
-  display: ${({ open }) => (open ? "block" : "none")};
 `;
 
 const Content = styled.div`
@@ -66,7 +34,6 @@ const Content = styled.div`
   background: white;
   border-radius: 8px;
 `;
-
 
 const Title = styled.h2`
   font-size: 1.5rem;
@@ -110,19 +77,21 @@ const NewsMeta = styled.p`
   color: #adb5bd;
 `;
 
-const ViewMore = styled.button`
-  background: none;
-  border: none;
-  color: #007bff;
+const ViewMore = styled(Link)`
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
   cursor: pointer;
-  padding: 0;
+  margin-top: 10px;
+  display: inline-block;
+
+  &:hover {
+    text-decoration: underline;
+    color: #dc3545;
+  }
 `;
 
-const menuItems = {
-  "Tin Tức": ["Tin tức mới nhất", "Tin tức đặc sắc", "Công nghệ", "Bảo tồn"],
-  "Sự Kiện": ["Sự kiện sắp diễn ra", "Sự kiện nổi bật"],
-};
-
+// Dữ liệu mẫu
 const newsArticles = {
   "Tin tức mới nhất": [
     {
@@ -177,47 +146,13 @@ const newsArticles = {
 };
 
 export default function News() {
-  const [openMenu, setOpenMenu] = useState("Tin Tức");
   const [selectedMenu, setSelectedMenu] = useState("Tin tức mới nhất");
-
-  const toggleMenu = (menu) => {
-    setOpenMenu(openMenu === menu ? null : menu);
-  };
 
   return (
     <PageContainer>
       <Header />
       <MainWrapper>
-        <Sidebar>
-          <SidebarItem active={openMenu === "Tin Tức"} onClick={() => toggleMenu("Tin Tức")}> 
-            <FaNewspaper style={{ marginRight: 10 }} /> Tin Tức
-          </SidebarItem>
-          <SubMenu open={openMenu === "Tin Tức"}>
-            {menuItems["Tin Tức"].map((subMenu) => (
-              <SidebarItem
-                key={subMenu}
-                onClick={() => setSelectedMenu(subMenu)}
-                style={{ paddingLeft: 30, background: selectedMenu === subMenu ? "#495057" : "transparent" }}
-              >
-                {subMenu}
-              </SidebarItem>
-            ))}
-          </SubMenu>
-          <SidebarItem active={openMenu === "Sự Kiện"} onClick={() => toggleMenu("Sự Kiện")}> 
-            <FaCalendarAlt style={{ marginRight: 10 }} /> Sự Kiện
-          </SidebarItem>
-          <SubMenu open={openMenu === "Sự Kiện"}>
-            {menuItems["Sự Kiện"].map((subMenu) => (
-              <SidebarItem
-                key={subMenu}
-                onClick={() => setSelectedMenu(subMenu)}
-                style={{ paddingLeft: 30, background: selectedMenu === subMenu ? "#495057" : "transparent" }}
-              >
-                {subMenu}
-              </SidebarItem>
-            ))}
-          </SubMenu>
-        </Sidebar>
+        <Sidebar selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
         <Content>
           <Title>{selectedMenu}</Title>
           {(newsArticles[selectedMenu] || []).map((article) => (
@@ -227,7 +162,7 @@ export default function News() {
                 <NewsTitle>{article.title}</NewsTitle>
                 <NewsDescription>{article.description}</NewsDescription>
                 <NewsMeta>{article.museum} - {article.date}</NewsMeta>
-                <ViewMore>Xem Thêm</ViewMore>
+                <ViewMore to={`/news/${article.id}`}>Xem Thêm</ViewMore>
               </NewsContent>
             </NewsCard>
           ))}

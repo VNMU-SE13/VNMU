@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Header from "../Home/Header"; 
 import Footer from "../Home/Footer"; 
+import  museums  from "../../data/museums"; 
 
 // Styled Components
 const AllMuseumContainer = styled.div`
@@ -75,26 +76,11 @@ const MuseumInfo = styled.div`
   }
 `;
 
-// 🔹 Danh sách bảo tàng (CHỈ ĐỔI TÊN, GIỮ NGUYÊN ĐƯỜNG LINK ẢNH)
-const museums = [
-  { id: 1, name: "Bảo tàng Quân khu 5", description: "Khám phá lịch sử quân sự khu vực miền Trung Việt Nam.", image: "/image/BT-QK5.jpg" },
-  { id: 2, name: "Bảo tàng Điêu khắc Chăm", description: "Nơi lưu giữ tinh hoa văn hóa Chăm Pa cổ đại.", image: "/image/BT-Cham.jpg" },
-  { id: 3, name: "Bảo tàng Đà Nẵng", description: "Lịch sử và văn hóa Đà Nẵng qua các thời kỳ.", image: "/image/BT-DuongDai.jpg" },
-  { id: 4, name: "Bảo tàng Mỹ thuật Đà Nẵng", description: "Trưng bày các tác phẩm mỹ thuật nổi bật của Đà Nẵng.", image: "/image/BT-LSVH.png" },
-  { id: 5, name: "Bảo tàng Đồng Đình", description: "Không gian văn hóa kết hợp nghệ thuật dân gian.", image: "/image/BT-KhoaHoc.jpg" },
-  { id: 6, name: "Nhà trưng bày Hoàng Sa", description: "Tư liệu và hiện vật về chủ quyền biển đảo.", image: "/image/BT-TuNhien.jpg" },
-  { id: 7, name: "Bảo tàng Tre trúc Sơn Trà Tịnh Viên", description: "Khu bảo tồn các công trình tre trúc.", image: "/image/BT-MyThuat.jpg" },
-  { id: 8, name: "Bảo tàng Tranh 3D Art In Paradise", description: "Trải nghiệm nghệ thuật tranh 3D độc đáo.", image: "/image/BT-HangHai.jpeg" },
-  { id: 9, name: "Thế Giới Úp Ngược", description: "Không gian sáng tạo và chụp ảnh độc đáo.", image: "/image/BT-DanToc.jpg" },
-  { id: 10, name: "Bảo tàng Phật giáo Đà Nẵng", description: "Bảo tồn và trưng bày di sản Phật giáo.", image: "/image/BT-CongNghe.jpg" },
-  { id: 11, name: "Bảo tàng Sáp Đà Nẵng", description: "Tượng sáp người nổi tiếng thế giới.", image: "/image/BT-Gom.jpg" },
-];
-
 const AllMuseum = () => {
   const navigate = useNavigate();
 
-  const handleNavigateToDetail = (id) => {
-    navigate(`/museums/${id}`);
+  const handleNavigateToDetail = (slug) => {
+    navigate(`/museums/${slug}`);
   };
 
   return (
@@ -110,10 +96,10 @@ const AllMuseum = () => {
       {/* Main Content */}
       <MuseumsGrid>
         {museums.map((museum) => (
-          <MuseumItem key={museum.id}>
+          <MuseumItem key={museum.slug}>
             <MuseumImage src={museum.image} alt={museum.name} />
             <MuseumInfo>
-              <h3 onClick={() => handleNavigateToDetail(museum.id)}>
+              <h3 onClick={() => handleNavigateToDetail(museum.slug)}>
                 {museum.name}
               </h3>
               <p>{museum.description}</p>

@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../../assets/css/QuizAndStore.css";
 import SouvenirProducts from "./SouvenirProducts";
 
 const QuizAndStore = () => {
+  const navigate = useNavigate();
   return (
     <div className="quiz-store-container">
       {/* Phần Đố vui */}
@@ -12,7 +14,9 @@ const QuizAndStore = () => {
           <p>
             Thử tài hiểu biết của bạn về các sự kiện lịch sử và bảo vật quý giá tại bảo tàng.
           </p>
-          <button className="quiz-start-button">Bắt đầu ngay</button>
+          <button className="quiz-start-button" onClick={() => navigate("/quiz")}>
+                  Bắt đầu ngay
+          </button>
         </div>
         <div className="quiz-image">
           <img src="/image/Quiz.png" alt="Quiz Illustration" className="quiz-img" />

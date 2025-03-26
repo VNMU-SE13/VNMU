@@ -5,7 +5,6 @@ import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactMuseumInfo from "../Museum/ArtifactMuseumInfo";
 import ArtifactDescription from "../Museum/ArtifactDescription";
-import CommentSection from "../Museum/CommentSection";
 import "../../assets/css/ArtifactDetail.css";
 
 const ArtifactDetail = () => {
@@ -13,7 +12,8 @@ const ArtifactDetail = () => {
   const [artifact, setArtifact] = useState(null);
   const [qrUrl, setQrUrl] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false); // Điều khiển hiển thị modal QR Code
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isPodcastModalOpen, setIsPodcastModalOpen] = useState(false);
   const itemsPerPage = 4;
 
   useEffect(() => {
@@ -34,6 +34,13 @@ const ArtifactDetail = () => {
         "/image/artifacts/tank7.jpg",
         "/image/artifacts/tank8.jpg",
       ],
+      details: [
+        { label: "Năm sản xuất", value: "1950" },
+        { label: "Xuất xứ", value: "Liên Xô" },
+        { label: "Loại xe", value: "Xe tăng chiến đấu" },
+        { label: "Ngày nhập về bảo tàng", value: "16-03-2005" },
+        { label: "Lần đầu tiên sử dụng", value: "1968" }
+      ]
     };
 
     setArtifact(foundArtifact);
@@ -114,26 +121,26 @@ const ArtifactDetail = () => {
               <span className="comments">{artifact.comments.length} Bình luận</span>
             </div>
 
-            {/* Nút hiển thị mã QR và Podcast */}
             <div className="artifact-actions">
               <button className="qr-button" onClick={() => setIsQrModalOpen(true)}>Mã QR</button>
-              <button className="podcast-button">Podcast</button>
+              <button className="podcast-button" onClick={() => setIsPodcastModalOpen(true)}>Podcast</button>
             </div>
           </div>
         </div>
+
 
         <ArtifactMuseumInfo
           museumName={artifact.museumName}
           description={artifact.description}
         />
-        
-        <ArtifactDescription 
-          description={artifact.description}
-          details={artifact.details} 
-        />
-
-
       </div>
+      <div className="artifact-info-container">
+          <ArtifactDescription 
+            description={artifact.description}
+            details={artifact.details} 
+          />
+        </div>
+
 
       {/* Modal hiển thị QR Code */}
       {isQrModalOpen && (
@@ -142,6 +149,16 @@ const ArtifactDetail = () => {
             <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>×</span>
             <h3>Quét mã QR để xem thêm</h3>
             <QRCode value={qrUrl} size={200} />
+          </div>
+        </div>
+      )}
+
+      {/* Modal hiển thị thông báo nâng cấp tài khoản */}
+      {isPodcastModalOpen && (
+        <div className="podcast-modal">
+          <div className="podcast-modal-content">
+            <span className="close-modal" onClick={() => setIsPodcastModalOpen(false)}>×</span>
+            <h3>Vui lòng nâng cấp tài khoản để có thể sử dụng tính năng này</h3>
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Import useNavigate để điều hướng
+import { useNavigate, Link } from "react-router-dom"; // ✅ dùng Link thay thẻ a
 
 // Styled Components
 const NewsEventsContainer = styled.div`
@@ -42,7 +42,6 @@ const SeeAllButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-block;
 
   &:hover {
     background: #8b0000;
@@ -81,6 +80,7 @@ const NewsCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 `;
 
 const NewsImage = styled.img`
@@ -118,7 +118,7 @@ const MuseumName = styled.p`
   margin-bottom: 8px;
 `;
 
-const ReadMore = styled.a`
+const ReadMore = styled(Link)`
   color: #8b0000;
   text-decoration: none;
   font-size: 14px;
@@ -129,6 +129,15 @@ const ReadMore = styled.a`
   &:hover {
     color: #555;
   }
+`;
+
+const DateLabel = styled.div`
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
 `;
 
 const ScrollButton = styled.button`
@@ -169,10 +178,10 @@ const ScrollButton = styled.button`
 
 // Component chính
 const NewsEvents = () => {
-  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+  const navigate = useNavigate();
 
   const handleSeeAll = () => {
-    navigate("/news"); // Điều hướng đến trang tin tức
+    navigate("/news");
   };
 
   const events = [
@@ -182,7 +191,7 @@ const NewsEvents = () => {
       title: "Hiện Vật Lịch Sử Là Cửa Sổ Đến Quá Khứ",
       description: "Hiện vật lịch sử không chỉ đơn thuần là những đồ vật cũ kỹ, mà chúng chứa đựng những giá trị vượt thời gian...",
       museum: "Bảo tàng Lịch Sử",
-      link: "#"
+      date: "2025-03-01"
     },
     {
       id: 2,
@@ -190,7 +199,7 @@ const NewsEvents = () => {
       title: "Triển Lãm Nghệ Thuật Hiện Đại",
       description: "Triển lãm nghệ thuật hiện đại là sân chơi dành cho các nghệ sĩ trẻ tài năng...",
       museum: "Bảo tàng Mỹ Thuật",
-      link: "#"
+      date: "2025-03-02"
     },
     {
       id: 3,
@@ -198,7 +207,7 @@ const NewsEvents = () => {
       title: "Khám Phá Di Sản Văn Hóa",
       description: "Khám phá di sản văn hóa là cơ hội tuyệt vời để tìm hiểu sâu hơn...",
       museum: "Bảo tàng Văn Hóa",
-      link: "#"
+      date: "2025-03-03"
     }
   ];
 
@@ -226,7 +235,7 @@ const NewsEvents = () => {
         <Description>
           Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.
         </Description>
-        <SeeAllButton onClick={handleSeeAll}>See All</SeeAllButton> {/* Điều hướng đến trang /news */}
+        <SeeAllButton onClick={handleSeeAll}>See All</SeeAllButton>
       </NewsHeader>
       
       <NewsContent>
@@ -241,7 +250,8 @@ const NewsEvents = () => {
               <CardTitle>{event.title}</CardTitle>
               <CardDescription>{event.description}</CardDescription>
               <MuseumName>{event.museum}</MuseumName>
-              <ReadMore href={event.link}>Read More</ReadMore>
+              <ReadMore to={`/news/${event.id}`}>Read More</ReadMore> {/* ✅ điều hướng */}
+              <DateLabel>{event.date}</DateLabel> {/* ✅ ngày đăng */}
             </NewsCard>
           ))}
         </NewsSlider>
