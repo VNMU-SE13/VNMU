@@ -75,7 +75,7 @@ const Option = styled.div`
 
 const ProgressBarWrapper = styled.div`
   width: 500px;
-  height: 24px;
+  height: 12px;
   background: black;
   border-radius: 12px;
   overflow: hidden;
@@ -275,7 +275,7 @@ const QuizStart = () => {
         } else {
           setIsFinished(true);
         }
-      }, 3000);
+      }, 1000);
     }
   };
 

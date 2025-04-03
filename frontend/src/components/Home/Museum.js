@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import axios from 'axios'
+import toSlug from "../../utils/toSlug";
 
 // Styled Components
 const MuseumContainer = styled.div`
@@ -121,35 +123,8 @@ const MuseumText = styled.p`
 export default function Museum() {
   const navigate = useNavigate(); 
 
-  const museums = [
-    {
-      id: 1,
-      slug: "bao-tang-quan-khu-5",
-      image: "/image/BT-QK5.jpg",
-      title: "Bảo tàng Quân khu 5",
-      description: "Khám phá lịch sử quân sự khu vực miền Trung Việt Nam.",
-      hours: "Giờ mở cửa: 8:00 sáng - 5:00 chiều",
-      closed: "Đóng cửa: Chủ Nhật",
-    },
-    {
-      id: 2,
-      slug: "bao-tang-dieu-khac-cham",
-      image: "/image/BT-Cham.jpg",
-      title: "Bảo tàng Điêu khắc Chăm",
-      description: "Nơi lưu giữ tinh hoa văn hóa Chăm Pa cổ đại.",
-      hours: "Giờ mở cửa: 8:00 sáng - 5:00 chiều",
-      closed: "Đóng cửa: Lễ Tết hằng năm",
-    },
-    {
-      id: 3,
-      slug: "bao-tang-da-nang",
-      image: "/image/BaoTangDaNang.jpg",
-      title: "Bảo tàng Đà Nẵng",
-      description: "Tìm hiểu về lịch sử, văn hóa và sự phát triển của thành phố Đà Nẵng.",
-      hours: "Giờ mở cửa: 8:00 sáng - 5:00 chiều",
-      closed: "Đóng cửa: Thứ Hai",
-    },
-  ];
+ 
+  const [museums, setMuseums] = useState([])
  
   const handleTitleClick = (slug) => {
     navigate(`/museums/${slug}`);
@@ -159,6 +134,19 @@ export default function Museum() {
     navigate("/all-museums");
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://localhost:7277/api/Museum')
+        setMuseums(response.data)
+      } catch (err) {
+        console.error('Lỗi khi gọi API:', err)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <MuseumContainer>
       <MuseumHeader>
@@ -166,19 +154,21 @@ export default function Museum() {
         <SeeAllButton onClick={handleSeeAll}>See All</SeeAllButton>
       </MuseumHeader>
       <MuseumGrid>
-        {museums.map((museum) => (
-          <MuseumItem key={museum.slug}>
-            <MuseumImage src={museum.image} alt={museum.title} />
+        {museums.map((museum, index) => {
+          if (index < 3)
+          return (
+          <MuseumItem key={museum.id}>
+            <MuseumImage src={museum.image} alt={museum.name} />
             <MuseumInfo>
-              <MuseumTitle onClick={() => handleTitleClick(museum.slug)}>
-                {museum.title}
+              <MuseumTitle onClick={() => handleTitleClick(toSlug(museum.name))}>
+                {museum.name}
               </MuseumTitle>
               <MuseumText>{museum.description}</MuseumText>
-              <MuseumText>{museum.hours}</MuseumText>
-              <MuseumText>{museum.closed}</MuseumText>
+              <MuseumText>{museum.location}</MuseumText>
+              <MuseumText>{museum.contact}</MuseumText>
             </MuseumInfo>
           </MuseumItem>
-        ))}
+        )})}
       </MuseumGrid>
     </MuseumContainer>
   );

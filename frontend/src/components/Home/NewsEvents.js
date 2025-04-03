@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom"; // ✅ dùng Link thay thẻ a
+import axios from 'axios'
 
 // Styled Components
 const NewsEventsContainer = styled.div`
@@ -184,34 +185,8 @@ const NewsEvents = () => {
     navigate("/news");
   };
 
-  const events = [
-    {
-      id: 1,
-      image: "/image/new11.jpg",
-      title: "Hiện Vật Lịch Sử Là Cửa Sổ Đến Quá Khứ",
-      description: "Hiện vật lịch sử không chỉ đơn thuần là những đồ vật cũ kỹ, mà chúng chứa đựng những giá trị vượt thời gian...",
-      museum: "Bảo tàng Lịch Sử",
-      date: "2025-03-01"
-    },
-    {
-      id: 2,
-      image: "/image/new22.jpeg",
-      title: "Triển Lãm Nghệ Thuật Hiện Đại",
-      description: "Triển lãm nghệ thuật hiện đại là sân chơi dành cho các nghệ sĩ trẻ tài năng...",
-      museum: "Bảo tàng Mỹ Thuật",
-      date: "2025-03-02"
-    },
-    {
-      id: 3,
-      image: "/image/new33.jpg",
-      title: "Khám Phá Di Sản Văn Hóa",
-      description: "Khám phá di sản văn hóa là cơ hội tuyệt vời để tìm hiểu sâu hơn...",
-      museum: "Bảo tàng Văn Hóa",
-      date: "2025-03-03"
-    }
-  ];
-
   const [startIndex, setStartIndex] = useState(0);
+  const [events, setEvents] = useState([])
   const itemsPerPage = 3;
 
   const handleNext = () => {
@@ -225,6 +200,18 @@ const NewsEvents = () => {
       setStartIndex(startIndex - itemsPerPage);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://localhost:7277/api/Event')
+        setEvents(response.data)
+      } catch (err) {
+        console.error('Lỗi khi gọi API:', err)
+      }
+    }
+    fetchData()
+  }, [])
 
   const visibleEvents = events.slice(startIndex, startIndex + itemsPerPage);
 
@@ -246,12 +233,12 @@ const NewsEvents = () => {
         <NewsSlider>
           {visibleEvents.map((event) => (
             <NewsCard key={event.id}>
-              <NewsImage src={event.image} alt={event.title} />
-              <CardTitle>{event.title}</CardTitle>
+              <NewsImage src={event.image} alt={event.name} />
+              <CardTitle>{event.name}</CardTitle>
               <CardDescription>{event.description}</CardDescription>
               <MuseumName>{event.museum}</MuseumName>
               <ReadMore to={`/news/${event.id}`}>Read More</ReadMore> {/* ✅ điều hướng */}
-              <DateLabel>{event.date}</DateLabel> {/* ✅ ngày đăng */}
+              <DateLabel>{event.startDate}</DateLabel> {/* ✅ ngày đăng */}
             </NewsCard>
           ))}
         </NewsSlider>

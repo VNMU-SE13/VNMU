@@ -14,6 +14,8 @@ import NewsDetail from "./components/News&Events/NewsDetail";
 import HashtagPage from './components/News&Events/HashtagPage';
 import QuizHome from './components/Quizz/QuizHome';
 import QuizStart from './components/Quizz/QuizStart';
+import BlogHome from'./components/Blog/BlogHome';
+import WriteBlog from'./components/Blog/WriteBlog';
 function App() {
   return (
     <Router>
@@ -28,10 +30,12 @@ function App() {
         <Route path="/submit-form" element={<SubmitForm />} />
         <Route path="/admin" element={<HomePageAdmin />} />
         <Route path="/news" element={<News/>}/>
-        <Route path="/news/:slug" element={<NewsDetail />} />
+        <Route path="/news/:id" element={<NewsDetail />} />
         <Route path="/tags/:tagName" element={<HashtagPage />} />
         <Route path="/quiz" element={<QuizHome />} />
         <Route path="/quiz/start" element={<QuizStart />} />
+        <Route path="/blog" element={<BlogHome />} />
+        <Route path="/writeblog" element={<WriteBlog />} />
       </Routes>
     </Router>
   );

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -25,6 +26,7 @@ const FilterButtons = styled.div`
   justify-content: center;
   gap: 15px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 `;
 
 const FilterButton = styled.button`
@@ -42,6 +44,19 @@ const FilterButton = styled.button`
     background: #c8102e;
     color: #ffffff;
   }
+`;
+
+const PeriodFilterWrapper = styled.div`
+  background-color: #fff6f7;
+  border: 2px dashed #c8102e;
+  border-radius: 20px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(200, 16, 46, 0.15);
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
 `;
 
 const ArtifactsSlider = styled.div`
@@ -125,21 +140,47 @@ const ArtifactItem = styled(Link)`
   }
 `;
 
+const QuizSection = styled.div`
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px dashed #ddd;
+`;
+
+const QuizText = styled.p`
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+`;
+
+const QuizButton = styled.a`
+  background-color: #c8102e;
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 30px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #a00c1d;
+  }
+`;
+
 const ArtifactsCarousel = ({ artifacts }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState(null);
+  const [activePeriod, setActivePeriod] = useState("GĐ Cận Hiện Đại");
+  const [filteredArtifacts, setFilteredArtifacts] = useState(artifacts);
+  const [categories, setCategories] = useState([]);
   const itemsPerPage = 5;
 
-  // Danh mục lọc
-  const categories = ["KC chống Pháp", "KC chống Mỹ", "KC chống Nhật", "CT biên giới"];
-
-  // 🔹 **Sửa bộ lọc: Check nếu category tồn tại trong danh sách của artifact**
-  const filteredArtifacts = activeFilter
-    ? artifacts.filter((artifact) => artifact.category.includes(activeFilter))
-    : artifacts;
-
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % filteredArtifacts.length);
+    setCurrentIndex((prevIndex) =>
+      (prevIndex + 1) % filteredArtifacts.length
+    );
   };
 
   const handlePrevious = () => {
@@ -148,32 +189,73 @@ const ArtifactsCarousel = ({ artifacts }) => {
     );
   };
 
-  const handleFilter = (category) => {
-    setActiveFilter(category === activeFilter ? null : category);
-    setCurrentIndex(0); // Reset index khi lọc
+  const handleFilter = (categoryId) => {
+    const isSame = activeFilter === categoryId;
+    const newFilter = isSame ? null : categoryId;
+    setActiveFilter(newFilter);
+    setCurrentIndex(0); // reset về đầu
   };
 
-  // Lấy danh sách hiện vật hiển thị
-  const currentArtifacts = [];
-  for (let i = 0; i < itemsPerPage; i++) {
-    if (filteredArtifacts.length > 0) {
-      currentArtifacts.push(filteredArtifacts[(currentIndex + i) % filteredArtifacts.length]);
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const response = await axios.get('https://localhost:7277/api/CategoryArtifact');
+        setCategories(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchCategory();
+  }, []);
+
+  useEffect(() => {
+    if (activeFilter) {
+      const filtered = artifacts.filter(a => a.categoryArtifactId === activeFilter);
+      setFilteredArtifacts(filtered);
+    } else {
+      setFilteredArtifacts(artifacts);
     }
-  }
+    setCurrentIndex(0); // reset khi lọc
+  }, [activeFilter, artifacts]);
+
+  const getVisibleArtifacts = () => {
+    if (filteredArtifacts.length === 0) return [];
+
+    const result = [];
+    for (let i = 0; i < itemsPerPage; i++) {
+      const index = (currentIndex + i) % filteredArtifacts.length;
+      result.push(filteredArtifacts[index]);
+    }
+    return result;
+  };
+
+  const currentArtifacts = getVisibleArtifacts();
 
   return (
     <MuseumArtifactsContainer>
       <Title>Các hiện vật của bảo tàng</Title>
 
-      {/* Thêm Filter Buttons */}
-      <FilterButtons>
-        {categories.map((category) => (
+      <PeriodFilterWrapper>
+        {["GĐ Phong Kiến", "GĐ Cận Hiện Đại", "GĐ Hiện Đại"].map((period, index) => (
           <FilterButton
-            key={category}
-            onClick={() => handleFilter(category)}
-            active={activeFilter === category}
+            key={index}
+            onClick={() => setActivePeriod(period)}
+            active={activePeriod === period}
           >
-            {category}
+            {period}
+          </FilterButton>
+        ))}
+      </PeriodFilterWrapper>
+
+      <FilterButtons>
+        {categories.map((category, index) => (
+          <FilterButton
+            key={index}
+            onClick={() => handleFilter(category.id)}
+            active={activeFilter === category.id}
+          >
+            {category.name}
           </FilterButton>
         ))}
       </FilterButtons>
@@ -182,22 +264,29 @@ const ArtifactsCarousel = ({ artifacts }) => {
         <ArrowButton className="left" onClick={handlePrevious}>
           &lt;
         </ArrowButton>
+
         <ArtifactsList>
           {currentArtifacts.length > 0 ? (
-            currentArtifacts.map((artifact) => (
-              <ArtifactItem to={`/artifact/${artifact.id}`} key={artifact.id}>
-                <img src={artifact.image} alt={artifact.name} />
-                <p>{artifact.name}</p>
+            currentArtifacts.map((artifact, index) => (
+              <ArtifactItem to={`/artifact/${artifact.id}`} key={index}>
+                <img src={artifact.image} alt={artifact.artifactName} />
+                <p>{artifact.artifactName}</p>
               </ArtifactItem>
             ))
           ) : (
             <p>Không có hiện vật nào.</p>
           )}
         </ArtifactsList>
+
         <ArrowButton className="right" onClick={handleNext}>
           &gt;
         </ArrowButton>
       </ArtifactsSlider>
+
+      <QuizSection>
+        <QuizText>Bạn đã tự tin với kiến thức của mình chưa?</QuizText>
+        <QuizButton href="http://localhost:3000/quiz">Thử tài ngay</QuizButton>
+      </QuizSection>
     </MuseumArtifactsContainer>
   );
 };

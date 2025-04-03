@@ -48,17 +48,24 @@ const MuseumStatus = styled.p`
 
 const MuseumStats = styled.div`
   display: flex;
-  justify-content: space-between;
-  flex: 2; /* Để các phần tử dàn đều ra */
+  justify-content: space-around;
+  flex: 2;
   font-size: 14px;
   color: #444;
   padding-left: 20px;
+  gap: 20px;
 `;
 
 const StatItem = styled.div`
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  text-align: center;
+
   strong {
     color: #ff5722;
     font-weight: bold;
+    margin-top: 4px;
   }
 `;
 
@@ -87,12 +94,12 @@ const ArtifactMuseumInfo = () => {
   const museumInfo = {
     avatar: "/image/BT-QK5.jpg",
     name: "Bảo tàng Quân khu 5",
-    status: "Online 1 Giờ Trước",
+    status: "Số 3 đường Duy Tân, phường Hòa Thuận Đông, quận Hải Châu, thành phố Đà Nẵng",
     shopButtonText: "Xem Bảo tàng",
-    rating: "5k",
+    rating: "Chiến tranh & Quân đội",
     productCount: 534,
-    joinTime: "20 tháng trước",
-    followerCount: "20,3k",
+    joinTime: "47 năm",
+    followerCount: "120k/năm",
   };
 
   return (
@@ -108,10 +115,10 @@ const ArtifactMuseumInfo = () => {
         <Button>{museumInfo.shopButtonText}</Button>
       </MuseumActions>
       <MuseumStats>
-        <StatItem>Đánh Giá: <strong>{museumInfo.rating}</strong></StatItem>
+        <StatItem>Chủ đề: <strong>{museumInfo.rating}</strong></StatItem>
         <StatItem>Hiện vật: <strong>{museumInfo.productCount}</strong></StatItem>
-        <StatItem>Tham Gia: <strong>{museumInfo.joinTime}</strong></StatItem>
-        <StatItem>Người Theo Dõi: <strong>{museumInfo.followerCount}</strong></StatItem>
+        <StatItem>Hoạt Động: <strong>{museumInfo.joinTime}</strong></StatItem>
+        <StatItem>Khách Tham Quan: <strong>{museumInfo.followerCount}</strong></StatItem>
       </MuseumStats>
 
 

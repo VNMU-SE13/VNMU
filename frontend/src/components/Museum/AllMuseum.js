@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "../Home/Header"; 
 import Footer from "../Home/Footer"; 
-import  museums  from "../../data/museums"; 
+import axios from "axios";
+import toSlug from "../../utils/toSlug";
 
 // Styled Components
 const AllMuseumContainer = styled.div`
@@ -78,6 +80,20 @@ const MuseumInfo = styled.div`
 
 const AllMuseum = () => {
   const navigate = useNavigate();
+  const [museums, setMuseums] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://localhost:7277/api/Museum')
+        setMuseums(response.data)
+      } catch (err) {
+        console.error('Lỗi khi gọi API:', err)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const handleNavigateToDetail = (slug) => {
     navigate(`/museums/${slug}`);
@@ -96,10 +112,10 @@ const AllMuseum = () => {
       {/* Main Content */}
       <MuseumsGrid>
         {museums.map((museum) => (
-          <MuseumItem key={museum.slug}>
+          <MuseumItem key={museum.id}>
             <MuseumImage src={museum.image} alt={museum.name} />
             <MuseumInfo>
-              <h3 onClick={() => handleNavigateToDetail(museum.slug)}>
+              <h3 onClick={() => handleNavigateToDetail(toSlug(museum.name))}>
                 {museum.name}
               </h3>
               <p>{museum.description}</p>

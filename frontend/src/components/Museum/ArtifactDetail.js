@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactMuseumInfo from "../Museum/ArtifactMuseumInfo";
 import ArtifactDescription from "../Museum/ArtifactDescription";
+import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
+import axios from "axios";
 import "../../assets/css/ArtifactDetail.css";
 
 const ArtifactDetail = () => {
@@ -14,6 +16,7 @@ const ArtifactDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isPodcastModalOpen, setIsPodcastModalOpen] = useState(false);
+  const [allArtifacts, setAllArtifacts] = useState([]);
   const itemsPerPage = 4;
 
   useEffect(() => {
@@ -22,7 +25,7 @@ const ArtifactDetail = () => {
       image: "/image/artifacts/tank.jpg",
       votes: 77,
       comments: [],
-      description: "Chưa có mô tả.",
+      description: "Xe tăng T-54 là một trong những biểu tượng lịch sử quan trọng gắn liền với những sự kiện hào hùng của dân tộc Việt Nam...",
       museumName: "Bảo tàng Quân khu 5",
       detailImages: [
         "/image/artifacts/tank1.jpg",
@@ -45,6 +48,10 @@ const ArtifactDetail = () => {
 
     setArtifact(foundArtifact);
     setQrUrl(window.location.href);
+
+    axios.get('https://localhost:7277/api/Artifact')
+      .then(res => setAllArtifacts(res.data))
+      .catch(err => console.error('Lỗi khi lấy danh sách hiện vật:', err));
   }, [id]);
 
   const handleThumbnailClick = (index) => {
@@ -80,9 +87,9 @@ const ArtifactDetail = () => {
       <Header />
 
       <div className="breadcrumb">
-        <a href="/">Trang chủ</a> / 
-        <a href="/all-museums">Các bảo tàng</a> / 
-        <a href={`/museums/${artifact.museumName}`} className="museum-link">{artifact.museumName}</a> / 
+        <a href="/">Trang chủ</a> /
+        <a href="/all-museums">Các bảo tàng</a> /
+        <a href={`/museums/${artifact.museumName}`} className="museum-link">{artifact.museumName}</a> /
         <span className="current-artifact">{artifact.name}</span>
       </div>
 
@@ -123,26 +130,39 @@ const ArtifactDetail = () => {
 
             <div className="artifact-actions">
               <button className="qr-button" onClick={() => setIsQrModalOpen(true)}>Mã QR</button>
-              <button className="podcast-button" onClick={() => setIsPodcastModalOpen(true)}>Podcast</button>
             </div>
+
+            <table className="artifact-table">
+              <tbody>
+                {artifact.details.map((item, index) => (
+                  <tr key={index}>
+                    <td className="label">{item.label}</td>
+                    <td className="value">{item.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-
 
         <ArtifactMuseumInfo
           museumName={artifact.museumName}
           description={artifact.description}
         />
       </div>
+
       <div className="artifact-info-container">
-          <ArtifactDescription 
-            description={artifact.description}
-            details={artifact.details} 
-          />
-        </div>
 
+        <ArtifactDescription
+          description={artifact.description}
+          details={artifact.details}
+        />
+      </div>
 
-      {/* Modal hiển thị QR Code */}
+      <div style={{ marginTop: "40px" }}>
+        <ArtifactsCarousel artifacts={allArtifacts} />
+      </div>
+
       {isQrModalOpen && (
         <div className="qr-modal">
           <div className="qr-modal-content">
@@ -153,15 +173,7 @@ const ArtifactDetail = () => {
         </div>
       )}
 
-      {/* Modal hiển thị thông báo nâng cấp tài khoản */}
-      {isPodcastModalOpen && (
-        <div className="podcast-modal">
-          <div className="podcast-modal-content">
-            <span className="close-modal" onClick={() => setIsPodcastModalOpen(false)}>×</span>
-            <h3>Vui lòng nâng cấp tài khoản để có thể sử dụng tính năng này</h3>
-          </div>
-        </div>
-      )}
+
 
       <Footer />
     </div>

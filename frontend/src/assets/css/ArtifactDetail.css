@@ -1,274 +1,291 @@
 .artifact-detail {
-    margin-top: 100px;
-    padding-bottom: 20px;
-    font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .breadcrumb {
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
-  
-  .breadcrumb a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb .current-artifact {
-    font-weight: bold;
-  }
-  
-  /* Hiện vật chính */
-  .artifact-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    gap: 20px;
-  }
-  
-  .artifact-image {
-    flex: 1;
-    position: relative;
-  }
-  
-  .artifact-image img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Danh sách ảnh nhỏ nằm dưới ảnh lớn */
-  .artifact-small-gallery {
-    margin-top: 10px;
+  margin-top: 100px;
+  padding-bottom: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+.breadcrumb {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.breadcrumb a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb .current-artifact {
+  font-weight: bold;
+}
+
+/* Hiện vật chính */
+.artifact-main {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  gap: 20px;
+}
+
+.artifact-image {
+  flex: 1;
+  position: relative;
+}
+
+.artifact-image img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Danh sách ảnh nhỏ nằm dưới ảnh lớn */
+.artifact-small-gallery {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
   gap: 10px;
-  width: 100%;/* Đảm bảo ảnh nhỏ chiếm hết chiều rộng có sẵn */
-  }
-  
-  .small-gallery {
-    display: flex;
-    gap: 10px; /* Khoảng cách giữa các ảnh */
-    justify-content: space-between; /* Căn chỉnh các ảnh trong cùng một hàng */
-  }
-  
-    .small-gallery-image {
-        width: 82px !important; /* Cố định chiều rộng */
-        height: 82px !important; /* Cố định chiều cao */
-        object-fit: cover !important; /* Đảm bảo ảnh không bị méo và đầy đủ không gian */
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        transition: transform 0.3s ease-in-out !important;
-    }
-  
-  
-  .small-gallery-image:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Nút chuyển đổi ảnh */
-  button {
-    background-color: #00000033;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 18px;
-    transition: background-color 0.3s;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button:focus {
-    outline: none;
-  }
-  
-  /* Thông tin hiện vật */
-  .artifact-info {
-    flex: 2;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    text-align: left;
-  }
-  
-  .artifact-title {
-    display: flex;
-    align-items: center;
-    font-size: 22px;
-    font-weight: bold;
-  }
-  
-  .artifact-title .tag {
-    background-color: #c00;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 3px;
-    margin-right: 10px;
-  }
-  
-  .artifact-rating {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    margin-top: 5px;
-  }
-  
-  .artifact-rating .votes,
-  .artifact-rating .comments {
-    margin-left: 8px;
-    color: #555;
-  }
-  
-  /* QR Code */
-  .artifact-qr {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .artifact-qr h3 {
-    margin-bottom: 10px;
-  }
-  
-  .artifact-qr img {
-    max-width: 150px;
-  }
-  
-  /* Phần bảo tàng và mô tả */
-  .artifact-description {
-    font-size: 16px;
-    margin-top: 15px;
-  }
-  
-  /* Bình luận */
-  .artifact-comments {
-    width: 100%;
-    padding: 20px;
-    border-top: 2px solid #ddd;
-    margin-top: 20px;
-  }
-  
-  footer {
-    width: 100%;
-    background-color: #7d0000;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-  }
-  
-  .museum-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 20px;
-  }
-  
-  .museum-name {
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-  }
-  
-  .museum-description {
-    font-size: 1rem;
-    color: #6c757d;
-  }
-  .artifact-actions {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-  }
-  
-  .qr-button, .podcast-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .qr-button:hover, .podcast-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .qr-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .qr-modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    position: relative;
-  }
-  
-  .close-modal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: red;
-  }
-  .podcast-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .podcast-modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    position: relative;
-  }
-  
-  .close-modal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: red;
-  }
-  
+  width: 100%;
+}
+
+.small-gallery {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.small-gallery-image {
+  width: 82px !important;
+  height: 82px !important;
+  object-fit: cover !important;
+  border-radius: 5px !important;
+  cursor: pointer !important;
+  transition: transform 0.3s ease-in-out !important;
+}
+
+.small-gallery-image:hover {
+  transform: scale(1.1);
+}
+
+/* Nút chuyển đổi ảnh */
+button {
+  background-color: #00000033;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 18px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Thông tin hiện vật */
+.artifact-info {
+  flex: 2;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  text-align: left;
+}
+
+.artifact-title {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.artifact-title .tag {
+  background-color: #c00;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.artifact-rating {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.artifact-rating .votes,
+.artifact-rating .comments {
+  margin-left: 8px;
+  color: #555;
+}
+
+/* Bảng chi tiết trong artifact-info */
+.artifact-table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.artifact-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.artifact-table .label {
+  font-weight: bold;
+  color: #111;
+  width: 40%;
+}
+
+.artifact-table .value {
+  color: #f2541b;
+}
+
+/* QR Code */
+.artifact-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.artifact-qr h3 {
+  margin-bottom: 10px;
+}
+
+.artifact-qr img {
+  max-width: 150px;
+}
+
+/* Phần bảo tàng và mô tả */
+.artifact-description {
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+/* Bình luận */
+.artifact-comments {
+  width: 100%;
+  padding: 20px;
+  border-top: 2px solid #ddd;
+  margin-top: 20px;
+}
+
+footer {
+  width: 100%;
+  background-color: #7d0000;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.museum-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.museum-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.museum-description {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.artifact-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.qr-button,
+.podcast-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.qr-button:hover,
+.podcast-button:hover {
+  background-color: #0056b3;
+}
+
+.qr-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  color: red;
+}
+
+.podcast-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.podcast-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
