@@ -1,0 +1,96 @@
+.museum-container {
+    padding: 40px;
+    background-color: #f8f8f8;
+    display: block;
+}
+
+.museum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.museum-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.see-all-button {
+    background-color: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.see-all-button:hover {
+    background-color: #a00d22;
+}
+
+.museum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.museum-item {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.museum-image {
+    width: 100% !important;
+    height: 500px !important;
+    object-fit: cover !important;
+    margin-bottom: 10px !important;
+}
+
+/* Đảm bảo phần .museum-info nằm dưới tiêu đề và căn chỉnh đúng */
+.museum-info {
+    padding: 10px;
+    margin-top: -10px; /* Thêm khoảng cách từ tiêu đề xuống */
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* Đảm bảo nội dung không bị hiển thị dọc */
+}
+
+.museum-info h3 {
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: #c8102e;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.museum-info h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #c8102e;
+    transition: width 0.3s ease;
+}
+
+.museum-info h3:hover::after {
+    width: 100%;
+}
+
+.museum-info p {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #555;
+    display: block; /* Đảm bảo các đoạn văn bản không bị lỗi hiển thị dọc */
+}

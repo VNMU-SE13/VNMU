@@ -1,0 +1,97 @@
+.artifact-museum-info {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.museum-info {
+  display: flex;
+  align-items: center;
+}
+
+.museum-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.museum-details {
+  flex-grow: 1;
+}
+
+.museum-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.museum-status {
+  color: #555;
+}
+
+/* Stats on the right */
+.museum-stats {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-left: auto;
+  font-size: 14px;
+  color: #444;
+}
+
+.stat-item strong {
+  color: #ff5722;
+}
+
+.museum-followers {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.followers-item strong {
+  color: #ff5722;
+}
+
+/* Button Section - Move to below */
+.museum-actions {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.favorite-btn {
+  background-color: #ff7e00;
+  color: white;
+}
+
+.chat-btn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.shop-btn {
+  background-color: #4caf50;
+  color: white;
+  margin-right: 20px;
+}

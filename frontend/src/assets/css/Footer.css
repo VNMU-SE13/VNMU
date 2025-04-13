@@ -1,0 +1,131 @@
+.footer-container {
+    background-color: #eaeaea;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    border-top: 3px solid #8b0000;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px; /* Đảm bảo mỗi phần không bị nhỏ quá */
+    text-align: left;
+    padding: 10px;
+}
+
+.footer-section h3 {
+    font-size: 18px;
+    color: #8b0000;
+    margin-bottom: 10px;
+}
+
+.footer-section p {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.footer-section .newsletter {
+    display: flex;
+    flex-direction: column; /* Chuyển thành dạng cột */
+    align-items: flex-start; /* Căn giữa các phần tử theo chiều ngang */
+    gap: 10px; /* Khoảng cách giữa các phần tử */
+    margin-top: 10px;
+}
+
+.newsletter-input {
+    width: 100%; /* Chiều rộng đầy đủ */
+    max-width: 300px; /* Giới hạn chiều rộng */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.newsletter-button {
+    background-color: #8b0000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.newsletter-button:hover {
+    background-color: #a00d22;
+}
+
+.footer-section .social-links p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.footer-section .social-links p i {
+    font-size: 18px;
+    color: #8b0000;
+}
+
+.footer-copyright {
+    text-align: center;
+    width: 100%;
+    background-color: #8b0000;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 20px;
+    border-radius: 0 0 5px 5px;
+}
+
+.social-media-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Sắp xếp danh sách thành cột */
+    gap: 10px; /* Khoảng cách giữa các mục */
+}
+
+.social-media-list li {
+    display: flex; /* Hiển thị logo và chữ trên cùng một hàng */
+    align-items: center; /* Căn giữa logo và chữ theo chiều dọc */
+    
+}
+
+.social-media-list li img {
+    width: 24px; /* Kích thước logo */
+    height: 24px;
+}
+
+.social-media-list li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    display: flex; /* Đảm bảo logo và chữ trên cùng hàng */
+    align-items: center; /* Căn giữa dọc chữ và logo */
+    gap: 15px;
+}
+
+.social-media-list li a:hover {
+    color: #8b0000;
+}
+
+.social-logo {
+    width: 24px;
+    height: 24px;
+}
+.newsletter-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #b22222; /* Màu đỏ nổi bật */
+    font-style: italic;
+  }

@@ -1,0 +1,173 @@
+.submit-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Đảm bảo footer luôn nằm dưới cùng */
+    min-height: 100vh; /* Chiều cao tối thiểu toàn màn hình */
+    background-image: url('C:/Users/tienn/OneDrive/Máy tính/museum-app/frontend/public/image/background-don.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  
+.submit-form {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fefae0; /* Màu nền vàng nhạt, dễ chịu */
+    border-radius: 12px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Shadow mềm mại */
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .submit-form h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 25px;
+    color: #b22222; /* Màu đỏ tươi, tạo điểm nhấn */
+    font-weight: bold;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #444; /* Màu chữ đậm vừa phải */
+    font-weight: 500;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #b22222; /* Màu viền nổi bật khi focus */
+    box-shadow: 0 0 6px rgba(178, 34, 34, 0.3); /* Hiệu ứng shadow tinh tế */
+  }
+  
+  textarea {
+    resize: vertical; /* Chỉ cho phép thay đổi chiều cao */
+    min-height: 100px; /* Đảm bảo chiều cao tối thiểu */
+  }
+  
+  .submit-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    color: white;
+    background-color: #b22222; /* Màu đỏ nổi bật */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #8b0000; /* Màu tối hơn khi hover */
+  }
+  
+  .submit-button:disabled {
+    background-color: #f2f2f2; /* Màu xám nhạt khi bị vô hiệu hóa */
+    color: #aaa;
+    cursor: not-allowed;
+    border: 1px solid #ddd;
+  }
+  
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    background-color: #f9f9f9; /* Màu nền nhạt hơn khi bị vô hiệu hóa */
+    color: #b3b3b3; /* Màu chữ mờ hơn */
+    cursor: not-allowed;
+    border: 1px solid #e0e0e0;
+  }
+  
+  /* Danh sách tệp */
+  .file-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+  }
+  
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .file-item span {
+    flex: 1;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .file-remove-button {
+    background-color: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 20px;
+    text-align: center;
+  }
+  
+  .file-remove-button:hover {
+    background-color: #a00c1c;
+  }
+  
+  .file-count {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+  }
+  
+  /* Thêm ghi chú */
+  .note {
+    font-size: 14px;
+    color: #555;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .submit-form {
+      padding: 20px;
+    }
+  
+    .submit-form h1 {
+      font-size: 28px;
+    }
+  
+    .submit-button {
+      font-size: 16px;
+      padding: 12px;
+    }
+  }
+  

@@ -1,0 +1,175 @@
+/* 📌 Định dạng chung */
+.quiz-store-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0 auto;
+  align-items: center;
+  max-width: 1200px;
+}
+
+/* 📌 Cấu trúc phần Đố vui và Cửa hàng */
+.quiz-section,
+.store-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 1200px;
+  gap: 20px;
+}
+
+/* 📌 Nội dung của Đố vui và Cửa hàng */
+.quiz-content,
+.store-content {
+  flex: 1;
+  text-align: left;
+}
+
+/* 📌 Tiêu đề */
+.quiz-content h2,
+.store-content h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.quiz-content p,
+.store-content p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* 📌 Nút bấm */
+.quiz-start-button,
+.store-shop-button {
+  background-color: #c8102e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.quiz-start-button:hover,
+.store-shop-button:hover {
+  background-color: #a00d22;
+}
+
+/* 📌 Hình ảnh */
+.quiz-image,
+.store-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-img,
+.store-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* 📌 Chuyển hình ảnh cửa hàng lưu niệm sang bên trái, nội dung sang phải */
+.store-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  flex-direction: row; /* Ảnh bên trái, chữ bên phải */
+}
+
+/* 🛍 Gộp danh sách sản phẩm vào cùng khung với Cửa hàng lưu niệm */
+.store-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 30px;
+}
+
+/* 🛍 Căn chỉnh danh sách sản phẩm */
+.souvenir-section {
+  width: 100%;
+  padding-top: 20px;
+  border-top: 2px solid #ddd; /* Thêm đường phân cách */
+}
+
+/* 🛍 Danh sách sản phẩm */
+.souvenir-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* 📌 Định dạng sản phẩm */
+.souvenir-item {
+  width: 220px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.souvenir-item:hover {
+  transform: translateY(-5px);
+}
+
+.souvenir-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.souvenir-name {
+  font-size: 16px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.souvenir-price {
+  color: #c8102e;
+  font-weight: bold;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* 📌 Responsive (Dành cho màn hình nhỏ hơn) */
+@media (max-width: 768px) {
+  .quiz-section,
+  .store-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .store-header {
+    flex-direction: column; /* Khi màn hình nhỏ thì về lại dạng cột */
+  }
+
+  .store-content {
+    text-align: center;
+  }
+
+  .souvenir-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .souvenir-item {
+    width: 100%;
+    max-width: 300px;
+  }
+}
