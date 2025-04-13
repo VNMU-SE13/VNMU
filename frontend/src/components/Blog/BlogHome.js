@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import BlogHeader from "./BlogHeader";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -85,55 +86,6 @@ const Illustration = styled.img`
   }
 `;
 
-// Header Component
-const HeaderWrapper = styled.header`
-  width: 100%;
-  padding: 1rem 2rem;
-  background-color: #fdfaf6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-`;
-
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  font-family: serif;
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-`;
-
-const NavLink = styled.a`
-  color: #111;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const GetStarted = styled.button`
-  background-color: #111;
-  color: #fff;
-  padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: 999px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #333;
-  }
-`;
 const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -162,24 +114,10 @@ const Tag = styled.a`
   }
 `;
 
-
-const Header = () => (
-  <HeaderWrapper>
-    <Logo>Medium</Logo>
-    <Nav>
-      <NavLink>Our story</NavLink>
-      <NavLink>Membership</NavLink>
-      <NavLink>Write</NavLink>
-      <NavLink>Sign in</NavLink>
-      <GetStarted>Get started</GetStarted>
-    </Nav>
-  </HeaderWrapper>
-);
-
 const BlogLandingPage = () => {
   return (
     <>
-      <Header />
+      <BlogHeader />
       <Wrapper>
         <Content>
           <TextSection>
@@ -191,7 +129,7 @@ const BlogLandingPage = () => {
               <Tag href="/blog/early-modern">📜 Cận đại</Tag>
               <Tag href="/blog/modern">🇻🇳 Hiện đại</Tag>
             </TagContainer>
-            <StartButton>Start reading</StartButton>
+            <StartButton>Bắt đầu đọc</StartButton>
           </TextSection>
           <Illustration src="/image/blog-hero.png" alt="Blog Illustration" />
         </Content>

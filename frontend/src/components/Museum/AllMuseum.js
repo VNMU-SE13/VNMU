@@ -85,7 +85,7 @@ const AllMuseum = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7277/api/Museum')
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`)
         setMuseums(response.data)
       } catch (err) {
         console.error('Lỗi khi gọi API:', err)

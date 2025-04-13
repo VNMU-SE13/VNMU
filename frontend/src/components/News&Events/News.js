@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import Sidebar from "./Sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toSlug from "../../utils/toSlug";
 
 // Styled Components
 const PageContainer = styled.div`
@@ -146,8 +148,24 @@ const newsArticles = {
 };
 
 export default function News() {
+  const navigate = useNavigate()
+  const [news, setNews] = useState([])
+  const [loading, setLoading] = useState(true)
   const [selectedMenu, setSelectedMenu] = useState("Tin tức mới nhất");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const resNew = await axios.get(`${process.env.REACT_APP_API_URL}/Event`)
+      setNews(resNew.data)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  if (loading) <p>Loading.....</p>
+  else
   return (
     <PageContainer>
       <Header />
@@ -155,13 +173,14 @@ export default function News() {
         <Sidebar selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
         <Content>
           <Title>{selectedMenu}</Title>
-          {(newsArticles[selectedMenu] || []).map((article) => (
+          {news.map((article) => (
             <NewsCard key={article.id}>
               <NewsImage src={article.image} alt={article.title} />
               <NewsContent>
-                <NewsTitle>{article.title}</NewsTitle>
+                <NewsTitle>{article.name}</NewsTitle>
                 <NewsDescription>{article.description}</NewsDescription>
-                <NewsMeta>{article.museum} - {article.date}</NewsMeta>
+                <Link to={`/museums/${toSlug(article.museum.name)}`}>{article.museum.name}</Link>
+                <NewsMeta>{article.startDate}</NewsMeta>
                 <ViewMore to={`/news/${article.id}`}>Xem Thêm</ViewMore>
               </NewsContent>
             </NewsCard>

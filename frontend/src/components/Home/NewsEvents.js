@@ -204,7 +204,7 @@ const NewsEvents = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7277/api/Event')
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event`)
         setEvents(response.data)
       } catch (err) {
         console.error('Lỗi khi gọi API:', err)
@@ -236,7 +236,7 @@ const NewsEvents = () => {
               <NewsImage src={event.image} alt={event.name} />
               <CardTitle>{event.name}</CardTitle>
               <CardDescription>{event.description}</CardDescription>
-              <MuseumName>{event.museum}</MuseumName>
+              <MuseumName>{event.museum.name}</MuseumName>
               <ReadMore to={`/news/${event.id}`}>Read More</ReadMore> {/* ✅ điều hướng */}
               <DateLabel>{event.startDate}</DateLabel> {/* ✅ ngày đăng */}
             </NewsCard>

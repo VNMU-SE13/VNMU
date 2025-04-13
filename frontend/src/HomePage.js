@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Header from "./components/Home/Header"; 
 import Museum from "./components/Home/Museum";
 import NewsEvents from "./components/Home/NewsEvents";
-import "./assets/css/HomePage.css";
-import QuizAndStore from "./components/Home/QuizAndStore";
+import Quiz from "./components/Home/Quiz";        // 👈 import quiz riêng
+import Store from "./components/Home/Store";      // 👈 import store riêng
 import Footer from "./components/Home/Footer";
+import "./assets/css/HomePage.css";
 
 const HomePage = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -60,19 +61,24 @@ const HomePage = () => {
         <button className="visit-button">Bắt đầu chuyến tham quan</button>
       </main>
 
-      {/* Locations and Hours Section */}
+      {/* Museum Section */}
       <section className="museum-container" id="museum">
         <Museum />
       </section>
 
-      {/* News and Events Section */}
+      {/* ✅ QUIZ nằm trên */}
+      <section className="quiz-container" id="quiz">
+        <Quiz />
+      </section>
+
+      {/* ✅ NEWS ở giữa */}
       <section className="news-events-container" id="news">
         <NewsEvents />
       </section>
 
-      {/* Quiz and Store Section */}
-      <section className="quiz-store-container" id="quiz">
-        <QuizAndStore />
+      {/* ✅ STORE nằm dưới */}
+      <section className="store-container" id="store">
+        <Store />
       </section>
 
       {/* Footer */}

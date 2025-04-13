@@ -15,7 +15,11 @@ import HashtagPage from './components/News&Events/HashtagPage';
 import QuizHome from './components/Quizz/QuizHome';
 import QuizStart from './components/Quizz/QuizStart';
 import BlogHome from'./components/Blog/BlogHome';
-import WriteBlog from'./components/Blog/WriteBlog';
+import WriteDescription from './components/Blog/WriteDescription';
+import MyBlog from './components/Blog/MyBlog';
+import BlogPage from './components/Blog/BlogPage';
+import Error from './components/Loading&Error/Error';
+import Loading from './components/Loading&Error/Loading';
 function App() {
   return (
     <Router>
@@ -26,7 +30,7 @@ function App() {
         <Route path="/museum" element={<Museum />} /> {/* Trang Bảo Tàng */}
         <Route path="/all-museums" element={<AllMuseum />} /> {/* Trang All Museum */}
         <Route path="/museums/:slug" element={<MuseumDetail />} /> {/* Trang Chi Tiết Bảo Tàng */}
-        <Route path="/artifact/:slug" element={<ArtifactDetail />} /> {/* Trang Chi Tiết Hiện Vật */}
+        <Route path="/artifact/:id" element={<ArtifactDetail />} /> {/* Trang Chi Tiết Hiện Vật */}
         <Route path="/submit-form" element={<SubmitForm />} />
         <Route path="/admin" element={<HomePageAdmin />} />
         <Route path="/news" element={<News/>}/>
@@ -35,7 +39,12 @@ function App() {
         <Route path="/quiz" element={<QuizHome />} />
         <Route path="/quiz/start" element={<QuizStart />} />
         <Route path="/blog" element={<BlogHome />} />
-        <Route path="/writeblog" element={<WriteBlog />} />
+        <Route path="/listblog" element={<BlogPage />} />
+        <Route path="/writedescription" element={<WriteDescription />} />
+        <Route path="/myblog" element={<MyBlog />} />
+        <Route path="/blog/:id" element={<BlogPage />} />
+        <Route path="/error" element={<Error />} />
+        <Route path="/loading" element={<Loading />} />
       </Routes>
     </Router>
   );

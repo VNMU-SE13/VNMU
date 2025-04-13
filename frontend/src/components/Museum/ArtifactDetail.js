@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import Header from "../Home/Header";
@@ -8,6 +8,8 @@ import ArtifactDescription from "../Museum/ArtifactDescription";
 import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
 import axios from "axios";
 import "../../assets/css/ArtifactDetail.css";
+import toSlug from "../../utils/toSlug";
+import GLBViewer from "../GLBViewer";
 
 const ArtifactDetail = () => {
   const { id } = useParams();
@@ -17,42 +19,30 @@ const ArtifactDetail = () => {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isPodcastModalOpen, setIsPodcastModalOpen] = useState(false);
   const [allArtifacts, setAllArtifacts] = useState([]);
+  const [artifactImages, setArtifactImages] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [museum, setMuseum] = useState()
   const itemsPerPage = 4;
 
   useEffect(() => {
-    let foundArtifact = {
-      name: "Xe tăng T-54",
-      image: "/image/artifacts/tank.jpg",
-      votes: 77,
-      comments: [],
-      description: "Xe tăng T-54 là một trong những biểu tượng lịch sử quan trọng gắn liền với những sự kiện hào hùng của dân tộc Việt Nam...",
-      museumName: "Bảo tàng Quân khu 5",
-      detailImages: [
-        "/image/artifacts/tank1.jpg",
-        "/image/artifacts/tank2.jpg",
-        "/image/artifacts/tank3.jpg",
-        "/image/artifacts/tank4.jpg",
-        "/image/artifacts/tank5.jpg",
-        "/image/artifacts/tank6.jpg",
-        "/image/artifacts/tank7.jpg",
-        "/image/artifacts/tank8.jpg",
-      ],
-      details: [
-        { label: "Năm sản xuất", value: "1950" },
-        { label: "Xuất xứ", value: "Liên Xô" },
-        { label: "Loại xe", value: "Xe tăng chiến đấu" },
-        { label: "Ngày nhập về bảo tàng", value: "16-03-2005" },
-        { label: "Lần đầu tiên sử dụng", value: "1968" }
-      ]
-    };
+    const fetchData = async () => {
+      setLoading(true)
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact/${id}`)
+      setArtifact(response.data)
+      setArtifactImages(response.data.images)
+      const resMuseums = await axios.get(`${process.env.REACT_APP_API_URL}/Museum/${response.data.museumId}`)
+      setMuseum(resMuseums.data)
+      setLoading(false)
+    }
 
-    setArtifact(foundArtifact);
-    setQrUrl(window.location.href);
+    setQrUrl(`${window.location.origin}/image/Tank_Platoon_0411141224_texture.glb`);
 
-    axios.get('https://localhost:7277/api/Artifact')
-      .then(res => setAllArtifacts(res.data))
-      .catch(err => console.error('Lỗi khi lấy danh sách hiện vật:', err));
-  }, [id]);
+    fetchData()
+
+    // axios.get(`${process.env.REACT_APP_API_URL}/Artifact`)
+    //   .then(res => setAllArtifacts(res.data))
+    //   .catch(err => console.error('Lỗi khi lấy danh sách hiện vật:', err));
+  }, []);
 
   const handleThumbnailClick = (index) => {
     setCurrentImageIndex(index);
@@ -60,52 +50,44 @@ const ArtifactDetail = () => {
 
   const handlePrevSet = () => {
     setCurrentImageIndex((prevIndex) =>
-      (prevIndex - itemsPerPage + artifact.detailImages.length) % artifact.detailImages.length
+      (prevIndex - itemsPerPage + artifact.images.length) % artifact.images.length
     );
   };
 
   const handleNextSet = () => {
     setCurrentImageIndex((prevIndex) =>
-      (prevIndex + itemsPerPage) % artifact.detailImages.length
+      (prevIndex + itemsPerPage) % artifact.images.length
     );
   };
 
-  if (!artifact) {
-    return <p>Hiện vật không tồn tại.</p>;
-  }
-
-  const totalImages = artifact.detailImages.length;
   const startIndex = currentImageIndex;
-  const currentImages = [];
 
-  for (let i = 0; i < itemsPerPage; i++) {
-    currentImages.push(artifact.detailImages[(startIndex + i) % totalImages]);
-  }
-
+  if(loading) return <p>Loading...</p>
+  else
   return (
     <div className="artifact-detail">
       <Header />
 
       <div className="breadcrumb">
         <a href="/">Trang chủ</a> /
-        <a href="/all-museums">Các bảo tàng</a> /
-        <a href={`/museums/${artifact.museumName}`} className="museum-link">{artifact.museumName}</a> /
-        <span className="current-artifact">{artifact.name}</span>
+        <a href="/all-museums">Các bảo tàng</a>/
+        <a href={`/museums/${toSlug(museum.name)}`} className="museum-link">{museum.name}</a> /
+        <span className="current-artifact">{artifact.artifactName}</span>
       </div>
 
       <div className="artifact-content">
         <div className="artifact-main">
           <div className="artifact-image">
-            <img src={artifact.detailImages[currentImageIndex]} alt={artifact.name} />
+            <img src={artifact.image} alt={artifact.name} />
 
             <div className="artifact-small-gallery">
               <button className="prev-set" onClick={handlePrevSet}>{"<"}</button>
               <div className="small-gallery">
-                {currentImages.map((image, index) => (
+                {artifactImages.map((image, index) => (
                   <img
                     key={index}
                     src={image}
-                    alt={`Chi tiết ${startIndex + index + 1}`}
+                    alt={`Chi tiết ${index + 1}`}
                     className="small-gallery-image"
                     onClick={() => handleThumbnailClick(startIndex + index)}
                   />
@@ -124,8 +106,7 @@ const ArtifactDetail = () => {
 
             <div className="artifact-rating">
               <span className="votes">{artifact.votes} ⭐⭐⭐⭐★</span>
-              <span className="separator"> | </span>
-              <span className="comments">{artifact.comments.length} Bình luận</span>
+
             </div>
 
             <div className="artifact-actions">
@@ -134,20 +115,40 @@ const ArtifactDetail = () => {
 
             <table className="artifact-table">
               <tbody>
-                {artifact.details.map((item, index) => (
-                  <tr key={index}>
-                    <td className="label">{item.label}</td>
-                    <td className="value">{item.value}</td>
-                  </tr>
-                ))}
+                <tr>
+                  <td>Ngày phát hiện</td>
+                  <td>{artifact.dateDiscovered}</td>
+                </tr>
+                <tr>
+                  <td>Kích thước</td>
+                  <td>{artifact.dimenson}</td>
+                </tr>
+                <tr>
+                  <td>Trọng lượng</td>
+                  <td>{artifact.weight}</td>
+                </tr>
+                <tr>
+                  <td>Chất liệu</td>
+                  <td>{artifact.material}</td>
+                </tr>
+                <tr>
+                  <td>Chức năng</td>
+                  <td>{artifact.function}</td>
+                </tr>
+                <tr>
+                  <td>Tình trạng</td>
+                  <td>{artifact.condition}</td>
+                </tr><tr>
+                  <td>Nguồn gốc</td>
+                  <td>{artifact.origin}</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
-
+        
         <ArtifactMuseumInfo
-          museumName={artifact.museumName}
-          description={artifact.description}
+          museum={museum}
         />
       </div>
 
@@ -164,14 +165,14 @@ const ArtifactDetail = () => {
       </div>
 
       {isQrModalOpen && (
-        <div className="qr-modal">
-          <div className="qr-modal-content">
-            <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>×</span>
-            <h3>Quét mã QR để xem thêm</h3>
-            <QRCode value={qrUrl} size={200} />
-          </div>
-        </div>
-      )}
+  <div className="qr-modal">
+    <div className="qr-modal-content" style={{ padding: "20px" }}>
+      <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>×</span>
+      <h3>Quét mã QR để mở mô hình 3D</h3>
+      <QRCode value={qrUrl} size={240} />
+    </div>
+  </div>
+)}
 
 
 

@@ -311,3 +311,137 @@ body {
 .search-submit-button:hover {
   background-color: #a50d23;
 }
+.quiz-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 40px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.quiz-content {
+  flex: 1;
+  text-align: left;
+}
+
+.quiz-content h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.quiz-content p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.quiz-start-button {
+  background-color: #c8102e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.quiz-start-button:hover {
+  background-color: #a00d22;
+}
+
+.quiz-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+.store-container {
+  background-color: #f9f9f9;
+  padding: 40px 20px 60px;
+  margin: 40px auto;
+  max-width: 1200px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.store-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-direction: row;
+  margin-bottom: 30px;
+}
+
+.store-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.store-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.store-content {
+  flex: 1;
+  text-align: left;
+}
+
+.store-content h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.store-content p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.store-shop-button {
+  background-color: #c8102e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.store-shop-button:hover {
+  background-color: #a00d22;
+}
+
+/* =============================== */
+/* 💡 Responsive cho quiz & store */
+/* =============================== */
+@media (max-width: 768px) {
+  .quiz-container,
+  .store-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .quiz-content,
+  .store-content {
+    text-align: center;
+  }
+}

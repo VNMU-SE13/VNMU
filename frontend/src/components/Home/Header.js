@@ -9,16 +9,16 @@ const Header = ({ toggleSearchBar }) => {
   const [user, setUser] = useState();
   const [isMuseumDropdownOpen, setIsMuseumDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [museums, setMuseums] = useState([])
+  const [museums, setMuseums] = useState([]);
   const { t, i18n } = useTranslation();
-  
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
       try {
-        const response = await axios.get("/api/User/Profile", {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/User/Profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -34,14 +34,14 @@ const Header = ({ toggleSearchBar }) => {
 
     const fetchMuseum = async () => {
       try {
-        const response = await axios.get('https://localhost:7277/api/Museum')
-        setMuseums(response.data)
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`);
+        setMuseums(response.data);
       } catch (err) {
-        console.error('Lỗi khi gọi API:', err)
+        console.error("Lỗi khi gọi API:", err);
       }
-    }
+    };
 
-    fetchMuseum()
+    fetchMuseum();
     fetchUser();
   }, []);
 
@@ -90,8 +90,15 @@ const Header = ({ toggleSearchBar }) => {
             <div className="dropdown-menu">
               {museums.map((museum, index) => {
                 return (
-                  <a onClick={() => navigate(`/museums/${toSlug(museum.name)}`)} className="dropdown-item">{museum.name}</a>
-                )
+                  <a
+                    key={index}
+                    onClick={() => navigate(`/museums/${toSlug(museum.name)}`)}
+                    className="dropdown-item"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {museum.name}
+                  </a>
+                );
               })}
             </div>
           )}
@@ -100,16 +107,23 @@ const Header = ({ toggleSearchBar }) => {
         <a href="#news" className="nav-link">{t("news")}</a>
         <a href="#quiz" className="nav-link">{t("quiz")}</a>
         <a href="#support" className="nav-link">{t("souvenir")}</a>
+        <a href="/blog" className="nav-link">{t("blog")}</a> 
 
         <div className="dropdown">
           <a href="#" className="dropdown-toggle">{t("other")}</a>
           <div className="dropdown-menu">
-            <a onClick={() => handleNavigate("/submit-form")} className="dropdown-item" style={{ cursor: "pointer" }}>{t("apply")}</a>
-            <a href="/blog" className="dropdown-item">{t("blog")}</a>
+            <a
+              onClick={() => handleNavigate("/submit-form")}
+              className="dropdown-item"
+              style={{ cursor: "pointer" }}
+            >
+              {t("apply")}
+            </a>
             <a href="#ho-tro" className="dropdown-item">{t("support")}</a>
           </div>
         </div>
       </nav>
+
       <div className="actions">
         <div className="top-actions">
           {user ? (

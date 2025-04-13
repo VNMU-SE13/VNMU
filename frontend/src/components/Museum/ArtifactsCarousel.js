@@ -170,9 +170,11 @@ const QuizButton = styled.a`
 `;
 
 const ArtifactsCarousel = ({ artifacts }) => {
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState(null);
-  const [activePeriod, setActivePeriod] = useState("GĐ Cận Hiện Đại");
+  const [periods, setPeriods] = useState([]);
+  const [activePeriod, setActivePeriod] = useState(0)
   const [filteredArtifacts, setFilteredArtifacts] = useState(artifacts);
   const [categories, setCategories] = useState([]);
   const itemsPerPage = 5;
@@ -197,16 +199,18 @@ const ArtifactsCarousel = ({ artifacts }) => {
   };
 
   useEffect(() => {
-    const fetchCategory = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7277/api/CategoryArtifact');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryArtifact`);
         setCategories(response.data);
+        const response2 = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`);
+        setPeriods(response2.data)
       } catch (err) {
         console.log(err);
       }
     };
 
-    fetchCategory();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -237,19 +241,19 @@ const ArtifactsCarousel = ({ artifacts }) => {
       <Title>Các hiện vật của bảo tàng</Title>
 
       <PeriodFilterWrapper>
-        {["GĐ Phong Kiến", "GĐ Cận Hiện Đại", "GĐ Hiện Đại"].map((period, index) => (
+        {periods.length>0 && periods.map((period, index) => (
           <FilterButton
             key={index}
-            onClick={() => setActivePeriod(period)}
-            active={activePeriod === period}
+            onClick={() => setActivePeriod(period.id)}
+            active={activePeriod === period.id}
           >
-            {period}
+            {period.name}
           </FilterButton>
         ))}
       </PeriodFilterWrapper>
 
       <FilterButtons>
-        {categories.map((category, index) => (
+        {categories.length>0 && categories.map((category, index) => (
           <FilterButton
             key={index}
             onClick={() => handleFilter(category.id)}

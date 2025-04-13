@@ -90,7 +90,7 @@ const Button = styled.button`
   }
 `;
 
-const ArtifactMuseumInfo = () => {
+const ArtifactMuseumInfo = ({museum}) => {
   const museumInfo = {
     avatar: "/image/BT-QK5.jpg",
     name: "Bảo tàng Quân khu 5",
@@ -105,20 +105,19 @@ const ArtifactMuseumInfo = () => {
   return (
     <MuseumContainer>
       <MuseumInfo>
-        <MuseumAvatar src={museumInfo.avatar} alt={museumInfo.name} />
+        <MuseumAvatar src={museum.image} alt={museum.name} />
         <MuseumDetails>
-          <MuseumName>{museumInfo.name}</MuseumName>
-          <MuseumStatus>{museumInfo.status}</MuseumStatus>
+          <MuseumName>{museum.name}</MuseumName>
+          <MuseumStatus>{museum.location}</MuseumStatus>
         </MuseumDetails>
       </MuseumInfo>
       <MuseumActions>
         <Button>{museumInfo.shopButtonText}</Button>
       </MuseumActions>
       <MuseumStats>
-        <StatItem>Chủ đề: <strong>{museumInfo.rating}</strong></StatItem>
-        <StatItem>Hiện vật: <strong>{museumInfo.productCount}</strong></StatItem>
-        <StatItem>Hoạt Động: <strong>{museumInfo.joinTime}</strong></StatItem>
-        <StatItem>Khách Tham Quan: <strong>{museumInfo.followerCount}</strong></StatItem>
+        <StatItem>Năm thành lập: <strong>{museum.establishYear}</strong></StatItem>
+        <StatItem>Hiện vật: <strong>{museum.artifacts.length}</strong></StatItem>
+        <StatItem>Liên hệ: <strong>{museum.contact}</strong></StatItem>
       </MuseumStats>
 
 
