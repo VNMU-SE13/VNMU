@@ -135,7 +135,15 @@ export default function QuizList(props) {
                   whiteSpace: "nowrap",
                 }}
               >
-                <b>Type Historical</b>
+                <b>Level</b>
+              </TableCell>
+              <TableCell
+                sx={{
+                  width: "15%",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <b>Category Historical</b>
               </TableCell>
 
               <TableCell
@@ -176,7 +184,10 @@ export default function QuizList(props) {
                   </TableCell>
 
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
-                    {item.typeHistorical}
+                    {item.level}
+                  </TableCell>
+                  <TableCell onClick={(e) => showForUpdate(item.id)}>
+                    {item.categoryHistoricals.name}
                   </TableCell>
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     {item.isActive ? "Đang hoạt động" : "Đã ngừng hoạt động"}

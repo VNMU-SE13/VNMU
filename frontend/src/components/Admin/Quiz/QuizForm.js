@@ -7,6 +7,8 @@ import {
   ButtonGroup,
   Button as MuiButton,
   Button,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import Form from "../../../layouts/Form";
 import Input from "../../../controls/Input";
@@ -46,8 +48,23 @@ function QuizForm(props) {
 
   const [quizId, setQuizId] = useState(0);
   const [notify, setNotify] = useState({ isOpen: false });
+  const [categoryList, setCategoryList] = useState([]);
 
   const [quizVisible, setQuizVisible] = useState(false);
+
+  useEffect(() => {
+    createAPIEndpoint(ENDPIONTS.CategoryHistorical)
+      .fetchAll()
+      .then((res) => {
+        let categoryList = res.data.map((item) => ({
+          id: item.id,
+          title: item.name,
+        }));
+        categoryList = [{ id: 0, title: "Select" }].concat(categoryList);
+        setCategoryList(categoryList);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
     if (quizId == 0) resetForm();
@@ -74,9 +91,11 @@ function QuizForm(props) {
     temp.description =
       values.description != "" ? "" : "This field is required.";
     temp.timeLimit = values.timeLimit != 0 ? "" : "This field is required.";
-
-    temp.typeHistorical =
-      values.typeHistorical != "" ? "" : "This field is required.";
+    temp.level = values.level != 0 ? "" : "This field is required.";
+    temp.categoryHistoricalId =
+      values.categoryHistoricalId != 0 ? "" : "This field is required.";
+    temp.isActive =
+      typeof values.isActive === "boolean" ? "" : "Invalid active state.";
 
     setErrors({ ...temp });
     return Object.values(temp).every((x) => x === "");
@@ -158,12 +177,20 @@ function QuizForm(props) {
             />
           </Grid>
           <Grid item xs={6}>
-            <Input
-              label="Type Historical"
-              name="typeHistorical"
-              value={values.typeHistorical}
+            <Select
+              label="Historical Category"
+              name="categoryHistoricalId"
+              value={values.categoryHistoricalId}
               onChange={handleInputChange}
-              error={errors.typeHistorical}
+              options={categoryList}
+              error={errors.categoryHistoricalId}
+            />
+            <Input
+              label="Level"
+              name="level"
+              value={values.level}
+              onChange={handleInputChange}
+              error={errors.level}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -171,6 +198,25 @@ function QuizForm(props) {
                   </InputAdornment>
                 ),
               }}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  name="isActive"
+                  checked={values.isActive}
+                  onChange={(e) =>
+                    handleInputChange({
+                      target: {
+                        name: "isActive",
+                        value: e.target.checked,
+                      },
+                    })
+                  }
+                  color="success"
+                />
+              }
+              label={values.isActive ? "Đang hoạt động" : "Ngừng hoạt động"}
+              labelPlacement="start"
             />
 
             <SubmitButtonGroup>

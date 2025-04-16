@@ -15,6 +15,7 @@ const getEventModel = () => ({
   endDate: "",
   location: "",
   museumId: 0,
+  hastag: [],
 });
 
 function EventManager() {

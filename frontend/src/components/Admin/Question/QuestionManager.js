@@ -9,6 +9,7 @@ const getQuestionModel = () => ({
   id: 0,
   text: "",
   points: 0,
+  image: "",
   quizId: 0,
 });
 

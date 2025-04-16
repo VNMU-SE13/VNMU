@@ -10,7 +10,9 @@ const getQuizModel = () => ({
   title: "",
   description: "",
   timeLimit: 0,
-  typeHistorical: "",
+  level: 0,
+  categoryHistoricalId: 0,
+  isActive: true,
 });
 
 function QuizManager() {

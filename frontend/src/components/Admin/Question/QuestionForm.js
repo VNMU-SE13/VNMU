@@ -48,6 +48,7 @@ function QuestionForm(props) {
   const [questionId, setQuestionId] = useState(0);
   const [notify, setNotify] = useState({ isOpen: false });
   const [quizList, setQuizList] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
 
   const [questionVisible, setQuestionVisible] = useState(false);
 
@@ -83,12 +84,20 @@ function QuestionForm(props) {
     resetFormControls();
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setValues({ ...values, image: URL.createObjectURL(file) });
+    }
+  };
   const validateForm = () => {
     let temp = {};
 
     temp.text = values.text != "" ? "" : "This field is required.";
     temp.points = values.points != 0 ? "" : "This field is required.";
 
+    temp.image = values.image != "" ? "" : "This field is required.";
     temp.quizId = values.quizId != 0 ? "" : "This field is required.";
 
     setErrors({ ...temp });
@@ -99,21 +108,51 @@ function QuestionForm(props) {
     e.preventDefault();
     if (validateForm()) {
       if (values.id == 0) {
-        createAPIEndpoint(ENDPIONTS.Question)
-          .create(values)
-          .then((res) => {
-            resetFormControls();
-            setNotify({ isOpen: true, message: "New question is created." });
-          })
-          .catch((err) => console.log(err));
+        const formData = new FormData();
+        formData.append("Text", values.text);
+        formData.append("Points", values.points);
+        formData.append("QuizId", values.quizId);
+
+        if (imageFile) {
+          formData.append("Image", imageFile);
+        }
+
+        try {
+          const response = await createAPIEndpoint(ENDPIONTS.Question).create(
+            formData
+          );
+
+          setNotify({ isOpen: true, message: "New Question is created." });
+          resetFormControls();
+        } catch (err) {
+          setNotify({
+            isOpen: true,
+            message: "New Question is created failed.",
+          });
+        }
       } else {
-        createAPIEndpoint(ENDPIONTS.Question)
-          .update(values.id, values)
-          .then((res) => {
-            setQuestionId(0);
-            setNotify({ isOpen: true, message: "The question is updated." });
-          })
-          .catch((err) => console.log(err));
+        const formData = new FormData();
+        formData.append("Text", values.text);
+        formData.append("Points", values.points);
+        formData.append("QuizId", values.quizId);
+
+        if (imageFile) {
+          formData.append("Image", imageFile);
+        }
+
+        try {
+          const response = await createAPIEndpoint(ENDPIONTS.Question).update(
+            formData
+          );
+
+          setNotify({ isOpen: true, message: "New Question is updated." });
+          resetFormControls();
+        } catch (err) {
+          setNotify({
+            isOpen: true,
+            message: "New Question is updated failed.",
+          });
+        }
       }
     }
   };
@@ -156,6 +195,20 @@ function QuestionForm(props) {
             />
           </Grid>
           <Grid item xs={6}>
+            <Input
+              label="Upload Image"
+              type="file"
+              name="image"
+              onChange={handleImageUpload}
+              error={errors.image} // Hàm xử lý tải lên hình ảnh
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AdornmentText>#</AdornmentText>
+                  </InputAdornment>
+                ),
+              }}
+            />
             <Select
               label="Quiz"
               name="quizId"

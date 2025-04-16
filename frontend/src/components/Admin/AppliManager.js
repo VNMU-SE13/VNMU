@@ -149,6 +149,14 @@ export default function AppliManager() {
                   whiteSpace: "nowrap",
                 }}
               >
+                <b>Image</b>
+              </TableCell>
+              <TableCell
+                sx={{
+                  width: "15%",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 <b>Content</b>
               </TableCell>
 
@@ -192,6 +200,9 @@ export default function AppliManager() {
               searchList.map((item, idx) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.title}</TableCell>
+                  <TableCell>
+                    <img src={item.image} alt="Image" width={50} height={50} />
+                  </TableCell>
                   <TableCell>{item.content}</TableCell>
 
                   <TableCell>

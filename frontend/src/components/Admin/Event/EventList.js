@@ -18,6 +18,8 @@ import {
   InputBase,
   IconButton,
   styled,
+  Chip,
+  Stack,
 } from "@mui/material";
 
 //import Table from "../../layout/Table";
@@ -153,6 +155,14 @@ export default function EventList(props) {
               >
                 <b>Image</b>
               </TableCell>
+              <TableCell
+                sx={{
+                  width: "15%",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <b>Hashtags</b>
+              </TableCell>
 
               <TableCell
                 sx={{
@@ -189,6 +199,17 @@ export default function EventList(props) {
                   </TableCell>
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     <img src={item.image} alt="Image" width={50} height={50} />
+                  </TableCell>
+                  <TableCell onClick={(e) => showForUpdate(item.id)}>
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                      {item.hastag?.map((tag) => (
+                        <Chip
+                          key={tag.id}
+                          label={`#${tag.hashtag}`}
+                          size="small"
+                        />
+                      ))}
+                    </Stack>
                   </TableCell>
 
                   <TableCell>

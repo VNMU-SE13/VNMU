@@ -110,6 +110,14 @@ export default function QuestionList(props) {
                   whiteSpace: "nowrap",
                 }}
               >
+                <b>Image</b>
+              </TableCell>
+              <TableCell
+                sx={{
+                  width: "15%",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 <b>Point</b>
               </TableCell>
 
@@ -138,6 +146,9 @@ export default function QuestionList(props) {
                 <TableRow key={item.id}>
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     {item.text}
+                  </TableCell>
+                  <TableCell onClick={(e) => showForUpdate(item.id)}>
+                    <img src={item.image} alt="Image" width={50} height={50} />
                   </TableCell>
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     {item.points}

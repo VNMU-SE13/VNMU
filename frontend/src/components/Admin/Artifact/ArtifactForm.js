@@ -191,15 +191,6 @@ function ArtifactForm(props) {
             formData
           );
 
-          // setArtifactId(0);
-          // setImageFiles([]);
-          // setImageFile(null);
-          // setPodcastFile(null);
-          // setValues({
-          //   ...values,
-          //   images: [],
-          // });
-
           setNotify({ isOpen: true, message: "New Artifact is created." });
           resetForm();
         } catch (err) {

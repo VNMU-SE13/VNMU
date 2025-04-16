@@ -27,6 +27,8 @@ import {
   TextField,
   Select,
   MenuItem,
+  Stack,
+  Chip,
 } from "@mui/material";
 
 //import Table from "../../layout/Table";
@@ -94,30 +96,6 @@ export default function BlogManager() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-
-  // const handleUpdateStatus = () => {
-  //   if (!selectedBlog) return;
-
-  //   if (newStatus == 1) {
-  //     createAPIEndpoint(ENDPIONTS.Blog)
-  //       .acceptBlog(selectedBlog.id, reason)
-  //       .then((res) => {
-  //         setNotify({ isOpen: true, message: "Updated successfully." });
-  //       })
-  //       .catch((err) => console.log(err));
-
-  //     setOpenDialog(false);
-  //   } else if (newStatus == 2) {
-  //     createAPIEndpoint(ENDPIONTS.Blog)
-  //       .unacceptBlog(selectedBlog.id, { message: reason })
-  //       .then((res) => {
-  //         setNotify({ isOpen: true, message: "Updated successfully." });
-  //       })
-  //       .catch((err) => console.log(err));
-
-  //     setOpenDialog(false);
-  //   }
-  // };
 
   const handleUpdateStatus = () => {
     if (!selectedBlog) return;
@@ -208,6 +186,14 @@ export default function BlogManager() {
                   whiteSpace: "nowrap",
                 }}
               >
+                <b>Hashtag</b>
+              </TableCell>
+              <TableCell
+                sx={{
+                  width: "15%",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 <b>Status</b>
               </TableCell>
 
@@ -235,13 +221,17 @@ export default function BlogManager() {
                     {item.user?.userName || "Không có dữ liệu"}
                   </TableCell>
                   <TableCell>{item.createdDate}</TableCell>
-                  {/* <TableCell>
-                    {item.isAccept == 0
-                      ? "Đang chờ xét duyệt"
-                      : item.isAccept == 1
-                      ? "Đồng ý xét duyệt"
-                      : "Từ chối"}
-                  </TableCell> */}
+                  <TableCell>
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                      {item.hastagOfBlog?.map((tag) => (
+                        <Chip
+                          key={tag.id}
+                          label={`#${tag.hashtag}`}
+                          size="small"
+                        />
+                      ))}
+                    </Stack>
+                  </TableCell>
 
                   <TableCell
                     onClick={() => handleOpenDialog(item)}
