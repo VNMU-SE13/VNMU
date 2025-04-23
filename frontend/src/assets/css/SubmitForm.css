@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: space-between; /* Đảm bảo footer luôn nằm dưới cùng */
     min-height: 100vh; /* Chiều cao tối thiểu toàn màn hình */
-    background-image: url('image/background-don.jpg');
+    /* background-image: url('image/background-don.jpg'); */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;

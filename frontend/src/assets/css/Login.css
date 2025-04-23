@@ -4,7 +4,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center; /* Căn giữa theo chiều dọc */
-    background: url("C:\\Users\\tienn\\OneDrive\\Máy tính\\museum-app\\frontend\\public\\image\\background.jpg") center/cover no-repeat;
+    /* background: url("C:\\Users\\tienn\\OneDrive\\Máy tính\\museum-app\\frontend\\public\\image\\background.jpg") center/cover no-repeat; */
     min-height: 100vh; /* Đảm bảo container chiếm toàn bộ chiều cao màn hình */
     padding: 0; /* Loại bỏ padding để căn giữa */
     margin: 0;
@@ -12,7 +12,7 @@
 }
 /* Header */
 .login-header {
-    background: url('C:\Users\tienn\OneDrive\Máy tính\museum-app\frontend\public\image\background-nho.jpg') center/cover no-repeat;
+    /* background: url('C:\Users\tienn\OneDrive\Máy tính\museum-app\frontend\public\image\background-nho.jpg') center/cover no-repeat; */
     color: white;
     text-align: center;
     width: 100%;
