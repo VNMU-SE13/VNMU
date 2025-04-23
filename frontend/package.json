@@ -40,7 +40,7 @@
     "sass": "^1.85.1",
     "styled-components": "^6.1.15",
     "sweetalert2": "^11.17.2",
-    "three": "^0.175.0",
+    "three": "^0.152.2",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
