@@ -1,10 +1,12 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import Sidebar from "./Sidebar";
 import axios from "axios";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 // Styled Components
 const PageContainer = styled.div`
@@ -136,62 +138,63 @@ export default function NewsDetail() {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editedContent, setEditedContent] = useState("");
   const [dropdownIndex, setDropdownIndex] = useState(null);
+  const { language } = useContext(LanguageContext);
+
+  const t = async (text) => await translateText(text, language);
 
   const handleEditComment = (index) => {
     setEditingIndex(index);
     setEditedContent(selectedArticle.comments[index].content);
-    setDropdownIndex(null); // đóng dropdown sau khi chọn
+    setDropdownIndex(null);
   };
-  
+
   const handleSaveEditedComment = () => {
     const updatedComments = [...selectedArticle.comments];
     updatedComments[editingIndex].content = editedContent;
     setSelectedArticle({ ...selectedArticle, comments: updatedComments });
     setEditingIndex(null);
   };
-  
+
   const handleDeleteComment = (indexToDelete) => {
-    const updatedComments = selectedArticle.comments.filter(
-      (_, index) => index !== indexToDelete
-    );
+    const updatedComments = selectedArticle.comments.filter((_, index) => index !== indexToDelete);
     setSelectedArticle({ ...selectedArticle, comments: updatedComments });
     setDropdownIndex(null);
   };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target);
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
 
     if (!token || !userId) {
-      alert("Bạn cần đăng nhập để bình luận.");
+      alert(await t("Bạn cần đăng nhập để bình luận."));
       return;
     }
 
     const comment = {
       content: formData.get("comment"),
       rating: 0,
-      eventId: id    
+      eventId: id,
     };
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/Comment`, comment, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
-      // Làm mới lại bình luận sau khi gửi
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event/${id}`);
-      setSelectedArticle(response.data);
+      const translatedDesc = await t(response.data.description);
+      const translatedName = await t(response.data.name);
+      const translatedMuseum = await t(response.data.museum?.name || "");
+      setSelectedArticle({ ...response.data, description: translatedDesc, name: translatedName, museum: translatedMuseum });
       e.target.reset();
     } catch (err) {
       console.log("Lỗi khi gửi bình luận:", err);
-      alert("Không gửi được bình luận. Vui lòng thử lại.");
-      alert("Không gửi được bình luận. Vui lòng thử lại.");
+      alert(await t("Không gửi được bình luận. Vui lòng thử lại."));
     }
   };
 
@@ -199,14 +202,17 @@ export default function NewsDetail() {
     const fetchNews = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event/${id}`);
-        setSelectedArticle(response.data);
+        const translatedDesc = await t(response.data.description);
+        const translatedName = await t(response.data.name);
+        const translatedMuseum = await t(response.data.museum?.name || "");
+        setSelectedArticle({ ...response.data, description: translatedDesc, name: translatedName, museum: translatedMuseum });
       } catch (err) {
         console.log(err);
       }
     };
 
     fetchNews();
-  }, [id]);
+  }, [id, language]);
 
   if (!selectedArticle) {
     return (
@@ -242,98 +248,91 @@ export default function NewsDetail() {
           </HashtagWrapper>
 
           <CommentBox>
-          <h3>Bình luận</h3>
-          {selectedArticle.comments &&
-            selectedArticle.comments.map((comment, index) => (
-              <Comment key={index} style={{ position: "relative" }}>
-                {console.log(comment)}
-                <p>
-                  <strong>{comment.userId}</strong>{" "}
-                  <span style={{ color: "#777", fontSize: "0.9rem" }}>
-                    ({comment.commentDate})
-                  </span>
-
-                  {/* Dropdown Toggle Button */}
-                  <button
-                    onClick={() => setDropdownIndex(dropdownIndex === index ? null : index)}
-                    style={{
-                      marginLeft: "10px",
-                      backgroundColor: "#f0f0f0",
-                      border: "1px solid #ccc",
-                      borderRadius: "50%",
-                      width: "30px",
-                      height: "30px",
-                      fontSize: "1.2rem",
-                      fontWeight: "bold",
-                      lineHeight: "30px",
-                      textAlign: "center",
-                      cursor: "pointer",
-                      transition: "background 0.3s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
-                  >
-                    ⋮
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {dropdownIndex === index && (
-                    <div
+            <h3>{language === 'vi' ? "Bình luận" : "Comments"}</h3>
+            {selectedArticle.comments &&
+              selectedArticle.comments.map((comment, index) => (
+                <Comment key={index} style={{ position: "relative" }}>
+                  <p>
+                    <strong>{comment.userId}</strong>{" "}
+                    <span style={{ color: "#777", fontSize: "0.9rem" }}>
+                      ({comment.commentDate})
+                    </span>
+                    <button
+                      onClick={() => setDropdownIndex(dropdownIndex === index ? null : index)}
                       style={{
-                        position: "absolute",
-                        right: 0,
-                        backgroundColor: "#fff",
+                        marginLeft: "10px",
+                        backgroundColor: "#f0f0f0",
                         border: "1px solid #ccc",
-                        borderRadius: "5px",
-                        padding: "5px",
-                        zIndex: 10,
+                        borderRadius: "50%",
+                        width: "30px",
+                        height: "30px",
+                        fontSize: "1.2rem",
+                        fontWeight: "bold",
+                        lineHeight: "30px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        transition: "background 0.3s",
                       }}
+                      onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                      onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
                     >
+                      ⋮
+                    </button>
+                    {dropdownIndex === index && (
                       <div
-                        onClick={() => handleEditComment(index)}
-                        style={{ padding: "5px 10px", cursor: "pointer" }}
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          backgroundColor: "#fff",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          padding: "5px",
+                          zIndex: 10,
+                        }}
                       >
-                        ✏️ Chỉnh sửa
+                        <div
+                          onClick={() => handleEditComment(index)}
+                          style={{ padding: "5px 10px", cursor: "pointer" }}
+                        >
+                          ✏️ {language === 'vi' ? "Chỉnh sửa" : "Edit"}
+                        </div>
+                        <div
+                          onClick={() => handleDeleteComment(index)}
+                          style={{ padding: "5px 10px", cursor: "pointer", color: "red" }}
+                        >
+                          🗑️ {language === 'vi' ? "Xóa" : "Delete"}
+                        </div>
                       </div>
-                      <div
-                        onClick={() => handleDeleteComment(index)}
-                        style={{ padding: "5px 10px", cursor: "pointer", color: "red" }}
-                      >
-                        🗑️ Xóa
-                      </div>
+                    )}
+                  </p>
+                  {editingIndex === index ? (
+                    <div>
+                      <textarea
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        rows={3}
+                        style={{ width: "100%", marginTop: "8px" }}
+                      />
+                      <button onClick={handleSaveEditedComment}>{language === 'vi' ? "Lưu" : "Save"}</button>
+                      <button onClick={() => setEditingIndex(null)}>{language === 'vi' ? "Hủy" : "Cancel"}</button>
                     </div>
+                  ) : (
+                    <p>{comment.content}</p>
                   )}
-                </p>
-
-                {/* Nội dung bình luận */}
-                {editingIndex === index ? (
-                  <div>
-                    <textarea
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                      rows={3}
-                      style={{ width: "100%", marginTop: "8px" }}
-                    />
-                    <button onClick={handleSaveEditedComment}>Lưu</button>
-                    <button onClick={() => setEditingIndex(null)}>Hủy</button>
-                  </div>
-                ) : (
-                  <p>{comment.content}</p>
-                )}
-              </Comment>
-            ))}
+                </Comment>
+              ))}
 
             <Form onSubmit={handleCommentSubmit}>
               <Textarea
                 name="comment"
                 rows={3}
-                placeholder="Nhập bình luận của bạn..."
+                placeholder={language === 'vi' ? "Nhập bình luận của bạn..." : "Enter your comment..."}
               />
-              <SubmitButton type="submit">Gửi bình luận</SubmitButton>
+              <SubmitButton type="submit">{language === 'vi' ? "Gửi bình luận" : "Submit Comment"}</SubmitButton>
             </Form>
           </CommentBox>
 
-          <BackButton onClick={() => navigate(-1)}>Quay lại</BackButton>
+          <BackButton onClick={() => navigate(-1)}>{language === 'vi' ? "Quay lại" : "Go back"}</BackButton>
         </Content>
       </MainWrapper>
       <Footer />

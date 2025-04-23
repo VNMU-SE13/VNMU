@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { FaNewspaper, FaCalendarAlt } from "react-icons/fa";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
-// Styled Components
+// Styled Components như cũ...
+
 const SidebarWrapper = styled.div`
   width: 250px;
   background: #343a40;
@@ -61,54 +64,77 @@ const SubMenuItem = styled.div`
   }
 `;
 
+// Gốc tiếng Việt
 const menuItems = {
   "Tin Tức": ["Tin tức mới nhất", "Tin tức đặc sắc", "Công nghệ", "Bảo tồn"],
   "Sự Kiện": ["Sự kiện sắp diễn ra", "Sự kiện nổi bật"],
 };
 
 export default function Sidebar({ selectedMenu, setSelectedMenu }) {
-  const [openMenu, setOpenMenu] = useState("Tin Tức"); // Mặc định mở "Tin Tức"
+  const { language } = useContext(LanguageContext);
+  const [openMenu, setOpenMenu] = useState("Tin Tức");
+  const [translatedMenu, setTranslatedMenu] = useState({});
 
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
+
+  useEffect(() => {
+    const translateMenuItems = async () => {
+      const result = {};
+      for (const [mainKey, subItems] of Object.entries(menuItems)) {
+        const translatedKey = await translateText(mainKey, language);
+        const translatedSubs = await Promise.all(
+          subItems.map((item) => translateText(item, language))
+        );
+        result[translatedKey] = translatedSubs;
+      }
+      setTranslatedMenu(result);
+    };
+
+    translateMenuItems();
+  }, [language]);
 
   return (
     <SidebarWrapper>
       {/* Tin Tức */}
       <SidebarItem active={openMenu === "Tin Tức"} onClick={() => toggleMenu("Tin Tức")}>
         <span>
-          <FaNewspaper style={{ marginRight: 10 }} /> Tin Tức
+          <FaNewspaper style={{ marginRight: 10 }} />
+          {translatedMenu["Tin Tức"] ? Object.keys(translatedMenu)[0] : "Tin Tức"}
         </span>
       </SidebarItem>
       <SubMenu open={openMenu === "Tin Tức"}>
-        {menuItems["Tin Tức"].map((subMenu) => (
-          <SubMenuItem 
-            key={subMenu} 
-            active={selectedMenu === subMenu} 
-            onClick={() => setSelectedMenu(subMenu)}
-          >
-            {subMenu}
-          </SubMenuItem>
-        ))}
+        {translatedMenu["Tin Tức"] &&
+          translatedMenu[Object.keys(translatedMenu)[0]].map((subMenu, index) => (
+            <SubMenuItem
+              key={index}
+              active={selectedMenu === menuItems["Tin Tức"][index]}
+              onClick={() => setSelectedMenu(menuItems["Tin Tức"][index])}
+            >
+              {subMenu}
+            </SubMenuItem>
+          ))}
       </SubMenu>
 
       {/* Sự Kiện */}
       <SidebarItem active={openMenu === "Sự Kiện"} onClick={() => toggleMenu("Sự Kiện")}>
         <span>
-          <FaCalendarAlt style={{ marginRight: 10 }} /> Sự Kiện
+          <FaCalendarAlt style={{ marginRight: 10 }} />
+          {translatedMenu["Sự Kiện"] ? Object.keys(translatedMenu)[1] : "Sự Kiện"}
         </span>
       </SidebarItem>
       <SubMenu open={openMenu === "Sự Kiện"}>
-        {menuItems["Sự Kiện"].map((subMenu) => (
-          <SubMenuItem 
-            key={subMenu} 
-            active={selectedMenu === subMenu} 
-            onClick={() => setSelectedMenu(subMenu)}
-          >
-            {subMenu}
-          </SubMenuItem>
-        ))}
+        {translatedMenu["Sự Kiện"] &&
+          translatedMenu[Object.keys(translatedMenu)[1]].map((subMenu, index) => (
+            <SubMenuItem
+              key={index}
+              active={selectedMenu === menuItems["Sự Kiện"][index]}
+              onClick={() => setSelectedMenu(menuItems["Sự Kiện"][index])}
+            >
+              {subMenu}
+            </SubMenuItem>
+          ))}
       </SubMenu>
     </SidebarWrapper>
   );

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify"; // Import Toast
-import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import "../../assets/css/Register.css";
 
@@ -11,7 +11,12 @@ import lockIcon from "../../assets/images/lock-icon.png";
 import eyeIcon from "../../assets/images/eye-icon.png";
 import eyeSlashIcon from "../../assets/images/eye-slash-icon.png";
 
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
+
 const Register = () => {
+  const { language } = useContext(LanguageContext);
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [user, setUser] = useState("");
@@ -20,13 +25,55 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [labels, setLabels] = useState({
+    welcome: "Chào mừng bạn đến với VNMU",
+    registerTitle: "Đăng ký",
+    usernamePlaceholder: "Tên tài khoản",
+    emailPlaceholder: "Nhập email",
+    passwordPlaceholder: "Mật khẩu",
+    confirmPasswordPlaceholder: "Xác nhận mật khẩu",
+    forgot: "Quên mật khẩu",
+    already: "Đã có tài khoản",
+    button: "Đăng ký",
+    loadingText: "Đang xử lý, vui lòng chờ...",
+    processing: "Đang đăng ký...",
+  });
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          welcome: "Chào mừng bạn đến với VNMU",
+          registerTitle: "Đăng ký",
+          usernamePlaceholder: "Tên tài khoản",
+          emailPlaceholder: "Nhập email",
+          passwordPlaceholder: "Mật khẩu",
+          confirmPasswordPlaceholder: "Xác nhận mật khẩu",
+          forgot: "Quên mật khẩu",
+          already: "Đã có tài khoản",
+          button: "Đăng ký",
+          loadingText: "Đang xử lý, vui lòng chờ...",
+          processing: "Đang đăng ký...",
+        });
+      } else {
+        const entries = Object.entries(labels);
+        const result = {};
+        for (const [key, value] of entries) {
+          result[key] = await translateText(value, language);
+        }
+        setLabels(result);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
+
   const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
   const toggleConfirmPasswordVisibility = () => setConfirmPasswordVisible(!confirmPasswordVisible);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra validation
     if (!user || !email || !password || !confirmPassword) {
       toast.error("Vui lòng điền đầy đủ thông tin!", { position: "top-right" });
       return;
@@ -37,19 +84,17 @@ const Register = () => {
       return;
     }
 
-    // Kiểm tra định dạng email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Email không hợp lệ!", { position: "top-right" });
       return;
     }
 
-    // Dữ liệu gửi lên API
     const userData = {
       username: user,
-      email: email,
-      password: password,
-      confirmPassword: confirmPassword
+      email,
+      password,
+      confirmPassword,
     };
 
     setLoading(true);
@@ -62,9 +107,8 @@ const Register = () => {
         toast.success("Đăng ký thành công! Chuyển hướng đến trang đăng nhập...", {
           position: "top-right",
         });
-
         setTimeout(() => {
-          window.location.href = "/login"; // Chuyển hướng sau khi đăng ký thành công
+          window.location.href = "/login";
         }, 2000);
       } else {
         toast.error(response.data.message || "Đăng ký thất bại!", { position: "top-right" });
@@ -94,12 +138,11 @@ const Register = () => {
         alignItems: "center",
       }}
     >
-      <ToastContainer /> {/* Component để hiển thị Toast Notifications */}
-
+      <ToastContainer />
       {loading && (
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
-          <p>Đang xử lý, vui lòng chờ...</p>
+          <p>{labels.loadingText}</p>
         </div>
       )}
 
@@ -108,35 +151,42 @@ const Register = () => {
           <Link to="/">
             <img src="/image/LOGO-white.png" alt="VNMU Logo" className="register-logo" />
           </Link>
-          <h2>Chào mừng bạn đến với VNMU</h2>
+          <h2>{labels.welcome}</h2>
         </div>
 
         <div className="register-form">
-          <h3>Đăng ký</h3>
+          <h3>{labels.registerTitle}</h3>
 
-          {/* Username Input */}
           <div className="form-group">
             <div className="input-wrapper">
               <img src={userIcon} alt="User Icon" className="input-icon" />
-              <input type="text" placeholder="Tên tài khoản" value={user} onChange={(e) => setUser(e.target.value)} />
+              <input
+                type="text"
+                placeholder={labels.usernamePlaceholder}
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+              />
             </div>
           </div>
 
-          {/* Email Input */}
           <div className="form-group">
             <div className="input-wrapper">
               <img src={emailIcon} alt="Email Icon" className="input-icon" />
-              <input type="email" placeholder="Nhập email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input
+                type="email"
+                placeholder={labels.emailPlaceholder}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
 
-          {/* Password Input */}
           <div className="form-group">
             <div className="input-wrapper">
               <img src={lockIcon} alt="Lock Icon" className="input-icon" />
               <input
                 type={passwordVisible ? "text" : "password"}
-                placeholder="Mật khẩu"
+                placeholder={labels.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -149,13 +199,12 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Confirm Password Input */}
           <div className="form-group">
             <div className="input-wrapper">
               <img src={lockIcon} alt="Lock Icon" className="input-icon" />
               <input
                 type={confirmPasswordVisible ? "text" : "password"}
-                placeholder="Xác nhận mật khẩu"
+                placeholder={labels.confirmPasswordPlaceholder}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -168,15 +217,13 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Links */}
           <div className="form-links">
-            <Link to="/login">Quên mật khẩu</Link>
-            <Link to="/login">Đã có tài khoản</Link>
+            <Link to="/login">{labels.forgot}</Link>
+            <Link to="/login">{labels.already}</Link>
           </div>
 
-          {/* Register Button */}
           <button className="register-button" onClick={handleSubmit} disabled={loading}>
-            {loading ? "Đang đăng ký..." : "Đăng ký"}
+            {loading ? labels.processing : labels.button}
           </button>
         </div>
       </div>

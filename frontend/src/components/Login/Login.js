@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { GoogleLogin } from "@react-oauth/google"; // ✅ import GoogleLogin
+import { GoogleLogin } from "@react-oauth/google";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/css/Login.css";
 import googleIcon from "../../assets/images/google.png";
@@ -12,13 +12,55 @@ import lockIcon from "../../assets/images/lock-icon.png";
 import eyeIcon from "../../assets/images/eye-icon.png";
 import eyeSlashIcon from "../../assets/images/eye-slash-icon.png";
 import axios from "axios";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const Login = () => {
+  const { language } = useContext(LanguageContext);
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [labels, setLabels] = useState({
+    welcome: "Chào mừng bạn đến với VNMU",
+    loginTitle: "Đăng nhập",
+    emailPlaceholder: "Nhập e-mail",
+    passwordPlaceholder: "Nhập mật khẩu",
+    forgotPassword: "Quên mật khẩu",
+    register: "Đăng ký",
+    loginBtn: "Đăng nhập",
+    orLoginWith: "Hoặc đăng nhập bằng",
+    loading: "Đang đăng nhập, vui lòng chờ...",
+  });
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          welcome: "Chào mừng bạn đến với VNMU",
+          loginTitle: "Đăng nhập",
+          emailPlaceholder: "Nhập e-mail",
+          passwordPlaceholder: "Nhập mật khẩu",
+          forgotPassword: "Quên mật khẩu",
+          register: "Đăng ký",
+          loginBtn: "Đăng nhập",
+          orLoginWith: "Hoặc đăng nhập bằng",
+          loading: "Đang đăng nhập, vui lòng chờ...",
+        });
+      } else {
+        const result = {};
+        for (const [key, value] of Object.entries(labels)) {
+          result[key] = await translateText(value, language);
+        }
+        setLabels(result);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -44,6 +86,7 @@ const Login = () => {
         toast.success("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId);
+        console.log("Login response:", response.data);
         navigate(response.data.role === "admin" ? "/admin" : "/");
       } else {
         toast.error(response.data.message || "Đăng nhập thất bại.");
@@ -56,11 +99,10 @@ const Login = () => {
   };
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
-    console.log(" Google Token:", credentialResponse.credential); 
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/User/google-login`, {
-        IdToken: credentialResponse.credential,
-      });
+        idToken: credentialResponse.credential,
+       });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
@@ -78,7 +120,7 @@ const Login = () => {
       {loading && (
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
-          <p>Đang đăng nhập, vui lòng chờ...</p>
+          <p>{labels.loading}</p>
         </div>
       )}
 
@@ -86,15 +128,20 @@ const Login = () => {
         <Link to="/">
           <img src="/image/LOGO-white.png" alt="VNMU Logo" className="login-logo" />
         </Link>
-        <h2>Chào mừng bạn đến với VNMU</h2>
+        <h2>{labels.welcome}</h2>
       </div>
 
       <div className="login-form">
-        <h3>Đăng nhập</h3>
+        <h3>{labels.loginTitle}</h3>
         <div className="form-group">
           <div className="input-wrapper">
             <img src={userIcon} alt="User Icon" className="input-icon" />
-            <input type="text" placeholder="Nhập e-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="text"
+              placeholder={labels.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
         </div>
         <div className="form-group">
@@ -102,7 +149,7 @@ const Login = () => {
             <img src={lockIcon} alt="Lock Icon" className="input-icon" />
             <input
               type={passwordVisible ? "text" : "password"}
-              placeholder="Nhập mật khẩu"
+              placeholder={labels.passwordPlaceholder}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -116,21 +163,22 @@ const Login = () => {
         </div>
 
         <div className="form-links">
-          <a href="#forgot-password">Quên mật khẩu</a>
-          <Link to="/register">Đăng ký</Link>
+          <a href="#forgot-password">{labels.forgotPassword}</a>
+          <Link to="/register">{labels.register}</Link>
         </div>
 
-        <button className="login-button" onClick={handleSubmit}>Đăng nhập</button>
+        <button className="login-button" onClick={handleSubmit}>
+          {labels.loginBtn}
+        </button>
 
         <div className="login-social">
-          <span>Hoặc đăng nhập bằng</span>
+          <span>{labels.orLoginWith}</span>
           <div className="social-icons">
             <GoogleLogin
               onSuccess={handleGoogleLoginSuccess}
               onError={() => toast.error("Google Login thất bại.")}
               width="100%"
             />
-            {/* Bạn có thể giữ icon Facebook & Twitter nếu sau này tích hợp */}
           </div>
         </div>
       </div>

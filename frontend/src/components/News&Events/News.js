@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
@@ -6,6 +6,8 @@ import Sidebar from "./Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toSlug from "../../utils/toSlug";
+import { LanguageContext } from "../../context/LanguageContext";
+import  translateText  from "../../utils/translate";
 
 // Styled Components
 const PageContainer = styled.div`
@@ -24,7 +26,7 @@ const MainWrapper = styled.div`
   padding: 20px;
   gap: 20px;
 
-  @media (max-width: 768px) {  
+  @media (max-width: 768px) {
     flex-direction: column;
     padding: 10px;
   }
@@ -50,6 +52,9 @@ const NewsCard = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 16px;
+  min-height: 140px; /* thêm chiều cao tối thiểu cho đều */
+  align-items: flex-start;
+  gap: 16px;
 `;
 
 const NewsImage = styled.img`
@@ -72,6 +77,13 @@ const NewsTitle = styled.h3`
 const NewsDescription = styled.p`
   font-size: 0.9rem;
   color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* chỉ 2 dòng */
+  -webkit-box-orient: vertical;
+  min-height: 40px; /* giữ chiều cao cho đều */
+  line-height: 1.4;
 `;
 
 const NewsMeta = styled.p`
@@ -93,79 +105,44 @@ const ViewMore = styled(Link)`
   }
 `;
 
-// Dữ liệu mẫu
-const newsArticles = {
-  "Tin tức mới nhất": [
-    {
-      id: 1,
-      title: "Khám phá bảo tàng lịch sử",
-      description: "Một hành trình hấp dẫn về quá khứ với những hiện vật độc đáo.",
-      image: "/image/News&Events/new1.jpg",
-      museum: "Bảo tàng Lịch Sử",
-      date: "2025-03-06",
-    },
-    {
-      id: 2,
-      title: "Công nghệ thực tế ảo trong bảo tàng",
-      description: "Trải nghiệm tương tác số hóa mới trong triển lãm.",
-      image: "/image/News&Events/new2.jpg",
-      museum: "Bảo tàng Công Nghệ",
-      date: "2025-03-05",
-    },
-    {
-      id: 3,
-      title: "Triển lãm tranh nghệ thuật cổ điển",
-      description: "Một không gian nghệ thuật độc đáo với các tác phẩm đỉnh cao.",
-      image: "/image/News&Events/new3.jpg",
-      museum: "Bảo tàng Mỹ Thuật",
-      date: "2025-03-04",
-    },
-    {
-      id: 4,
-      title: "Những phát hiện khảo cổ học mới",
-      description: "Bước đột phá trong nghiên cứu lịch sử với các hiện vật mới.",
-      image: "/image/News&Events/new4.jpg",
-      museum: "Bảo tàng Khảo Cổ",
-      date: "2025-03-03",
-    },
-    {
-      id: 5,
-      title: "Ứng dụng AI trong bảo tồn hiện vật",
-      description: "Công nghệ AI giúp bảo tồn hiện vật cổ với độ chính xác cao.",
-      image: "/image/News&Events/new5.jpg",
-      museum: "Bảo tàng Khoa Học",
-      date: "2025-03-02",
-    },
-    {
-      id: 6,
-      title: "Hành trình xuyên không gian và thời gian",
-      description: "Một chuyến du hành độc đáo khám phá lịch sử loài người.",
-      image: "/image/News&Events/new6.jpg",
-      museum: "Bảo tàng Vũ Trụ",
-      date: "2025-03-01",
-    }
-  ],
-};
-
 export default function News() {
-  const navigate = useNavigate()
-  const [news, setNews] = useState([])
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate();
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState("Tin tức mới nhất");
+  const { language } = useContext(LanguageContext);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
-      const resNew = await axios.get(`${process.env.REACT_APP_API_URL}/Event`)
-      setNews(resNew.data)
-      setLoading(false)
-    }
+      setLoading(true);
+      try {
+        const resNew = await axios.get(`${process.env.REACT_APP_API_URL}/Event`);
+        const translatedNews = await Promise.all(
+          resNew.data.map(async (item) => {
+            const [translatedName, translatedDesc, translatedMuseum] = await Promise.all([
+              translateText(item.name, language),
+              translateText(item.description, language),
+              translateText(item.museum.name, language)
+            ]);
+            return {
+              ...item,
+              name: translatedName,
+              description: translatedDesc,
+              museum: { ...item.museum, name: translatedMuseum }
+            };
+          })
+        );
+        setNews(translatedNews);
+      } catch (err) {
+        console.error("Lỗi khi gọi API tin tức:", err);
+      }
+      setLoading(false);
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, [language]);
 
-  if (loading) <p>Loading.....</p>
-  else
+  if (loading) return <p>Loading...</p>;
   return (
     <PageContainer>
       <Header />
@@ -175,7 +152,7 @@ export default function News() {
           <Title>{selectedMenu}</Title>
           {news.map((article) => (
             <NewsCard key={article.id}>
-              <NewsImage src={article.image} alt={article.title} />
+              <NewsImage src={article.image} alt={article.name} />
               <NewsContent>
                 <NewsTitle>{article.name}</NewsTitle>
                 <NewsDescription>{article.description}</NewsDescription>

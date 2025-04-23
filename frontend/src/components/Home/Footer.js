@@ -1,57 +1,91 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "../../assets/css/Footer.css";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const Footer = () => {
-  const [email, setEmail] = useState(""); // Trạng thái lưu email
-  const [message, setMessage] = useState(""); // Trạng thái lưu thông báo
+  const { language } = useContext(LanguageContext);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [labels, setLabels] = useState({
+    title: "Tìm Hiểu Lịch Sử Cùng VNMU",
+    newsletter: "Đăng Ký Nhận Bản Tin",
+    placeholder: "Nhập email tại đây...",
+    send: "Gửi ➤",
+    msgEmpty: "Bạn chưa nhập email",
+    msgSuccess: "Chúng tôi sẽ gửi thông tin mới nhất về các bảo tàng đến cho bạn",
+    social: "Mạng Xã Hội Của VNMU",
+    copyright: "Bản quyền của VNMU",
+  });
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          title: "Tìm Hiểu Lịch Sử Cùng VNMU",
+          newsletter: "Đăng Ký Nhận Bản Tin",
+          placeholder: "Nhập email tại đây...",
+          send: "Gửi ➤",
+          msgEmpty: "Bạn chưa nhập email",
+          msgSuccess: "Chúng tôi sẽ gửi thông tin mới nhất về các bảo tàng đến cho bạn",
+          social: "Mạng Xã Hội Của VNMU",
+          copyright: "Bản quyền của VNMU",
+        });
+      } else {
+        const entries = Object.entries(labels);
+        const result = {};
+        for (const [key, value] of entries) {
+          result[key] = await translateText(value, language);
+        }
+        setLabels(result);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
 
   const handleInputChange = (e) => {
-    setEmail(e.target.value); // Cập nhật trạng thái email
+    setEmail(e.target.value);
   };
 
   const handleSend = () => {
     if (email.trim() === "") {
-      setMessage("Bạn chưa nhập email"); // Hiển thị thông báo nếu email trống
+      setMessage(labels.msgEmpty);
     } else {
-      setMessage(
-        "Chúng tôi sẽ gửi thông tin mới nhất về các bảo tàng đến cho bạn"
-      ); // Hiển thị thông báo nếu có email
-      setEmail(""); // Xóa nội dung trong ô nhập sau khi gửi
+      setMessage(labels.msgSuccess);
+      setEmail("");
     }
   };
 
   return (
     <footer className="footer-container">
-      {/* Section: Contact Info */}
       <div className="footer-section">
-        <h3>Tìm Hiểu Lịch Sử Cùng VNMU</h3>
+        <h3>{labels.title}</h3>
         <p>📍 Quận Ngũ Hành Sơn, Tp Đà Nẵng</p>
         <p>📞 0394392343</p>
         <p>📧 vnmu@gmail.com</p>
         <p>🌐 www.vnmu.com</p>
       </div>
 
-      {/* Section: Newsletter */}
       <div className="footer-section">
-        <h3>Đăng Ký Nhận Bản Tin</h3>
+        <h3>{labels.newsletter}</h3>
         <div className="newsletter">
           <input
             type="email"
-            placeholder="Nhập email tại đây..."
+            placeholder={labels.placeholder}
             className="newsletter-input"
             value={email}
-            onChange={handleInputChange} // Lắng nghe thay đổi trong ô nhập
+            onChange={handleInputChange}
           />
           <button className="newsletter-button" onClick={handleSend}>
-            Gửi ➤
+            {labels.send}
           </button>
         </div>
-        {message && <p className="newsletter-message">{message}</p>} {/* Hiển thị thông báo */}
+        {message && <p className="newsletter-message">{message}</p>}
       </div>
 
-      {/* Section: Social Media */}
       <div className="footer-section">
-        <h3>Mạng Xã Hội Của VNMU</h3>
+        <h3>{labels.social}</h3>
         <ul className="social-media-list">
           <li>
             <a
@@ -59,11 +93,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
-                src="/image/facebook.png"
-                alt="Facebook"
-                className="social-logo"
-              />
+              <img src="/image/facebook.png" alt="Facebook" className="social-logo" />
               Facebook
             </a>
           </li>
@@ -73,11 +103,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
-                src="/image/youtube.png"
-                alt="YouTube"
-                className="social-logo"
-              />
+              <img src="/image/youtube.png" alt="YouTube" className="social-logo" />
               YouTube
             </a>
           </li>
@@ -87,19 +113,16 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
-                src="/image/instagram.png"
-                alt="Instagram"
-                className="social-logo"
-              />
+              <img src="/image/instagram.png" alt="Instagram" className="social-logo" />
               Instagram
             </a>
           </li>
         </ul>
       </div>
 
-      {/* Section: Copyright */}
-      <div className="footer-copyright">Bản quyền của VNMU</div>
+      <div className="footer-copyright">
+        {labels.copyright}
+      </div>
     </footer>
   );
 };

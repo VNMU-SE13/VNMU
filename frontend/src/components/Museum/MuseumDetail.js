@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Header from "../Home/Header";
@@ -6,22 +6,13 @@ import Footer from "../Home/Footer";
 import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
 import axios from "axios";
 import toSlug from "../../utils/toSlug";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
-// Keyframes Animation
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
-
-const fadeInUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const fadeInDown = keyframes`
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
+// Animations
+const fadeIn = keyframes`from { opacity: 0; } to { opacity: 1; }`;
+const fadeInUp = keyframes`from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); }`;
+const fadeInDown = keyframes`from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); }`;
 
 // Styled Components
 const MuseumDetailContainer = styled.div`
@@ -50,6 +41,47 @@ const MuseumInfo = styled.div`
   gap: 2rem;
 `;
 
+const MuseumTextWithMap = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const TextColumn = styled.div`
+  flex: 1;
+  min-width: 250px;
+`;
+
+const MapBox = styled.div`
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+  }
+`;
+
+const MuseumImage = styled.div`
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  animation: ${fadeInUp} 1.5s ease-in-out;
+
+  img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const MuseumText = styled.div`
   flex: 1;
   background-color: #fff;
@@ -76,21 +108,6 @@ const Text = styled.p`
   animation: ${fadeInUp} 1.5s ease-in-out;
 `;
 
-const MuseumImage = styled.div`
-  flex: 1;
-  max-width: 400px;
-  display: flex;
-  justify-content: center;
-  animation: ${fadeInUp} 1.5s ease-in-out;
-
-  img {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-`;
-
 const Breadcrumb = styled.div`
   font-size: 14px;
   margin-bottom: 20px;
@@ -112,109 +129,88 @@ const Breadcrumb = styled.div`
   }
 `;
 
-const ArtifactsSection = styled.div`
-  margin-top: 40px;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const ArtifactsTitle = styled.h2`
-  font-size: 24px;
-  color: #c8102e;
-  margin-bottom: 20px;
-`;
-
-const ArtifactsSlider = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const ArtifactItem = styled.div`
-  text-align: center;
-  flex: 1;
-
-  img {
-    width: 150px;
-    height: 150px;
-    border-radius: 10px;
-    object-fit: cover;
-    margin: 0 auto;
-    display: block;
-  }
-
-  p {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #333;
-  }
-`;
-
-const ArrowButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #c8102e;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #a00c1d;
-  }
-`;
-
-
-const MuseumTextWithMap = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-`;
-
-const MapBox = styled.div`
-  width: 300px;
-  height: 300px;
-  flex-shrink: 0;
-
-  iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 8px;
-  }
-`;
-
-const TextColumn = styled.div`
-  flex: 1;
-  min-width: 250px;
-`;
-
-
 const MuseumDetail = () => {
-
-  const [museums, setMuseums] = useState([])
+  const { language } = useContext(LanguageContext);
+  const { slug } = useParams();
+  const [museums, setMuseums] = useState([]);
+  const [translatedMuseum, setTranslatedMuseum] = useState(null);
+  const [labels, setLabels] = useState({
+    home: "Trang chủ",
+    all: "Các bảo tàng",
+    notFound: "Bảo tàng không tồn tại.",
+    open: "Giờ mở cửa",
+    closed: "Đóng cửa",
+    address: "Địa chỉ",
+    description: "Mô tả chi tiết",
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchMuseums = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`)
-        setMuseums(response.data)
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`);
+        setMuseums(response.data);
       } catch (err) {
-        console.error('Lỗi khi gọi API:', err)
+        console.error("Lỗi khi gọi API:", err);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchMuseums();
+  }, []);
 
-  const { slug } = useParams();
   const museum = museums.find((m) => toSlug(m.name) === slug);
 
-  if (!museum) {
-    return <p>Bảo tàng không tồn tại.</p>;
+  useEffect(() => {
+    const translateMuseum = async () => {
+      if (!museum || language === "vi") {
+        setTranslatedMuseum(museum);
+        return;
+      }
+
+      const translated = {
+        ...museum,
+        name: await translateText(museum.name, language),
+        description: await translateText(museum.description, language),
+        location: await translateText(museum.location, language),
+        hours: await translateText(museum.hours, language),
+        closed: await translateText(museum.closed, language),
+      };
+
+      setTranslatedMuseum(translated);
+    };
+
+    translateMuseum();
+  }, [museum, language]);
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          home: "Trang chủ",
+          all: "Các bảo tàng",
+          notFound: "Bảo tàng không tồn tại.",
+          open: "Giờ mở cửa",
+          closed: "Đóng cửa",
+          address: "Địa chỉ",
+          description: "Mô tả chi tiết",
+        });
+      } else {
+        setLabels({
+          home: await translateText("Trang chủ", language),
+          all: await translateText("Các bảo tàng", language),
+          notFound: await translateText("Bảo tàng không tồn tại.", language),
+          open: await translateText("Giờ mở cửa", language),
+          closed: await translateText("Đóng cửa", language),
+          address: await translateText("Địa chỉ", language),
+          description: await translateText("Mô tả chi tiết", language),
+        });
+      }
+    };
+
+    translateLabels();
+  }, [language]);
+
+  if (!translatedMuseum) {
+    return <p>{labels.notFound}</p>;
   }
 
   return (
@@ -223,32 +219,32 @@ const MuseumDetail = () => {
 
       <MuseumContent>
         <Breadcrumb>
-          <Link to="/">Trang chủ</Link> / <Link to="/all-museums">Các bảo tàng</Link> /{" "}
-          <span>{museum.name}</span>
+          <Link to="/">{labels.home}</Link> / <Link to="/all-museums">{labels.all}</Link> /{" "}
+          <span>{translatedMuseum.name}</span>
         </Breadcrumb>
 
-        <MuseumTitle>{museum.name}</MuseumTitle>
+        <MuseumTitle>{translatedMuseum.name}</MuseumTitle>
 
         <MuseumInfo>
           <MuseumTextWithMap>
             <TextColumn>
-              <SectionTitle>Giờ mở cửa</SectionTitle>
-              <Text>{museum.hours}</Text>
+              <SectionTitle>{labels.open}</SectionTitle>
+              <Text>{translatedMuseum.hours}</Text>
               <Text>
-                <strong>Đóng cửa:</strong> {museum.closed}
+                <strong>{labels.closed}:</strong> {translatedMuseum.closed}
               </Text>
 
-              <SectionTitle>Địa chỉ</SectionTitle>
-              <Text>{museum.location}</Text>
+              <SectionTitle>{labels.address}</SectionTitle>
+              <Text>{translatedMuseum.location}</Text>
 
-              <SectionTitle>Mô tả chi tiết</SectionTitle>
-              <Text>{museum.description}</Text>
+              <SectionTitle>{labels.description}</SectionTitle>
+              <Text>{translatedMuseum.description}</Text>
             </TextColumn>
 
             <MapBox>
               <iframe
                 title="Google Map"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(museum.location)}&output=embed`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(translatedMuseum.location)}&output=embed`}
                 loading="lazy"
                 allowFullScreen
               ></iframe>
@@ -256,14 +252,11 @@ const MuseumDetail = () => {
           </MuseumTextWithMap>
 
           <MuseumImage>
-            <img src={museum.image} alt={museum.name} />
+            <img src={translatedMuseum.image} alt={translatedMuseum.name} />
           </MuseumImage>
         </MuseumInfo>
 
-        {/* Sử dụng ArtifactsCarousel thay vì slider cũ */}
-
-        <ArtifactsCarousel artifacts={museum.artifacts} />
-
+        <ArtifactsCarousel artifacts={translatedMuseum.artifacts} />
       </MuseumContent>
 
       <Footer />

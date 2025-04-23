@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import Header from "../Home/Header";
@@ -10,39 +10,89 @@ import axios from "axios";
 import "../../assets/css/ArtifactDetail.css";
 import toSlug from "../../utils/toSlug";
 import GLBViewer from "../GLBViewer";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const ArtifactDetail = () => {
   const { id } = useParams();
+  const { language } = useContext(LanguageContext);
+
   const [artifact, setArtifact] = useState(null);
   const [qrUrl, setQrUrl] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [isPodcastModalOpen, setIsPodcastModalOpen] = useState(false);
   const [allArtifacts, setAllArtifacts] = useState([]);
-  const [artifactImages, setArtifactImages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [museum, setMuseum] = useState()
+  const [artifactImages, setArtifactImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [museum, setMuseum] = useState(null);
   const itemsPerPage = 4;
+
+  const [translatedLabels, setTranslatedLabels] = useState({
+    home: "Trang chủ",
+    allMuseums: "Các bảo tàng",
+    artifact: "Hiện vật",
+    discovered: "Ngày phát hiện",
+    size: "Kích thước",
+    weight: "Trọng lượng",
+    material: "Chất liệu",
+    function: "Chức năng",
+    condition: "Tình trạng",
+    origin: "Nguồn gốc",
+    scanQR: "Quét mã QR để mở mô hình 3D",
+    qrBtn: "Mã QR",
+    rating: "đánh giá",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact/${id}`)
-      setArtifact(response.data)
-      setArtifactImages(response.data.images)
-      const resMuseums = await axios.get(`${process.env.REACT_APP_API_URL}/Museum/${response.data.museumId}`)
-      setMuseum(resMuseums.data)
-      setLoading(false)
-    }
+      setLoading(true);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact/${id}`);
+      setArtifact(response.data);
+      setArtifactImages(response.data.images);
 
-    setQrUrl(`${window.location.origin}/image/Tank_Platoon_0411141224_texture.glb`);
+      const resMuseums = await axios.get(`${process.env.REACT_APP_API_URL}/Museum/${response.data.museumId}`);
+      setMuseum(resMuseums.data);
 
-    fetchData()
+      const artifactsRes = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact`);
+      setAllArtifacts(artifactsRes.data);
 
-    // axios.get(`${process.env.REACT_APP_API_URL}/Artifact`)
-    //   .then(res => setAllArtifacts(res.data))
-    //   .catch(err => console.error('Lỗi khi lấy danh sách hiện vật:', err));
-  }, []);
+      setQrUrl(`${window.location.origin}/image/Tuong_0417115605_texture.glb`);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setTranslatedLabels({
+          home: "Trang chủ",
+          allMuseums: "Các bảo tàng",
+          artifact: "Hiện vật",
+          discovered: "Ngày phát hiện",
+          size: "Kích thước",
+          weight: "Trọng lượng",
+          material: "Chất liệu",
+          function: "Chức năng",
+          condition: "Tình trạng",
+          origin: "Nguồn gốc",
+          scanQR: "Quét mã QR để mở mô hình 3D",
+          qrBtn: "Mã QR",
+          rating: "đánh giá",
+        });
+      } else {
+        const entries = Object.entries(translatedLabels);
+        const result = {};
+        for (const [key, value] of entries) {
+          result[key] = await translateText(value, language);
+        }
+        setTranslatedLabels(result);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
 
   const handleThumbnailClick = (index) => {
     setCurrentImageIndex(index);
@@ -60,19 +110,19 @@ const ArtifactDetail = () => {
     );
   };
 
-  const startIndex = currentImageIndex;
+  if (loading || !artifact || !museum) return <p>Loading...</p>;
 
-  if(loading) return <p>Loading...</p>
-  else
   return (
     <div className="artifact-detail">
       <Header />
 
       <div className="breadcrumb">
-        <a href="/">Trang chủ</a> /
-        <a href="/all-museums">Các bảo tàng</a>/
-        <a href={`/museums/${toSlug(museum.name)}`} className="museum-link">{museum.name}</a> /
-        <span className="current-artifact">{artifact.artifactName}</span>
+        <a href="/">{translatedLabels.home}</a> /
+        <a href="/all-museums">{translatedLabels.allMuseums}</a> /
+        <a href={`/museums/${toSlug(museum.name)}`} className="museum-link">
+          {museum.name}
+        </a>{" "}
+        / <span className="current-artifact">{artifact.artifactName}</span>
       </div>
 
       <div className="artifact-content">
@@ -81,7 +131,9 @@ const ArtifactDetail = () => {
             <img src={artifact.image} alt={artifact.name} />
 
             <div className="artifact-small-gallery">
-              <button className="prev-set" onClick={handlePrevSet}>{"<"}</button>
+              <button className="prev-set" onClick={handlePrevSet}>
+                {"<"}
+              </button>
               <div className="small-gallery">
                 {artifactImages.map((image, index) => (
                   <img
@@ -89,74 +141,76 @@ const ArtifactDetail = () => {
                     src={image}
                     alt={`Chi tiết ${index + 1}`}
                     className="small-gallery-image"
-                    onClick={() => handleThumbnailClick(startIndex + index)}
+                    onClick={() => handleThumbnailClick(index)}
                   />
                 ))}
               </div>
-              <button className="next-set" onClick={handleNextSet}>{">"}</button>
+              <button className="next-set" onClick={handleNextSet}>
+                {">"}
+              </button>
             </div>
           </div>
 
           <div className="artifact-info">
-            <h2>Hiện vật</h2>
+            <h2>{translatedLabels.artifact}</h2>
             <div className="artifact-title">
               <span className="tag">🔥</span>
               <h1>{artifact.name}</h1>
             </div>
 
             <div className="artifact-rating">
-              <span className="votes">{artifact.votes} ⭐⭐⭐⭐★</span>
-
+              <span className="votes">
+                {artifact.votes} ⭐⭐⭐⭐★ {translatedLabels.rating}
+              </span>
             </div>
 
             <div className="artifact-actions">
-              <button className="qr-button" onClick={() => setIsQrModalOpen(true)}>Mã QR</button>
+              <button className="qr-button" onClick={() => setIsQrModalOpen(true)}>
+                {translatedLabels.qrBtn}
+              </button>
             </div>
 
             <table className="artifact-table">
               <tbody>
                 <tr>
-                  <td>Ngày phát hiện</td>
+                  <td>{translatedLabels.discovered}</td>
                   <td>{artifact.dateDiscovered}</td>
                 </tr>
                 <tr>
-                  <td>Kích thước</td>
+                  <td>{translatedLabels.size}</td>
                   <td>{artifact.dimenson}</td>
                 </tr>
                 <tr>
-                  <td>Trọng lượng</td>
+                  <td>{translatedLabels.weight}</td>
                   <td>{artifact.weight}</td>
                 </tr>
                 <tr>
-                  <td>Chất liệu</td>
+                  <td>{translatedLabels.material}</td>
                   <td>{artifact.material}</td>
                 </tr>
                 <tr>
-                  <td>Chức năng</td>
+                  <td>{translatedLabels.function}</td>
                   <td>{artifact.function}</td>
                 </tr>
                 <tr>
-                  <td>Tình trạng</td>
+                  <td>{translatedLabels.condition}</td>
                   <td>{artifact.condition}</td>
-                </tr><tr>
-                  <td>Nguồn gốc</td>
+                </tr>
+                <tr>
+                  <td>{translatedLabels.origin}</td>
                   <td>{artifact.origin}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-        
-        <ArtifactMuseumInfo
-          museum={museum}
-        />
+
+        <ArtifactMuseumInfo museum={museum} />
       </div>
 
       <div className="artifact-info-container">
-
         <ArtifactDescription
-          description={artifact.description}
-          details={artifact.details}
+          artifact={artifact}
         />
       </div>
 
@@ -166,15 +220,24 @@ const ArtifactDetail = () => {
 
       {isQrModalOpen && (
   <div className="qr-modal">
-    <div className="qr-modal-content" style={{ padding: "20px" }}>
-      <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>×</span>
-      <h3>Quét mã QR để mở mô hình 3D</h3>
-      <QRCode value={qrUrl} size={240} />
+    <div className="qr-modal-content" style={{ padding: "20px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center", justifyContent: "center" }}>
+      <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>
+        ×
+      </span>
+      
+      {/* Bên trái: QRCode */}
+      <div style={{ textAlign: "center" }}>
+        <h3 style={{ marginBottom: "10px" }}>{translatedLabels.scanQR}</h3>
+        <QRCode value={qrUrl} size={180} />
+      </div>
+
+      {/* Bên phải: GLBViewer */}
+      <div style={{ width: "300px", height: "300px", background: "#f8f8f8", borderRadius: "8px", overflow: "hidden" }}>
+        <GLBViewer url={qrUrl} />
+      </div>
     </div>
   </div>
 )}
-
-
 
       <Footer />
     </div>

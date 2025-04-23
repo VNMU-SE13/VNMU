@@ -1,5 +1,7 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 // Styled Components
 const ArtifactContainer = styled.div`
@@ -68,49 +70,58 @@ const ValueCell = styled(TableCell)`
   color: #ff5722;
 `;
 
-const WikiLink = styled.a`
-  color: #3366cc;
-  text-decoration: none;
-  font-weight: bold;
-
-  &:hover {
-    text-decoration: underline;
-    color: #2255aa;
-  }
-`;
-
-const ArtifactDescription = () => {
+const ArtifactDescription = ({artifact}) => {
   const synthRef = useRef(window.speechSynthesis);
+  const { language } = useContext(LanguageContext);
 
-  const artifactInfo = {
-    name: "Xe tăng T-54",
-    descriptionTexts: [
-      "Xe tăng T-54 là một trong những biểu tượng lịch sử quan trọng gắn liền với những sự kiện hào hùng của dân tộc Việt Nam trong cuộc đấu tranh giành độc lập và thống nhất đất nước. Đây là loại xe tăng chiến đấu chủ lực do Liên Xô sản xuất, được Quân đội Nhân dân Việt Nam sử dụng rộng rãi trong thời kỳ kháng chiến chống Mỹ, đặc biệt là trong Chiến dịch Hồ Chí Minh lịch sử năm 1975.",
-      "Một trong những hình ảnh mang tính biểu tượng nhất của T-54 là khoảnh khắc xe tăng mang số hiệu 390 húc đổ cổng chính Dinh Độc Lập vào trưa ngày 30 tháng 4 năm 1975, đánh dấu sự sụp đổ của chính quyền Việt Nam Cộng hòa và kết thúc cuộc chiến tranh kéo dài hơn hai thập kỷ.",
-      "Những chiếc T-54 đã tham gia vào nhiều trận đánh quan trọng, từ Chiến dịch Đường 9 – Nam Lào năm 1971 đến Chiến dịch Quảng Trị năm 1972. Xe tăng này không chỉ là phương tiện chiến đấu mà còn là biểu tượng của ý chí và lòng dũng cảm của những người lính xe tăng Việt Nam, như Anh hùng Lực lượng Vũ trang Nhân dân Bùi Quang Thận – người cắm lá cờ chiến thắng trên nóc Dinh Độc Lập ngày 30/4/1975.",
-      "Ngày nay, những chiếc xe tăng T-54 vẫn được trưng bày tại các bảo tàng và di tích lịch sử trên cả nước, nhắc nhở thế hệ sau về những chiến công oanh liệt và tinh thần chiến đấu quật cường của quân và dân Việt Nam trong sự nghiệp đấu tranh bảo vệ Tổ quốc."
-    ],
-    details: [
-      { label: "Năm sản xuất", value: "1950" },
-      { label: "Xuất xứ", value: "Liên Xô" },
-      { label: "Loại xe", value: "Xe tăng chiến đấu" },
-      { label: "Ngày nhập về bảo tàng", value: "16-03-2005" },
-      { label: "Lần đầu tiên sử dụng", value: "1968" },
-    ],
-  };
+  const [translatedName, setTranslatedName] = useState(artifact.artifactName);
+  const [translatedDesc, setTranslatedDesc] = useState(artifact.description);
+  const [translatedDetails, setTranslatedDetails] = useState([ { label: "Năm sản xuất", value: artifact.dateDiscovered },
+    { label: "Chiều dài", value: artifact.dimenson },
+    { label: "Cân nặng", value: artifact.weight },
+    { label: "Vật liệu", value: artifact.material },
+    { label: "Tình trạng", value: artifact.condition }]);
+
+  useEffect(() => {
+    const translateArtifact = async () => {
+      if (language === "vi") {
+        setTranslatedName(artifact.artifactName);
+        setTranslatedDesc(artifact.description);
+        setTranslatedDetails([ { label: "Năm sản xuất", value: artifact.dateDiscovered },
+          { label: "Chiều dài", value: artifact.dimenson },
+          { label: "Cân nặng", value: artifact.weight },
+          { label: "Vật liệu", value: artifact.material },
+          { label: "Tình trạng", value: artifact.condition }]);
+      } else {
+        const name = await translateText(artifact.artifactName, language);
+        const descs = await translateText(artifact.description, language)
+        const details = await Promise.all(
+          translatedDetails.map(async (item) => {
+            const label = await translateText(item.label, language);
+            const value = await translateText(item.value, language);
+            return { label, value };
+          })
+        );
+
+        setTranslatedName(name);
+        setTranslatedDesc(descs);
+        setTranslatedDetails(details);
+      }
+    };
+
+    translateArtifact();
+  }, [language]);
 
   const speakDescription = () => {
     const synth = synthRef.current;
 
-    // Nếu đang nói thì dừng lại
     if (synth.speaking) {
       synth.cancel();
       return;
     }
 
-    // Tạo nội dung cần nói
     const utterance = new SpeechSynthesisUtterance(
-      artifactInfo.descriptionTexts.join(" ")
+      artifact.description
     );
     utterance.lang = "vi-VN";
     utterance.rate = 1;
@@ -120,17 +131,15 @@ const ArtifactDescription = () => {
   return (
     <ArtifactContainer>
       <TitleRow>
-        <Title>{artifactInfo.name}</Title>
+        <Title>{artifact.artifactName}</Title>
         <PodcastButton onClick={speakDescription}>Podcast</PodcastButton>
       </TitleRow>
 
-      {artifactInfo.descriptionTexts.map((text, index) => (
-        <DescriptionText key={index}>{text}</DescriptionText>
-      ))}
+        <DescriptionText>{translatedDesc}</DescriptionText>
 
       <DetailsTable>
         <tbody>
-          {artifactInfo.details.map((detail, index) => (
+          {translatedDetails.map((detail, index) => (
             <tr key={index}>
               <LabelCell>{detail.label}</LabelCell>
               <ValueCell>{detail.value}</ValueCell>

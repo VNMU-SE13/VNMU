@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import Header from "./components/Home/Header"; 
+import Header from "./components/Home/Header";
 import Museum from "./components/Home/Museum";
 import NewsEvents from "./components/Home/NewsEvents";
-import Quiz from "./components/Home/Quiz";        // 👈 import quiz riêng
-import Store from "./components/Home/Store";      // 👈 import store riêng
+import Quiz from "./components/Home/Quiz";
+import Store from "./components/Home/Store";
 import Footer from "./components/Home/Footer";
 import "./assets/css/HomePage.css";
+import PR from "./components/Home/PR"
+import AllArtifact from "./components/Home/AllArtifact";
 
 const HomePage = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -71,11 +73,16 @@ const HomePage = () => {
         <Quiz />
       </section>
 
+      <section className="PR-container" id="pr">
+        <PR />
+      </section>
       {/* ✅ NEWS ở giữa */}
       <section className="news-events-container" id="news">
         <NewsEvents />
       </section>
-
+      <section className="artifact-container" id="artifacts">
+        <AllArtifact />
+      </section>
       {/* ✅ STORE nằm dưới */}
       <section className="store-container" id="store">
         <Store />

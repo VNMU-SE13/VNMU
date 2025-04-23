@@ -3,7 +3,9 @@ import styled from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import Sidebar from "./Sidebar";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 // Hàm tạo slug từ tiêu đề
 function generateSlug(text) {
@@ -67,11 +69,6 @@ const Content = styled.div`
   flex: 1;
 `;
 
-const Title = styled.h2`
-  font-size: 1.6rem;
-  margin-bottom: 10px;
-`;
-
 const SearchBox = styled.div`
   background: #fff;
   padding: 12px 20px;
@@ -132,10 +129,34 @@ const ArticleImage = styled.img`
 export default function HashtagPage() {
   const { tagName } = useParams();
   const [selectedMenu, setSelectedMenu] = useState("Tin tức mới nhất");
+  const [translatedArticles, setTranslatedArticles] = useState([]);
+  const { language } = useContext(LanguageContext);
 
   const filteredArticles = allArticles.filter(article =>
     article.tags.includes(tagName)
   );
+
+  useEffect(() => {
+    const translateArticles = async () => {
+      const results = await Promise.all(
+        filteredArticles.map(async (article) => {
+          const [title, desc, museum] = await Promise.all([
+            translateText(article.title, language),
+            translateText(article.description, language),
+            translateText(article.museum, language),
+          ]);
+          return { ...article, title, description: desc, museum };
+        })
+      );
+      setTranslatedArticles(results);
+    };
+
+    if (language === "vi") {
+      setTranslatedArticles(filteredArticles);
+    } else {
+      translateArticles();
+    }
+  }, [language, tagName]);
 
   return (
     <PageContainer>
@@ -147,8 +168,8 @@ export default function HashtagPage() {
             Kết quả tìm kiếm cho hashtag: <span style={{ color: "#007bff" }}>#{tagName}</span>
           </SearchBox>
 
-          {filteredArticles.length > 0 ? (
-            filteredArticles.map(article => (
+          {translatedArticles.length > 0 ? (
+            translatedArticles.map(article => (
               <ArticleCard key={article.id}>
                 <ArticleTitle to={`/news/${generateSlug(article.title)}`}>
                   {article.title}

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
-import Header from "../Home/Header"; 
-import Footer from "../Home/Footer"; 
+import Header from "../Home/Header";
+import Footer from "../Home/Footer";
 import axios from "axios";
 import toSlug from "../../utils/toSlug";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 // Styled Components
 const AllMuseumContainer = styled.div`
@@ -80,20 +81,48 @@ const MuseumInfo = styled.div`
 
 const AllMuseum = () => {
   const navigate = useNavigate();
-  const [museums, setMuseums] = useState([])
+  const { language } = useContext(LanguageContext);
+
+  const [museums, setMuseums] = useState([]);
+  const [translatedMuseums, setTranslatedMuseums] = useState([]);
+  const [pageTitle, setPageTitle] = useState("Các bảo tàng ở Đà Nẵng");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`)
-        setMuseums(response.data)
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`);
+        setMuseums(response.data);
       } catch (err) {
-        console.error('Lỗi khi gọi API:', err)
+        console.error("Lỗi khi gọi API:", err);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const translateMuseums = async () => {
+      if (language === "vi") {
+        setTranslatedMuseums(museums);
+        setPageTitle("Các bảo tàng ở Đà Nẵng");
+      } else {
+        const tTitle = await translateText("Các bảo tàng ở Đà Nẵng", language);
+        setPageTitle(tTitle);
+
+        const translated = await Promise.all(
+          museums.map(async (museum) => {
+            const name = await translateText(museum.name, language);
+            const desc = await translateText(museum.description, language);
+            return { ...museum, name, description: desc };
+          })
+        );
+
+        setTranslatedMuseums(translated);
+      }
+    };
+
+    translateMuseums();
+  }, [language, museums]);
 
   const handleNavigateToDetail = (slug) => {
     navigate(`/museums/${slug}`);
@@ -101,17 +130,13 @@ const AllMuseum = () => {
 
   return (
     <AllMuseumContainer>
-      {/* Header */}
       <Header />
-
-      {/* Title */}
       <PageTitle>
-        <h1>Các bảo tàng ở Đà Nẵng</h1>
+        <h1>{pageTitle}</h1>
       </PageTitle>
 
-      {/* Main Content */}
       <MuseumsGrid>
-        {museums.map((museum) => (
+        {translatedMuseums.map((museum) => (
           <MuseumItem key={museum.id}>
             <MuseumImage src={museum.image} alt={museum.name} />
             <MuseumInfo>
@@ -124,7 +149,6 @@ const AllMuseum = () => {
         ))}
       </MuseumsGrid>
 
-      {/* Footer */}
       <Footer />
     </AllMuseumContainer>
   );

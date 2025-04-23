@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import BlogHeader from "./BlogHeader";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
+import { useNavigate } from "react-router-dom";
+import Header from "../Home/Header";
 
+// Styled Components
 const Wrapper = styled.div`
   min-height: 100vh;
   background-color: #fdfaf6;
@@ -114,22 +119,65 @@ const Tag = styled.a`
   }
 `;
 
+// Main Component
 const BlogLandingPage = () => {
+
+  const navigate = useNavigate()
+
+  const { language } = useContext(LanguageContext);
+  const [translatedText, setTranslatedText] = useState({
+    heading: "Lịch sử không ngủ quên",
+    subtext: "Mỗi trang là một thời đại - Nơi để đọc, viết và mở rộng hiểu biết của bạn",
+    tagAncient: "Cổ đại",
+    tagMedieval: "Trung đại",
+    tagEarlyModern: "Cận đại",
+    tagModern: "Hiện đại",
+    startButton: "Bắt đầu đọc"
+  });
+
+  useEffect(() => {
+    const translateAll = async () => {
+      if (language === "vi") {
+        setTranslatedText({
+          heading: "Lịch sử không ngủ quên",
+          subtext: "Mỗi trang là một thời đại - Nơi để đọc, viết và mở rộng hiểu biết của bạn",
+          tagAncient: "Cổ đại",
+          tagMedieval: "Trung đại",
+          tagEarlyModern: "Cận đại",
+          tagModern: "Hiện đại",
+          startButton: "Bắt đầu đọc"
+        });
+      } else {
+        setTranslatedText({
+          heading: await translateText("Lịch sử không ngủ quên", language),
+          subtext: await translateText("Mỗi trang là một thời đại - Nơi để đọc, viết và mở rộng hiểu biết của bạn", language),
+          tagAncient: await translateText("Cổ đại", language),
+          tagMedieval: await translateText("Trung đại", language),
+          tagEarlyModern: await translateText("Cận đại", language),
+          tagModern: await translateText("Hiện đại", language),
+          startButton: await translateText("Bắt đầu đọc", language)
+        });
+      }
+    };
+
+    translateAll();
+  }, [language]);
+
   return (
     <>
-      <BlogHeader />
+      <Header />
       <Wrapper>
         <Content>
           <TextSection>
-            <Heading>Lịch sử không ngủ quên</Heading>
-            <Subtext>Mỗi trang là một thời đại - Nơi để đọc, viết và mở rộng hiểu biết của bạn</Subtext>
+            <Heading>{translatedText.heading}</Heading>
+            <Subtext>{translatedText.subtext}</Subtext>
             <TagContainer>
-              <Tag href="/blog/ancient">🏯 Cổ đại</Tag>
-              <Tag href="/blog/medieval">🛡 Trung đại</Tag>
-              <Tag href="/blog/early-modern">📜 Cận đại</Tag>
-              <Tag href="/blog/modern">🇻🇳 Hiện đại</Tag>
+              <Tag href="/blog/ancient">🏯 {translatedText.tagAncient}</Tag>
+              <Tag href="/blog/medieval">🛡 {translatedText.tagMedieval}</Tag>
+              <Tag href="/blog/early-modern">📜 {translatedText.tagEarlyModern}</Tag>
+              <Tag href="/blog/modern">🇻🇳 {translatedText.tagModern}</Tag>
             </TagContainer>
-            <StartButton>Bắt đầu đọc</StartButton>
+            <StartButton onClick={() => navigate('/listblog')}>{translatedText.startButton}</StartButton>
           </TextSection>
           <Illustration src="/image/blog-hero.png" alt="Blog Illustration" />
         </Content>

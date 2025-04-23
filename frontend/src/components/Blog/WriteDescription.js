@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styled, { keyframes } from "styled-components";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import BlogHeader from "./BlogHeader";
 import Swal from 'sweetalert2';
 import axios from "axios";
+import Loading from "../common/Loading";
 
 Quill.register("modules/imageResize", ImageResize);
 const fadeIn = keyframes`
@@ -309,6 +310,26 @@ const PreviewImage = styled.img`
   object-fit: cover;
 `;
 
+const BackButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #f28c38;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: #e0782e;
+    transform: scale(1.05);
+  }
+`;
+
 
 
 
@@ -325,6 +346,7 @@ const WriteDescription = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const quillRef = useRef(null);
 
   const [loading, setLoading] = useState(false)
 
@@ -493,10 +515,15 @@ const WriteDescription = () => {
     setSelectedImage(file);
     setImagePreview(URL.createObjectURL(file));
   };
-  
-  
 
-  if (loading) return <p>Loading...</p>
+  // handle change content
+  const handleChangeContent = (e) => {   
+    const editor = quillRef.current?.getEditor();
+    const html = editor?.root.innerHTML; // HTML content
+    setContent(html);
+  };
+  
+  if (loading) return <Loading />
   else
   return (
     <>
@@ -526,9 +553,10 @@ const WriteDescription = () => {
             <EditorTitle>Viết mô tả nội dung</EditorTitle>
             <EditorBox>
               <ReactQuill
+                ref={quillRef}
                 theme="snow"
                 value={content}
-                onChange={setContent}
+                onChange={handleChangeContent}
                 placeholder="Bắt đầu viết nội dung..."
                 modules={modules}
               />
@@ -575,6 +603,7 @@ const WriteDescription = () => {
           </EditorContainer>
       
           <PostButton onClick={handlePost}>Đăng bài viết</PostButton>
+          <BackButton onClick={() => window.history.back()}>⬅ Quay lại</BackButton>
         </>
       )}
     </>

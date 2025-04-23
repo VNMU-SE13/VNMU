@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,21 +8,63 @@ import lockIcon from "../../assets/images/lock-icon.png";
 import eyeIcon from "../../assets/images/eye-icon.png";
 import eyeSlashIcon from "../../assets/images/eye-slash-icon.png";
 import axios from "axios";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const Login = () => {
+  const { language } = useContext(LanguageContext);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const [labels, setLabels] = useState({
+    welcome: "Chào mừng bạn đến với VNMU",
+    loginTitle: "Đăng nhập",
+    emailPlaceholder: "Nhập e-mail",
+    passwordPlaceholder: "Nhập mật khẩu",
+    forgotPassword: "Quên mật khẩu",
+    register: "Đăng ký",
+    loginBtn: "Đăng nhập",
+    loading: "Đang đăng nhập, vui lòng chờ...",
+    loginWith: "Đăng nhập bằng",
+  });
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          welcome: "Chào mừng bạn đến với VNMU",
+          loginTitle: "Đăng nhập",
+          emailPlaceholder: "Nhập e-mail",
+          passwordPlaceholder: "Nhập mật khẩu",
+          forgotPassword: "Quên mật khẩu",
+          register: "Đăng ký",
+          loginBtn: "Đăng nhập",
+          loading: "Đang đăng nhập, vui lòng chờ...",
+          loginWith: "Đăng nhập bằng",
+        });
+      } else {
+        const result = {};
+        for (const [key, value] of Object.entries(labels)) {
+          result[key] = await translateText(value, language);
+        }
+        setLabels(result);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();    
+    e.preventDefault();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email) {
       toast.error("Vui lòng nhập email.");
       return;
@@ -37,8 +79,8 @@ const Login = () => {
     }
 
     const loginData = {
-      email: email,
-      password: password,
+      email,
+      password,
     };
 
     setLoading(true);
@@ -70,38 +112,55 @@ const Login = () => {
       {loading && (
         <div className="loading-overlay">
           <div className="loading-spinner"></div>
-          <p>Đang đăng nhập, vui lòng chờ...</p>
+          <p>{labels.loading}</p>
         </div>
       )}
       <div className="login-header">
         <Link to="/">
           <img src="/image/LOGO-white.png" alt="VNMU Logo" className="login-logo" />
         </Link>
-        <h2>Chào mừng bạn đến với VNMU</h2>
+        <h2>{labels.welcome}</h2>
       </div>
       <div className="login-form">
-        <h3>Đăng nhập</h3>
+        <h3>{labels.loginTitle}</h3>
         <div className="form-group">
           <div className="input-wrapper">
             <img src={userIcon} alt="User Icon" className="input-icon" />
-            <input type="text" placeholder="Nhập e-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="text"
+              placeholder={labels.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
         </div>
         <div className="form-group">
           <div className="input-wrapper">
             <img src={lockIcon} alt="Lock Icon" className="input-icon" />
-            <input type={passwordVisible ? "text" : "password"} placeholder="Nhập mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <img src={passwordVisible ? eyeIcon : eyeSlashIcon} alt={passwordVisible ? "Hide Password" : "Show Password"} className="password-icon" onClick={togglePasswordVisibility} />
+            <input
+              type={passwordVisible ? "text" : "password"}
+              placeholder={labels.passwordPlaceholder}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <img
+              src={passwordVisible ? eyeIcon : eyeSlashIcon}
+              alt={passwordVisible ? "Hide Password" : "Show Password"}
+              className="password-icon"
+              onClick={togglePasswordVisibility}
+            />
           </div>
         </div>
         <div className="form-links">
-          <a href="#forgot-password">Quên mật khẩu</a>
-          <Link to="/register">Đăng ký</Link>
+          <a href="#forgot-password">{labels.forgotPassword}</a>
+          <Link to="/register">{labels.register}</Link>
         </div>
-        <button className="login-button" onClick={handleSubmit}>Đăng nhập</button>
+        <button className="login-button" onClick={handleSubmit}>
+          {labels.loginBtn}
+        </button>
         <div className="login-social">
-          <span>Đăng nhập bằng</span>
-
+          <span>{labels.loginWith}</span>
+          {/* Bạn có thể thêm các nút mạng xã hội tại đây nếu muốn */}
         </div>
       </div>
     </div>

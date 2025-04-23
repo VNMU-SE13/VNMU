@@ -1,9 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
-// Styled Components
+// Styled components (giữ nguyên - không thay đổi để đảm bảo layout)
 const MuseumArtifactsContainer = styled.div`
   margin-top: 40px;
   background-color: #ffffff;
@@ -170,13 +172,22 @@ const QuizButton = styled.a`
 `;
 
 const ArtifactsCarousel = ({ artifacts }) => {
-
+  const { language } = useContext(LanguageContext);
+  const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState(null);
   const [periods, setPeriods] = useState([]);
-  const [activePeriod, setActivePeriod] = useState(0)
-  const [filteredArtifacts, setFilteredArtifacts] = useState(artifacts);
   const [categories, setCategories] = useState([]);
+  const [filteredArtifacts, setFilteredArtifacts] = useState(artifacts);
+  const [filteredCategories, setFilteredCategories] = useState()
+  const [activePeriod, setActivePeriod] = useState(0);
+  const [labels, setLabels] = useState({
+    title: "Các hiện vật của bảo tàng",
+    noData: "Không có hiện vật nào.",
+    quizText: "Bạn đã tự tin với kiến thức của mình chưa?",
+    quizBtn: "Thử tài ngay",
+  });
+
   const itemsPerPage = 5;
 
   const handleNext = () => {
@@ -191,41 +202,92 @@ const ArtifactsCarousel = ({ artifacts }) => {
     );
   };
 
+  const handleFilterPeriod = (periodId) => {
+    if(activePeriod !== periodId) {
+      setActivePeriod(periodId)
+      setFilteredCategories(() => categories.filter(cate => cate.categoryHistoricalId === periodId))
+      setActiveFilter(null)
+    }
+  }
+
   const handleFilter = (categoryId) => {
     const isSame = activeFilter === categoryId;
     const newFilter = isSame ? null : categoryId;
     setActiveFilter(newFilter);
-    setCurrentIndex(0); // reset về đầu
+    setCurrentIndex(0);
   };
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryArtifact`);
-        setCategories(response.data);
-        const response2 = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`);
-        setPeriods(response2.data)
+        const resCategories = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryArtifact`);
+        const resPeriods = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`);
+
+        if (language === "vi") {
+          setCategories(resCategories.data);
+          setFilteredCategories(resCategories.data)
+          setPeriods(resPeriods.data);
+        } else {
+          const translatedCategories = await Promise.all(
+            resCategories.data.map(async (item) => ({
+              ...item,
+              name: await translateText(item.name, language),
+            }))
+          );
+          const translatedPeriods = await Promise.all(
+            resPeriods.data.map(async (item) => ({
+              ...item,
+              name: await translateText(item.name, language),
+            }))
+          );
+          setCategories(translatedCategories);
+          setFilteredCategories(resCategories.data);
+          setPeriods(translatedPeriods);
+        }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
+      setLoading(false)
     };
 
     fetchData();
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     if (activeFilter) {
-      const filtered = artifacts.filter(a => a.categoryArtifactId === activeFilter);
+      const filtered = artifacts.filter((a) => a.categoryArtifactId === activeFilter);
       setFilteredArtifacts(filtered);
     } else {
       setFilteredArtifacts(artifacts);
     }
-    setCurrentIndex(0); // reset khi lọc
+    setCurrentIndex(0);
   }, [activeFilter, artifacts]);
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          title: "Các hiện vật của bảo tàng",
+          noData: "Không có hiện vật nào.",
+          quizText: "Bạn đã tự tin với kiến thức của mình chưa?",
+          quizBtn: "Thử tài ngay",
+        });
+      } else {
+        setLabels({
+          title: await translateText("Các hiện vật của bảo tàng", language),
+          noData: await translateText("Không có hiện vật nào.", language),
+          quizText: await translateText("Bạn đã tự tin với kiến thức của mình chưa?", language),
+          quizBtn: await translateText("Thử tài ngay", language),
+        });
+      }
+    };
+
+    translateLabels();
+  }, [language]);
 
   const getVisibleArtifacts = () => {
     if (filteredArtifacts.length === 0) return [];
-
     const result = [];
     for (let i = 0; i < itemsPerPage; i++) {
       const index = (currentIndex + i) % filteredArtifacts.length;
@@ -236,15 +298,17 @@ const ArtifactsCarousel = ({ artifacts }) => {
 
   const currentArtifacts = getVisibleArtifacts();
 
+  if(loading) return <p>Loading...</p>
+  else
   return (
     <MuseumArtifactsContainer>
-      <Title>Các hiện vật của bảo tàng</Title>
+      <Title>{labels.title}</Title>
 
       <PeriodFilterWrapper>
-        {periods.length>0 && periods.map((period, index) => (
+        {periods.map((period, index) => (
           <FilterButton
             key={index}
-            onClick={() => setActivePeriod(period.id)}
+            onClick={() => handleFilterPeriod(period.id)}
             active={activePeriod === period.id}
           >
             {period.name}
@@ -253,7 +317,7 @@ const ArtifactsCarousel = ({ artifacts }) => {
       </PeriodFilterWrapper>
 
       <FilterButtons>
-        {categories.length>0 && categories.map((category, index) => (
+        {filteredCategories.map((category, index) => (
           <FilterButton
             key={index}
             onClick={() => handleFilter(category.id)}
@@ -278,7 +342,7 @@ const ArtifactsCarousel = ({ artifacts }) => {
               </ArtifactItem>
             ))
           ) : (
-            <p>Không có hiện vật nào.</p>
+            <p>{labels.noData}</p>
           )}
         </ArtifactsList>
 
@@ -288,8 +352,8 @@ const ArtifactsCarousel = ({ artifacts }) => {
       </ArtifactsSlider>
 
       <QuizSection>
-        <QuizText>Bạn đã tự tin với kiến thức của mình chưa?</QuizText>
-        <QuizButton href="http://localhost:3000/quiz">Thử tài ngay</QuizButton>
+        <QuizText>{labels.quizText}</QuizText>
+        <QuizButton href="/quiz">{labels.quizBtn}</QuizButton>
       </QuizSection>
     </MuseumArtifactsContainer>
   );

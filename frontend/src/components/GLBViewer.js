@@ -5,7 +5,7 @@ import { OrbitControls, useGLTF } from "@react-three/drei";
 
 const GLBModel = ({ url }) => {
   const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
+  return <primitive object={scene} scale={2.5} />;
 };
 
 const GLBViewer = ({ url }) => (

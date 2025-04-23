@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import BlogHeader from "./BlogHeader";
+import axios from 'axios';
+import Swal from "sweetalert2";
+import toDateTime from "../../utils/toDateTime";
+import Header from "../Home/Header";
+import BlogSidebar from "./BlogSidebar";
+
+const HEADER_HEIGHT = 90; // header height cố định
+const SIDEBAR_WIDTH = 240; // sidebar width cố định
 
 const slideIn = keyframes`
   from {
@@ -16,250 +25,238 @@ const slideIn = keyframes`
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background: #f2f4f8;
-  font-family: "Segoe UI", sans-serif;
+  background: #f9fafb;
+  margin-left: ${SIDEBAR_WIDTH}px;
 `;
 
 const Sidebar = styled.div`
-  width: 240px;
+  width: ${SIDEBAR_WIDTH}px;
   background: #1f2937;
   padding: 2rem 1rem;
   color: white;
+  position: fixed;
+  top: ${HEADER_HEIGHT}px;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
   animation: ${slideIn} 0.4s ease;
+  z-index: 20;
 `;
 
 const SidebarTitle = styled.h3`
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #f59e0b;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
 `;
 
 const SidebarItem = styled.div`
-  padding: 0.75rem 0;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
   color: #f3f4f6;
   cursor: pointer;
+  border-radius: 8px;
   transition: all 0.2s ease;
 
   &:hover {
+    background: #374151;
     color: #fbbf24;
-    transform: translateX(5px);
-  }
-`;
-
-const Submenu = styled.div`
-  padding-left: 1rem;
-  font-size: 0.95rem;
-  color: #d1d5db;
-`;
-
-const SubmenuItem = styled.div`
-  padding: 0.5rem 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: #fbbf24;
-    transform: translateX(5px);
   }
 `;
 
 const Content = styled.div`
   flex: 1;
-  padding: 2rem;
-  animation: ${slideIn} 0.5s ease;
+  padding: ${HEADER_HEIGHT + 20}px 2rem 4rem; /* top + bottom space */
+  overflow-y: auto;
 `;
 
 const BlogTable = styled.table`
   width: 100%;
-  background: #fefcf3;
-  border: 1px solid #d6caa8;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-collapse: collapse;
   font-size: 1rem;
-  font-family: 'Be Vietnam Pro', serif;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   overflow: hidden;
-  animation: fadeUp 0.5s ease;
-
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  animation: ${slideIn} 0.5s ease;
 `;
 
 const Th = styled.th`
   background: #f8f1df;
   border: 1px solid #d6caa8;
-  padding: 0.9rem;
+  padding: 1rem;
   text-align: left;
-  font-weight: bold;
   color: #4b3b28;
 `;
 
 const Td = styled.td`
-  border: 1px solid #e2d8b4;
-  padding: 0.75rem;
-  color: #3d3d3d;
-  background-color: #fffef8;
+  border: 1px solid #e5e7eb;
+  padding: 0.85rem;
+  color: #374151;
+  background-color: #ffffff;
 `;
 
-const ActionLink = styled.span`
-  color: #3b82f6;
-  margin-right: 0.5rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
-
-  &:hover {
-    text-decoration: underline;
-    color: #2563eb;
-  }
-`;
-
-const HeaderWrapper = styled.header`
-  width: 100%;
-  padding: 0rem 2rem;
-  background-color: #fdfaf6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-`;
-
-const Logo = styled.img`
-  width: 130px;
-  height: auto;
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-`;
-
-const NavLink = styled.a`
-  color: #111;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #f15c22;
-    text-decoration: underline;
-  }
-`;
-
-const GetStarted = styled.button`
-  background-color: #111;
-  color: #fff;
-  padding: 0.5rem 1.25rem;
+const ActionButton = styled.button`
+  padding: 8px 14px;
+  margin-right: 8px;
   border: none;
-  border-radius: 999px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  color: white;
 
   &:hover {
-    background-color: #333;
     transform: scale(1.05);
   }
 `;
 
-const Header = () => (
-  <HeaderWrapper>
-    <Logo src="/image/VNMUDoc.png" alt="Logo" />
-    <Nav>
-      <NavLink>Nhật ký trực tuyến</NavLink>
-      <NavLink href="http://localhost:3000/writedescription">Viết</NavLink>
-      <NavLink>Trở thành thành viên</NavLink>
-      <GetStarted>Bắt đầu đọc</GetStarted>
-    </Nav>
-  </HeaderWrapper>
-);
+const EditButton = styled(ActionButton)`
+  background-color: #3b82f6;
+
+  &:hover {
+    background-color: #2563eb;
+  }
+`;
+
+const DeleteButton = styled(ActionButton)`
+  background-color: #ef4444;
+
+  &:hover {
+    background-color: #dc2626;
+  }
+`;
 
 const MyBlog = () => {
-  const [showSubmenu, setShowSubmenu] = useState(false);
-  const [blogs, setBlogs] = useState([]);
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [listBlog, setListBlog] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [listFilteredBlog, setListFilteredBlog] = useState([])
+  const [listStage, setListStage] = useState([])
+  const [selectedStage, setSelectedStage] = useState(0);
 
   useEffect(() => {
-    const stored = localStorage.getItem("myBlogs");
-    if (stored) setBlogs(JSON.parse(stored));
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Blog/getAllByUserLogged`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        const resStage = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryBlog`)
+        setListStage(() => {
+          return [{id: 0, name: 'Tất cả'},...resStage.data]
+        })
+        setListBlog(res.data);
+        setListFilteredBlog(res.data)
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const handleEdit = (blog, index) => {
-    localStorage.setItem("editingBlog", JSON.stringify({ ...blog, index }));
-    navigate("/writedescription");
+  const handleEdit = (id) => {
+    navigate(`/myblog/edit/${id}`);
   };
 
-  const handleDelete = (indexToDelete) => {
-    const updatedBlogs = blogs.filter((_, index) => index !== indexToDelete);
-    setBlogs(updatedBlogs);
-    localStorage.setItem("myBlogs", JSON.stringify(updatedBlogs));
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Xác nhận xóa",
+      text: "Bạn có chắc chắn muốn xóa bài viết này không?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Vâng, xóa ngay!",
+      cancelButtonText: "Hủy",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const res = await axios.delete(`${process.env.REACT_APP_API_URL}/Blog/${id}`);
+
+        if (res.status === 200) {
+          setListBlog((prev) => prev.filter((blog) => blog.id !== id));
+          setListFilteredBlog((prev) => prev.filter((blog) => blog.id !== id));
+          Swal.fire({
+            icon: "success",
+            title: "Đã xóa!",
+            text: "Bài viết đã được xóa thành công.",
+            timer: 1800,
+            showConfirmButton: false,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Thất bại!",
+            text: "Không thể xóa bài viết. Vui lòng thử lại.",
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Đã xảy ra lỗi khi xóa bài viết.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
-  const filteredBlogs =
-    filterStatus === "all"
-      ? blogs
-      : blogs.filter((b) => b.status === filterStatus);
+  const handleSelectStage = (stageId) => {
+    setSelectedStage(stageId)
+    setListFilteredBlog(() => {
+      return selectedStage == 0
+        ? listBlog
+        : listBlog.filter((blog) => blog.categoryBlogId === selectedStage);
+    });  
+  }
+
 
   return (
     <>
       <Header />
+      <BlogSidebar
+          listStage={listStage}
+          selectedStage={selectedStage}
+          handleSelectStage={handleSelectStage}
+      />
       <Container>
-        <Sidebar>
-          <SidebarTitle>Bài đăng</SidebarTitle>
-          <SidebarItem onClick={() => setFilterStatus("all")}>Tất cả</SidebarItem>
-          <Submenu>
-            <SubmenuItem onClick={() => setFilterStatus("pending")}>Chờ duyệt</SubmenuItem>
-            <SubmenuItem onClick={() => setFilterStatus("approved")}>Đã duyệt</SubmenuItem>
-          </Submenu>
-          <SidebarItem>Nhận xét</SidebarItem>
-          <SidebarItem>Cài đặt</SidebarItem>
-        </Sidebar>
         <Content>
           <BlogTable>
             <thead>
               <tr>
                 <Th></Th>
                 <Th>Tiêu đề</Th>
-                <Th>Lượt xem</Th>
+                <Th>Lượt thích</Th>
                 <Th>Ngày</Th>
-                <Th>Tình trạng</Th>
+                <Th>Action</Th>
               </tr>
             </thead>
             <tbody>
-              {filteredBlogs.map((blog, index) => (
+              {listFilteredBlog.map((blog, index) => (
                 <tr key={index}>
-                  <Td>
-                    <input type="checkbox" />
-                  </Td>
+                  <Td><input type="checkbox" /></Td>
                   <Td>
                     <div>
                       <strong>{blog.title}</strong>
-                      <div>
-                        <ActionLink onClick={() => handleEdit(blog, index)}>
-                          Chỉnh sửa
-                        </ActionLink>
-                        <ActionLink onClick={() => handleDelete(index)}>
-                          Xóa
-                        </ActionLink>
-                      </div>
                     </div>
                   </Td>
                   <Td>0</Td>
-                  <Td>{blog.date || new Date().toLocaleDateString()}</Td>
-                  <Td>{blog.status === "approved" ? "Đã duyệt" : "Chờ duyệt"}</Td>
+                  <Td>{toDateTime(blog.createdDate)}</Td>
+                  <Td>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        <EditButton onClick={() => handleEdit(blog.id)}>✏️ Chỉnh sửa</EditButton>
+                        <DeleteButton onClick={() => handleDelete(blog.id)}>🗑 Xóa</DeleteButton>
+                      </div>
+                    </Td>
                 </tr>
               ))}
             </tbody>

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom"; // ✅ dùng Link thay thẻ a
-import axios from 'axios'
+import { useNavigate, Link } from "react-router-dom";
+import axios from 'axios';
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 // Styled Components
 const NewsEventsContainer = styled.div`
@@ -177,17 +179,21 @@ const ScrollButton = styled.button`
   }
 `;
 
-// Component chính
 const NewsEvents = () => {
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+  const [startIndex, setStartIndex] = useState(0);
+  const [events, setEvents] = useState([]);
+  const [translatedEvents, setTranslatedEvents] = useState([]);
+  const [title, setTitle] = useState("Tin Tức & Sự Kiện");
+  const [desc, setDesc] = useState("Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.");
+  const [seeAll, setSeeAll] = useState("See All");
+
+  const itemsPerPage = 3;
 
   const handleSeeAll = () => {
     navigate("/news");
   };
-
-  const [startIndex, setStartIndex] = useState(0);
-  const [events, setEvents] = useState([])
-  const itemsPerPage = 3;
 
   const handleNext = () => {
     if (startIndex + itemsPerPage < events.length) {
@@ -204,27 +210,52 @@ const NewsEvents = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event`)
-        setEvents(response.data)
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event`);
+        setEvents(response.data);
       } catch (err) {
-        console.error('Lỗi khi gọi API:', err)
+        console.error('Lỗi khi gọi API:', err);
       }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, []);
 
-  const visibleEvents = events.slice(startIndex, startIndex + itemsPerPage);
+  useEffect(() => {
+    const translateStatic = async () => {
+      if (language === "vi") {
+        setTitle("Tin Tức & Sự Kiện");
+        setDesc("Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.");
+        setSeeAll("Xem tất cả");
+        setTranslatedEvents(events);
+      } else {
+        const tTitle = await translateText("Tin Tức & Sự Kiện", language);
+        const tDesc = await translateText("Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.", language);
+        const tButton = await translateText("Xem tất cả", language);
+        setTitle(tTitle);
+        setDesc(tDesc);
+        setSeeAll(tButton);
+
+        const translated = await Promise.all(events.map(async (e) => {
+          const name = await translateText(e.name, language);
+          const description = await translateText(e.description, language);
+          return { ...e, name, description };
+        }));
+        setTranslatedEvents(translated);
+      }
+    };
+
+    translateStatic();
+  }, [language, events]);
+
+  const visibleEvents = translatedEvents.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <NewsEventsContainer>
       <NewsHeader>
-        <Title>Tin Tức & Sự Kiện</Title>
-        <Description>
-          Cập nhật các tin tức mới nhất về bảo tàng, sự kiện triển lãm, và những câu chuyện thú vị về các hiện vật lịch sử.
-        </Description>
-        <SeeAllButton onClick={handleSeeAll}>See All</SeeAllButton>
+        <Title>{title}</Title>
+        <Description>{desc}</Description>
+        <SeeAllButton onClick={handleSeeAll}>{seeAll}</SeeAllButton>
       </NewsHeader>
-      
+
       <NewsContent>
         <ScrollButton className="prev" onClick={handlePrev} disabled={startIndex === 0}>
           <FaChevronLeft />
@@ -237,8 +268,8 @@ const NewsEvents = () => {
               <CardTitle>{event.name}</CardTitle>
               <CardDescription>{event.description}</CardDescription>
               <MuseumName>{event.museum.name}</MuseumName>
-              <ReadMore to={`/news/${event.id}`}>Read More</ReadMore> {/* ✅ điều hướng */}
-              <DateLabel>{event.startDate}</DateLabel> {/* ✅ ngày đăng */}
+              <ReadMore to={`/news/${event.id}`}>Xem Chi Tiết</ReadMore>
+              <DateLabel>{event.startDate}</DateLabel>
             </NewsCard>
           ))}
         </NewsSlider>

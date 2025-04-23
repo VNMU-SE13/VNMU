@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { LanguageContext } from "../../context/LanguageContext";
+import axios from "axios";
 
+// === Global animation for modal ===
 // === Global animation for modal ===
 const keyframes = `
 @keyframes fadeScale {
@@ -13,24 +16,24 @@ const keyframes = `
     opacity: 1;
     transform: scale(1);
   }
-}
-`;
+}`;
 
 const PageWrapper = styled.div`
   background-image: url('/image/bg-paper.jpg');
   background-size: cover;
   background-position: center;
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 60px 20px 40px 20px;
   position: relative;
   text-align: center;
+  overflow-x: hidden;
 `;
 
 const Title = styled.h1`
-  font-size: 40px;
+  font-size: 42px;
   font-family: 'SVN-Voga', serif;
   color: #4b2e2e;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 `;
 
 const ImageContainer = styled.div`
@@ -38,13 +41,13 @@ const ImageContainer = styled.div`
   width: 480px;
   max-width: 90%;
   border: 6px solid #d6c29a;
-  border-radius: 15px;
+  border-radius: 20px;
   background-color: #fdf5e6;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 
   img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 14px;
     display: block;
   }
 `;
@@ -53,29 +56,43 @@ const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
 `;
 
 const Button = styled.button`
+  width: 100%;
   background-color: #a40000;
   color: white;
   border: none;
   border-radius: 20px;
-  padding: 10px 24px;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 12px 24px;
+  font-size: 17px;
   font-weight: bold;
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 
   &:hover {
     background-color: #7a0000;
+    transform: translateY(2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 `;
 
 const Decoration = styled.img`
   position: absolute;
   z-index: 2;
+
   &.kid-top-left { top: 140px; left: 350px; width: 220px; }
   &.lantern-top-left { top: 10px; left: 30px; width: 120px; }
   &.kid-top-right { top: 140px; right: 350px; width: 220px; }
@@ -97,6 +114,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 `;
 
 const ModalContent = styled.div`
@@ -104,9 +122,10 @@ const ModalContent = styled.div`
   padding: 30px 40px;
   border-radius: 20px;
   max-width: 650px;
-  width: 95%;
+  width: 100%;
   position: relative;
   font-family: 'Times New Roman', serif;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 `;
 
 const ModalContentAnimated = styled(ModalContent)`
@@ -114,11 +133,12 @@ const ModalContentAnimated = styled(ModalContent)`
   background-image: url('/image/background.jpg');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 12px;
+  top: 10px;
   right: 12px;
   background: #ff4444;
   border: none;
@@ -126,16 +146,23 @@ const CloseButton = styled.button`
   font-weight: bold;
   font-size: 18px;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background: #cc0000;
+  }
 `;
 
 const ModalTitle = styled.h2`
   font-size: 30px;
   font-family: 'SVN-Voga', serif;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   color: #4b2e2e;
 `;
 
@@ -144,11 +171,11 @@ const HorizontalGroup = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 15px;
-  margin-top: 10px;
+  margin-top: 20px;
 `;
 
 const QuizStartButton = styled(Button)`
-  margin-top: 20px;
+  margin-top: 30px;
   background-color: #0f6900;
 
   &:hover {
@@ -161,53 +188,44 @@ const SelectedButton = styled(Button)`
   border: 2px solid #4b0000;
 `;
 
-const TopicButton = styled(Button)`
-  background-color: #e2a000;
-  color: white;
-
-  &:hover {
-    background-color: #c68400;
-  }
-`;
-
-const StartTitle = styled.h3`
-  font-size: 20px;
-  margin-top: 20px;
-  font-weight: bold;
-  color: #4b2e2e;
-`;
-
-const SelectedInfo = styled.p`
-  margin-top: 10px;
-  font-style: italic;
-  color: #333;
-`;
-
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
   background: white;
+  margin-top: 10px;
 `;
 
 const Th = styled.th`
   text-align: center;
-  padding: 8px;
-  border-bottom: 1px solid #ccc;
+  padding: 10px 8px;
+  border-bottom: 2px solid #ccc;
+  font-weight: bold;
 `;
 
 const Td = styled.td`
   text-align: center;
-  padding: 6px;
+  padding: 8px 6px;
 `;
 
 const NoData = styled.p`
   font-style: italic;
   text-align: center;
   color: #555;
+  margin-top: 20px;
 `;
 
-// === Main Component ===
+const Subtitle = styled.h3`
+  font-size: 22px;
+  font-family: 'SVN-Voga', serif;
+  color: #5c4033;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  text-align: center;
+`;
+
+
+
 const QuizHome = () => {
   const navigate = useNavigate();
   const [showGuide, setShowGuide] = useState(false);
@@ -215,7 +233,87 @@ const QuizHome = () => {
   const [historyData, setHistoryData] = useState([]);
   const [showStartModal, setShowStartModal] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [selectedTopic, setSelectedTopic] = useState(null);
+  const { language } = useContext(LanguageContext);
+  const [periods, setPeriods] = useState()
+  const [level, setLevel] = useState(null)
+
+  const t = {
+    title: {
+      vi: "Trạng nguyên lịch sử Việt",
+      en: "Vietnam History Master"
+    },
+    start: {
+      vi: "Bắt đầu",
+      en: "Start"
+    },
+    guide: {
+      vi: "Hướng dẫn",
+      en: "Guide"
+    },
+    history: {
+      vi: "Lịch sử câu đố",
+      en: "Quiz History"
+    },
+    selectTitle: {
+      vi: "Chọn giai đoạn & chủ đề",
+      en: "Select Period & Topic"
+    },
+    selectedTopic: {
+      vi: "Đã chọn chủ đề:",
+      en: "Selected topic:"
+    },
+    noTopic: {
+      vi: "Chưa chọn chủ đề. Bạn có thể thi toàn bộ giai đoạn.",
+      en: "No topic selected. You can take the full period."
+    },
+    historyEmpty: {
+      vi: "Chưa có dữ liệu",
+      en: "No data available"
+    },
+    guideText: {
+      vi: `🎯 Mục tiêu: Trở thành Trạng Nguyên lịch sử Việt bằng cách trả lời đúng nhiều câu hỏi nhất.
+
+📌 Cách chơi:
+- Nhấn vào "Bắt đầu" để chọn giai đoạn lịch sử và chủ đề câu hỏi.
+- Sau khi chọn, bạn sẽ được chuyển sang giao diện câu hỏi.
+- Mỗi câu hỏi có 4 đáp án A, B, C, D — chọn một đáp án bạn cho là đúng.
+
+⏱ Tự động chuyển câu: Sau khi chọn đáp án, hệ thống sẽ thông báo đúng/sai và tự chuyển câu.
+
+📊 Kết thúc lượt chơi:
+- Khi hoàn thành câu hỏi, bạn sẽ nhận điểm, xếp hạng và danh hiệu.
+- Kết quả lưu trong phần "Lịch sử câu đố".
+
+🔁 Có thể chơi lại bao nhiêu lần tùy thích!`,
+      en: `🎯 Goal: Become the Vietnamese History Master by answering the most correct questions.
+
+📌 How to play:
+- Click "Start" to choose a historical period and quiz topic.
+- After selection, you will enter the quiz interface.
+- Each question has 4 options A, B, C, D — choose the most correct one.
+
+⏱ Auto-switch: The quiz will auto-proceed after selecting your answer with feedback.
+
+📊 End of game:
+- After all questions, you’ll receive your score, rank, and title.
+- Your result will be saved in "Quiz History".
+
+🔁 You can replay as many times as you want!`
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resPeriod = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`)
+        setPeriods(resPeriod.data)
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -231,16 +329,21 @@ const QuizHome = () => {
   }, [showHistory]);
 
   const handleStart = () => {
-    if (!selectedPeriod) return;
-
-    const periodParam = encodeURIComponent(selectedPeriod);
-    const topicParam = selectedTopic ? `&topic=${encodeURIComponent(selectedTopic)}` : '';
-    navigate(`/quiz/start?period=${periodParam}${topicParam}`);
+    // const periodParam = encodeURIComponent(selectedPeriod);
+    // navigate(`/quiz/start?period=${periodParam}${topicParam}`);
   };
+
+  const handleSelectLevel = (selectedLevel) => {
+    setLevel(selectedLevel)
+    setSelectedPeriod(null)
+  }
+
+  const handleSelectPeriod = (periodId) => {
+    setSelectedPeriod(periodId)
+  }
 
   return (
     <PageWrapper>
-      {/* Decorations */}
       <Decoration src="/image/kid1.png" alt="kid1" className="kid-top-left" />
       <Decoration src="/image/lantern1.png" alt="lantern1" className="lantern-top-left" />
       <Decoration src="/image/kid2.png" alt="kid2" className="kid-top-right" />
@@ -250,120 +353,103 @@ const QuizHome = () => {
       <Decoration src="/image/cloud-left.png" alt="cloud-left" className="cloud-left" />
       <Decoration src="/image/cloud-right.png" alt="cloud-right" className="cloud-right" />
 
-      <Title>Trạng nguyên lịch sử Việt</Title>
+      <Title>{t.title[language]}</Title>
 
       <ImageContainer>
         <img src="/image/quizz-main.jpg" alt="Quiz" />
       </ImageContainer>
 
       <ButtonGroup>
-        <Button onClick={() => setShowStartModal(true)}>Bắt đầu</Button>
-        <Button onClick={() => setShowGuide(true)}>Hướng dẫn</Button>
-        <Button onClick={() => setShowHistory(true)}>Lịch sử câu đố</Button>
+        <Button onClick={() => setShowStartModal(true)}>{t.start[language]}</Button>
+        <Button onClick={() => setShowGuide(true)}>{t.guide[language]}</Button>
+        <Button onClick={() => setShowHistory(true)}>{t.history[language]}</Button>
+        <Button onClick={() => navigate('/')}>Home</Button>
       </ButtonGroup>
 
-      {/* === Modal Chọn Giai Đoạn & Chủ Đề === */}
       {showStartModal && (
         <ModalOverlay>
           <ModalContentAnimated>
             <CloseButton onClick={() => {
               setShowStartModal(false);
               setSelectedPeriod(null);
-              setSelectedTopic(null);
             }}>×</CloseButton>
 
-            <ModalTitle>Chọn giai đoạn & chủ đề</ModalTitle>
+            <ModalTitle>{t.selectTitle[language]}</ModalTitle>
 
+            {/* Phần chọn Level */}
+            <Subtitle>Chọn Level</Subtitle>
             <HorizontalGroup>
-              {["GĐ Phong Kiến", "GĐ Cận Hiện Đại", "GĐ Hiện Đại"].map(period => (
-                selectedPeriod === period ? (
-                  <SelectedButton key={period} onClick={() => {
-                    setSelectedPeriod(period);
-                    setSelectedTopic(null);
+              {[1, 2, 3].map(optLevel => (
+                level === optLevel ? (
+                  <SelectedButton key={optLevel} onClick={() => {
+                    handleSelectLevel()
                   }}>
-                    {period}
+                    Level {optLevel}
                   </SelectedButton>
                 ) : (
-                  <Button key={period} onClick={() => {
-                    setSelectedPeriod(period);
-                    setSelectedTopic(null);
+                  <Button key={optLevel} onClick={() => {
+                    handleSelectLevel(optLevel)
                   }}>
-                    {period}
+                    Level {optLevel}
                   </Button>
                 )
               ))}
             </HorizontalGroup>
 
-            {selectedPeriod && (
+            {/* Phần chọn Giai đoạn */}
+            {level && (
               <>
-                <StartTitle>Chủ đề của {selectedPeriod}</StartTitle>
+                <Subtitle>Chọn Giai đoạn</Subtitle>
                 <HorizontalGroup>
-                  {(selectedPeriod === "GĐ Phong Kiến"
-                    ? ["Triều Đinh", "Triều Lý", "Triều Trần", "Triều Lê", "Triều Nguyễn"]
-                    : selectedPeriod === "GĐ Cận Hiện Đại"
-                      ? ["KC Chống Mỹ", "KC Chống Pháp", "KC Chống Nhật", "KC Biên Giới"]
-                      : ["Chính Trị", "Văn Hóa Truyền Thống", "Văn Hóa Giải Trí"]
-                  ).map(topic => (
-                    <TopicButton
-                      key={topic}
-                      onClick={() => setSelectedTopic(topic)}
-                    >
-                      {topic}
-                    </TopicButton>
+                  {periods.map(period => (
+                    selectedPeriod === period.id ? (
+                      <SelectedButton key={period.id} onClick={() => {
+                        handleSelectPeriod(period.id);
+                      }}>
+                        {period.name}
+                      </SelectedButton>
+                    ) : (
+                      <Button key={period.id} onClick={() => {
+                        handleSelectPeriod(period.id);
+                      }}>
+                        {period.name}
+                      </Button>
+                    )
                   ))}
                 </HorizontalGroup>
-
-                <SelectedInfo>
-                  {selectedTopic
-                    ? `Đã chọn chủ đề: ${selectedTopic}`
-                    : `Chưa chọn chủ đề. Bạn có thể thi toàn bộ giai đoạn.`}
-                </SelectedInfo>
-
-                <QuizStartButton onClick={handleStart}>Bắt đầu</QuizStartButton>
               </>
             )}
+
+            {/* Nút bắt đầu quiz */}
+            {(level && selectedPeriod) && (
+              <QuizStartButton onClick={handleStart}>
+                {t.start[language]}
+              </QuizStartButton>
+            )}
           </ModalContentAnimated>
+
         </ModalOverlay>
       )}
 
-      {/* === Hướng dẫn === */}
       {showGuide && (
         <ModalOverlay>
           <ModalContent>
             <CloseButton onClick={() => setShowGuide(false)}>×</CloseButton>
-            <ModalTitle>Hướng dẫn tham gia trò chơi</ModalTitle>
-            <div style={{ fontSize: "16px", lineHeight: 1.7, color: "#333", textAlign: "left" }}>
-              <p><strong>🎯 Mục tiêu:</strong> Trở thành Trạng Nguyên lịch sử Việt bằng cách trả lời đúng nhiều câu hỏi nhất.</p>
-
-              <p><strong>📌 Cách chơi:</strong></p>
-              <ul style={{ paddingLeft: 20, listStyleType: "disc" }}>
-                <li>Nhấn vào <strong>"Bắt đầu"</strong> để chọn <em>giai đoạn lịch sử</em> và <em>chủ đề câu hỏi</em>.</li>
-                <li>Sau khi chọn, bạn sẽ được chuyển sang giao diện câu hỏi.</li>
-                <li>Mỗi câu hỏi sẽ có 4 đáp án A, B, C, D — chọn một đáp án bạn cho là đúng.</li>
-              </ul>
-
-              <p><strong>⏱ Tự động chuyển câu:</strong> Sau khi chọn đáp án, hệ thống sẽ thông báo đúng/sai và tự chuyển sang câu tiếp theo.</p>
-
-              <p><strong>📊 Kết thúc lượt chơi:</strong></p>
-              <ul style={{ paddingLeft: 20, listStyleType: "disc" }}>
-                <li>Khi hoàn thành hết câu hỏi, bạn sẽ nhận được <strong>điểm số</strong>, <strong>xếp hạng</strong> và <strong>danh hiệu</strong>.</li>
-                <li>Kết quả của bạn sẽ được lưu lại trong phần <strong>"Lịch sử câu đố"</strong>.</li>
-              </ul>
-
-              <p><strong>🔁 Có thể chơi lại bao nhiêu lần tùy thích!</strong></p>
+            <ModalTitle>{t.guide[language]}</ModalTitle>
+            <div style={{ fontSize: "16px", lineHeight: 1.7, color: "#333", textAlign: "left", whiteSpace: 'pre-line' }}>
+              {t.guideText[language]}
             </div>
           </ModalContent>
         </ModalOverlay>
       )}
 
-      {/* === Lịch sử === */}
       {showHistory && (
         <ModalOverlay>
           <ModalContent>
             <CloseButton onClick={() => setShowHistory(false)}>×</CloseButton>
-            <ModalTitle>Lịch sử tham gia</ModalTitle>
+            <ModalTitle>{t.history[language]}</ModalTitle>
             {historyData.length === 0 ? (
-              <NoData>Chưa có dữ liệu</NoData>
+              <NoData>{t.historyEmpty[language]}</NoData>
             ) : (
               <Table>
                 <thead>

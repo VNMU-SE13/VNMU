@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const MuseumContainer = styled.div`
   background-color: #fff;
@@ -18,7 +20,7 @@ const MuseumContainer = styled.div`
 const MuseumInfo = styled.div`
   display: flex;
   align-items: center;
-  flex: 1; /* Chiếm phần lớn diện tích để tránh khoảng trống */
+  flex: 1;
 `;
 
 const MuseumAvatar = styled.img`
@@ -58,7 +60,7 @@ const MuseumStats = styled.div`
 
 const StatItem = styled.div`
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   align-items: center;
   text-align: center;
 
@@ -70,7 +72,7 @@ const StatItem = styled.div`
 `;
 
 const MuseumActions = styled.div`
-flex: 1;
+  flex: 1;
   display: flex;
   justify-content: center;
 `;
@@ -90,17 +92,36 @@ const Button = styled.button`
   }
 `;
 
-const ArtifactMuseumInfo = ({museum}) => {
-  const museumInfo = {
-    avatar: "/image/BT-QK5.jpg",
-    name: "Bảo tàng Quân khu 5",
-    status: "Số 3 đường Duy Tân, phường Hòa Thuận Đông, quận Hải Châu, thành phố Đà Nẵng",
-    shopButtonText: "Xem Bảo tàng",
-    rating: "Chiến tranh & Quân đội",
-    productCount: 534,
-    joinTime: "47 năm",
-    followerCount: "120k/năm",
-  };
+const ArtifactMuseumInfo = ({ museum }) => {
+  const { language } = useContext(LanguageContext);
+  const [labels, setLabels] = useState({
+    viewMuseum: "Xem Bảo tàng",
+    founded: "Năm thành lập",
+    artifacts: "Hiện vật",
+    contact: "Liên hệ",
+  });
+
+  useEffect(() => {
+    const translateLabels = async () => {
+      if (language === "vi") {
+        setLabels({
+          viewMuseum: "Xem Bảo tàng",
+          founded: "Năm thành lập",
+          artifacts: "Hiện vật",
+          contact: "Liên hệ",
+        });
+      } else {
+        const entries = Object.entries(labels);
+        const translated = {};
+        for (const [key, value] of entries) {
+          translated[key] = await translateText(value, language);
+        }
+        setLabels(translated);
+      }
+    };
+
+    translateLabels();
+  }, [language]);
 
   return (
     <MuseumContainer>
@@ -111,16 +132,22 @@ const ArtifactMuseumInfo = ({museum}) => {
           <MuseumStatus>{museum.location}</MuseumStatus>
         </MuseumDetails>
       </MuseumInfo>
+
       <MuseumActions>
-        <Button>{museumInfo.shopButtonText}</Button>
+        <Button>{labels.viewMuseum}</Button>
       </MuseumActions>
+
       <MuseumStats>
-        <StatItem>Năm thành lập: <strong>{museum.establishYear}</strong></StatItem>
-        <StatItem>Hiện vật: <strong>{museum.artifacts.length}</strong></StatItem>
-        <StatItem>Liên hệ: <strong>{museum.contact}</strong></StatItem>
+        <StatItem>
+          {labels.founded}: <strong>{museum.establishYear}</strong>
+        </StatItem>
+        <StatItem>
+          {labels.artifacts}: <strong>{museum.artifacts.length}</strong>
+        </StatItem>
+        <StatItem>
+          {labels.contact}: <strong>{museum.contact}</strong>
+        </StatItem>
       </MuseumStats>
-
-
     </MuseumContainer>
   );
 };

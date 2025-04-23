@@ -12,17 +12,14 @@
 .quiz-section,
 .store-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  max-width: 1200px;
-  gap: 20px;
+  flex-direction: row; /* SỬA: Để phần nội dung và ảnh nằm cạnh nhau */
+  align-items: center; 
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  gap: 40px; /* Thêm khoảng cách giữa nội dung và ảnh */
 }
-
 /* 📌 Nội dung của Đố vui và Cửa hàng */
 .quiz-content,
 .store-content {
@@ -82,13 +79,13 @@
 /* 📌 Chuyển hình ảnh cửa hàng lưu niệm sang bên trái, nội dung sang phải */
 .store-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  gap: 20px;
-  flex-direction: row; /* Ảnh bên trái, chữ bên phải */
+  max-width: 1200px; /* Giới hạn tối đa cho đẹp */
+  gap: 40px;
+  padding: 40px 20px;
 }
-
 /* 🛍 Gộp danh sách sản phẩm vào cùng khung với Cửa hàng lưu niệm */
 .store-section {
   display: flex;

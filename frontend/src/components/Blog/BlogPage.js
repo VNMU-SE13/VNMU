@@ -1,196 +1,89 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { GiShield, GiScrollQuill, GiPagoda } from "react-icons/gi";
-import { FaShareAlt } from "react-icons/fa";
-import BlogComments from "./BlogComments";
 import axios from "axios";
-import BlogHeader from "./BlogHeader";
+import BlogDetail from "./BlogDetail";
+import Header from "../Home/Header";
+import BlogSidebar from "./BlogSidebar";
 
-const Hashtag = styled.span`
-  background-color: #fef3c7;        /* Màu nền vàng nhạt */
-  color: #b45309;                   /* Màu chữ nâu cam */
-  font-size: 0.85rem;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-weight: 600;
-  margin-right: 0.5rem;
-  white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.25s ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #fde68a;
-    color: #92400e;
-    transform: scale(1.05);
-  }
-`;
 // ----- Layout -----
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background: #f2f4f8;
-`;
-
-const Sidebar = styled.div`
-  width: 240px;
-  background: #1f2937;
-  padding: 2rem 1rem;
-  color: white;
-`;
-
-const StageButton = styled.button`
-  width: 100%;
-  background: ${({ active }) => (active ? "#fbbf24" : "#f7f1eb")};
-  color: #1f2937;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 0.95rem;
-  font-weight: ${({ active }) => (active ? "600" : "500")};
-  padding: 10px 18px;
-  border-radius: 999px;
-  margin-bottom: 12px;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: ${({ active }) => (active ? "0 2px 8px rgba(251, 191, 36, 0.4)" : "0 1px 4px rgba(0, 0, 0, 0.05)")};
-
-  &:hover {
-    background: #fcd34d;
-    transform: scale(1.02);
-    font-weight: 600;
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.4);
-  }
+  background: #f9fafb;
+  margin-left: 240px; /* đẩy Content ra bằng đúng chiều rộng Sidebar */
 `;
 
 
 const Content = styled.div`
   flex: 1;
-  padding: 2rem;
+  padding: 110px 2rem 6rem; /* 90px Header + 20px khoảng cách */
+  overflow-y: auto;
+  min-height: 100vh;
 `;
 
 const BlogItemRow = styled.div`
-  background: #fff;
+  background: #ffffff;
   display: flex;
   align-items: flex-start;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #f59e0b;
-  gap: 1rem;
-  justify-content: space-between;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #f59e0b;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const Thumbnail = styled.img`
-  width: 64px;
-  height: 64px;
-  border-radius: 6px;
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
   object-fit: cover;
+  flex-shrink: 0;
 `;
 
 const BlogInfo = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const BlogTitle = styled.h4`
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #222;
-`;
-
-const BlogDate = styled.p`
-  font-size: 0.85rem;
-  color: #888;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
 `;
 
 const BlogDescription = styled.p`
-  font-size: 1rem;
-  color: #444;
-  line-height: 1.7;
-  max-width: 80%;
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.6;
   margin: 0;
 `;
 
 const DetailButton = styled.button`
-  padding: 8px 16px;
+  padding: 10px 18px;
   background-color: #2563eb;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   height: fit-content;
-  align-self: flex-start;
   white-space: nowrap;
   margin-left: auto;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 
   &:hover {
     background-color: #1d4ed8;
-  }
-`;
-
-const BlogImage = styled.img`
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-`;
-
-const Title = styled.h2`
-  margin-bottom: 1.25rem;
-  font-size: 1.75rem;
-  font-weight: 700;
-  text-align: center;
-  color: #1f2937;
-`;
-
-const BlogCenterWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const BlogMetaRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  width: 100%;
-`;
-
-const ShareButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: #1877f2;
-  font-size: 1.2rem;
-
-  &:hover {
-    color: #0d5ae5;
-  }
-`;
-
-const BackButton = styled(ShareButton)`
-  background-color: #2563eb;
-  color: #fff;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  margin-top: 2rem;
-
-  &:hover {
-    background-color: #1d4ed8;
-    color: #fff;
+    transform: scale(1.05);
   }
 `;
 
@@ -199,7 +92,7 @@ const FadeInBox = styled.div`
   @keyframes fadein {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(12px);
     }
     to {
       opacity: 1;
@@ -208,14 +101,40 @@ const FadeInBox = styled.div`
   }
 `;
 
+const PaginationWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 240px; /* sidebar width */
+  right: 0;
+  background: #ffffff;
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+`;
+
+
 const BlogPage = () => {
-  const { id } = useParams();
+  const { id, hashtag } = useParams();
   const navigate = useNavigate();
   const [listBlog, setListBlog] = useState([])
   const [listFilteredBlog, setListFilteredBlog] = useState([])
   const [listStage, setListStage] = useState([])
   const [selectedStage, setSelectedStage] = useState(0);
   const [blog, setBlog] = useState()
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const totalPages = Math.ceil(listFilteredBlog.length / itemsPerPage);
+  const paginatedBlogs = listFilteredBlog.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
 
   useEffect(() => {
     try {
@@ -250,76 +169,49 @@ const BlogPage = () => {
     }
   }, [id])
 
+  useEffect(() => {
+    if(hashtag) {
+      const fetchData = async () => {
+        try {
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}/Blog/getByHashtag?hastag=${encodeURIComponent(hashtag)}`)
+          console.log(res.data)
+          setListFilteredBlog(res.data)
+        }
+        catch(err) {
+          console.log(err)
+        }
+      }
+      fetchData()
+    }
+  }, [hashtag])
+
   const handleSelectStage = (stageId) => {
     setSelectedStage(stageId)
-    setListBlog(() => {
-      return selectedStage === 0
+    setListFilteredBlog(() => {
+      return selectedStage == 0
         ? listBlog
-        : listBlog.filter((blog) => blog.id === selectedStage);
-    });
-    
-
-    console.log(listFilteredBlog)
-    if (id) navigate("/blog");
+        : listBlog.filter((blog) => blog.categoryBlogId === selectedStage);
+    });  
   }
 
   return (
     <>
-      <BlogHeader />
+      <Header />
       <Container>
-        <Sidebar>
-          <h3 style={{ marginBottom: "1rem", color: "#f59e0b" }}>Giai đoạn</h3>
-          {listStage.map((stage) => (
-            <StageButton
-              key={stage.id}
-              active={selectedStage === stage.id}
-              onClick={() => {
-                handleSelectStage(stage.id);
-              }}
-            >
-              {stage.name}
-            </StageButton>
-          ))}
-        </Sidebar>
+        <BlogSidebar
+          listStage={listStage}
+          selectedStage={selectedStage}
+          handleSelectStage={handleSelectStage}
+        />
 
         <Content>
           {id && blog ? (
-            <FadeInBox>
-              <Title>{blog.title}</Title>
-              <BlogCenterWrapper>
-                <BlogImage src={blog.image} alt={blog.title} />
-                <BlogDescription>{blog.content}</BlogDescription>
-                <BlogMetaRow>
-                  {blog.hastagOfBlog.map((tag, index) => (
-                    <Hashtag key={index}>{tag.hashtag}</Hashtag>
-                  ))}
-
-                </BlogMetaRow>
-                <BlogMetaRow>
-                  <BlogDate>Ngày đăng: {blog.createdDate}</BlogDate>
-                  <ShareButton
-                    onClick={() =>
-                      window.open(
-                        `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
-                        "_blank"
-                      )
-                    }
-                    aria-label="Chia sẻ bài viết"
-                  >
-                    <FaShareAlt />
-                  </ShareButton>
-                </BlogMetaRow>
-              </BlogCenterWrapper>
-              <BlogComments />
-              <BackButton onClick={() => navigate("/listblog")}>
-                Quay lại danh sách
-              </BackButton>
-            </FadeInBox>
+            <BlogDetail blog={blog}/>
           ) : (
             <FadeInBox>
-              <h2>Danh sách bài viết theo giai đoạn: {selectedStage}</h2>
-              {listFilteredBlog.length > 0 ? (
-                listFilteredBlog.map((blog) => (
+              <h2>Danh sách bài viết theo: {selectedStage}</h2>
+              {paginatedBlogs.length > 0 ? (
+                paginatedBlogs.map((blog) => (
                   <BlogItemRow key={blog.id}>
                     <Thumbnail src={blog.image} alt="thumbnail" />
                     <BlogInfo>
@@ -334,6 +226,27 @@ const BlogPage = () => {
               ) : (
                 <p>Không tìm thấy bài viết.</p>
               )}
+              <PaginationWrapper>
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(index + 1)}
+                    style={{
+                      margin: "0 6px",
+                      padding: "8px 14px",
+                      backgroundColor: currentPage === index + 1 ? "#f59e0b" : "#e5e7eb",
+                      color: currentPage === index + 1 ? "#fff" : "#111",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </PaginationWrapper>
+
             </FadeInBox>
           )}
         </Content>

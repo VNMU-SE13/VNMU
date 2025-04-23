@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Swal from 'sweetalert2';
+import { useContext, useEffect, useState } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
+import translateText from "../../utils/translate";
 
 const HeaderWrapper = styled.header`
   width: 100%;
@@ -50,48 +53,112 @@ const GetStarted = styled.button`
   }
 `;
 
-
 const BlogHeader = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+  const [translated, setTranslated] = useState({
+    diary: "Nhật ký trực tuyến",
+    write: "Viết",
+    becomeMember: "Trở thành thành viên",
+    startReading: "Bắt đầu đọc",
+    alertTitle: "Bạn chưa đăng nhập!",
+    alertText: "Vui lòng đăng nhập trước khi viết bài.",
+    confirmText: "Đăng nhập ngay",
+    cancelText: "Để sau"
+  });
 
-    const handleWriteClick = () => {
+  useEffect(() => {
+    const translateAll = async () => {
+      if (language === "vi") {
+        setTranslated({
+          diary: "Nhật ký trực tuyến",
+          write: "Viết",
+          becomeMember: "Trở thành thành viên",
+          startReading: "Bắt đầu đọc",
+          alertTitle: "Bạn chưa đăng nhập!",
+          alertText: "Vui lòng đăng nhập trước khi viết bài.",
+          confirmText: "Đăng nhập ngay",
+          cancelText: "Để sau"
+        });
+      } else {
+        setTranslated({
+          diary: await translateText("Nhật ký trực tuyến", language),
+          write: await translateText("Viết", language),
+          becomeMember: await translateText("Trở thành thành viên", language),
+          startReading: await translateText("Bắt đầu đọc", language),
+          alertTitle: await translateText("Bạn chưa đăng nhập!", language),
+          alertText: await translateText("Vui lòng đăng nhập trước khi viết bài.", language),
+          confirmText: await translateText("Đăng nhập ngay", language),
+          cancelText: await translateText("Để sau", language)
+        });
+      }
+    };
+
+    translateAll();
+  }, [language]);
+
+  const handleWriteClick = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-        Swal.fire({
-        title: 'Bạn chưa đăng nhập!',
-        text: 'Vui lòng đăng nhập trước khi viết bài.',
+      Swal.fire({
+        title: translated.alertTitle,
+        text: translated.alertText,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Đăng nhập ngay',
-        cancelButtonText: 'Để sau',
-        }).then((result) => {
+        confirmButtonText: translated.confirmText,
+        cancelButtonText: translated.cancelText,
+      }).then((result) => {
         if (result.isConfirmed) {
-            navigate("/login");
+          navigate("/login");
         }
-        });
+      });
     } else {
-        navigate("/writedescription");
+      navigate("/writedescription");
     }
-    };
+  };
 
-    return (
-        <HeaderWrapper>
-            <a href="http://localhost:3000">
-            <Logo src="/image/VNMUDoc.png" alt="Logo" />
-            </a>
-            <Nav>
-                <NavLink href="http://localhost:3000/myblog">Nhật ký trực tuyến</NavLink>
-                <NavLink onClick={handleWriteClick}>Viết</NavLink>
-                <NavLink href="http://localhost:3000/login">Trở thành thành viên</NavLink>
-                <GetStarted onClick={() => window.location.href = "http://localhost:3000/listblog"}>
-                Bắt đầu đọc
-                </GetStarted>
-            </Nav>
-        </HeaderWrapper>
-    )
-}
+  const handleDiaryClick = () => {
+    const token = localStorage.getItem("token");
 
-export default BlogHeader
+    if (!token) {
+      Swal.fire({
+        title: translated.alertTitle,
+        text: 'Vui lòng đăng nhập!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: translated.confirmText,
+        cancelButtonText: translated.cancelText,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+    } else {
+      navigate("/myblog");
+    }
+  }
+
+  return (
+    <HeaderWrapper>
+      <a onClick={() => navigate('/')}>
+        <Logo src="/image/VNMUDoc.png" alt="Logo" />
+      </a>
+      <Nav>
+        <NavLink onClick={() => navigate('/blog')}>Blog</NavLink>
+        <NavLink onClick={handleDiaryClick}>{translated.diary}</NavLink>
+        <NavLink onClick={handleWriteClick}>{translated.write}</NavLink>
+        <NavLink onClick={() => navigate('/login')}>{translated.becomeMember}</NavLink>
+        <GetStarted onClick={() => navigate('/listblog')}>
+          {translated.startReading}
+        </GetStarted>
+      </Nav>
+    </HeaderWrapper>
+  );
+};
+
+export default BlogHeader;

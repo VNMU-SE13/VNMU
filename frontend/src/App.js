@@ -18,10 +18,22 @@ import BlogHome from'./components/Blog/BlogHome';
 import WriteDescription from './components/Blog/WriteDescription';
 import MyBlog from './components/Blog/MyBlog';
 import BlogPage from './components/Blog/BlogPage';
-import Error from './components/Loading&Error/Error';
-import Loading from './components/Loading&Error/Loading';
+import EditBlog from "./components/Blog/EditBlog";
+import { LanguageProvider } from "./context/LanguageContext";
+import Search from "./components/AdvancedSearch";
+import FloatingChatButton from "./components/Chat/FloatingChatButton";
+import UserProfile from "./components/User/Profile";
+import NearestMuseumLeaflet from './components/NearestMuseumLeaflet';
+import MuseumManager from './components/MuseumMananger/MuseumManager'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ShortVideoGallery from './components/shortvideo/ShortVideoGallery';
+import VideoDetailPage from './components/shortvideo/VideoDetailPage';
+import shortVideos from './components/shortvideo/videoData';
+
 function App() {
   return (
+    <LanguageProvider>
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} /> {/* Trang chủ */}
@@ -40,13 +52,22 @@ function App() {
         <Route path="/quiz/start" element={<QuizStart />} />
         <Route path="/blog" element={<BlogHome />} />
         <Route path="/listblog" element={<BlogPage />} />
+        <Route path="/listblog/:hashtag" element={<BlogPage />} />
         <Route path="/writedescription" element={<WriteDescription />} />
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/blog/:id" element={<BlogPage />} />
-        <Route path="/error" element={<Error />} />
-        <Route path="/loading" element={<Loading />} />
+        <Route path="/myblog/edit/:id" element={<EditBlog />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/nearest-museum" element={<NearestMuseumLeaflet />} />
+        <Route path="/manager" element={<MuseumManager />} />
+        <Route path="/shortvideo" element={<ShortVideoGallery videos={shortVideos} />} />
+        <Route path="/descriptionvideo/:id" element={<VideoDetailPage />} />
       </Routes>
     </Router>
+    <ToastContainer position="top-right" autoClose={3000} />
+    <FloatingChatButton />
+    </LanguageProvider>
   );
 }
 
