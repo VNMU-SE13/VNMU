@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   background-color: #fdfaf6;
   display: flex;
   flex-direction: column;
+  padding: 60px;
 `;
 
 const Content = styled.div`

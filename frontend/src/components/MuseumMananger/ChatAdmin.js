@@ -84,7 +84,6 @@ const ChatAdmin = () => {
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
   const connectionRef = useRef();
-
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const adminId = "09a2c21a-5087-4619-9bae-36028d2ed607";

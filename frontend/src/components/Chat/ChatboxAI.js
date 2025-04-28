@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-  background: #4caf50;
+  background: #c8102e;
   color: white;
   padding: 12px 16px;
   font-weight: bold;
@@ -76,7 +76,7 @@ const Input = styled.input`
 const SendButton = styled.button`
   padding: 10px 16px;
   margin-left: 8px;
-  background-color: #4caf50;
+  background-color: #c8102e;
   color: white;
   border: none;
   border-radius: 8px;
@@ -84,7 +84,7 @@ const SendButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #3d9141;
+    background-color:rgb(218, 46, 46);
   }
 
   &:active {

@@ -329,8 +329,8 @@ const QuizHome = () => {
   }, [showHistory]);
 
   const handleStart = () => {
-    // const periodParam = encodeURIComponent(selectedPeriod);
-    // navigate(`/quiz/start?period=${periodParam}${topicParam}`);
+    const periodParam = encodeURIComponent(selectedPeriod);
+    navigate(`/quiz/start?level=${level}&period=${periodParam}`);
   };
 
   const handleSelectLevel = (selectedLevel) => {

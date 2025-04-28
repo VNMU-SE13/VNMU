@@ -103,7 +103,7 @@ const Header = ({ toggleSearchBar }) => {
   return (
     <header className="homepage-header">
       <div className="logo" onClick={goToHome} style={{ cursor: "pointer" }}>
-        <img src="/image/VNMUDoc.png" alt="VNMU Logo" className="logo-image" />
+        <img src="/image/LOGO-white.png" alt="VNMU Logo" className="logo-image" />
       </div>
 
       <nav className="navbar">

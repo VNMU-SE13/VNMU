@@ -7,7 +7,7 @@ const Button = styled.div`
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #4caf50;
+  background-color: #c8102e;
   color: white;
   padding: 14px;
   border-radius: 50%;
@@ -16,7 +16,7 @@ const Button = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    background-color: #388e3c;
+    background-color: #c8102e;
   }
 `;
 

@@ -79,10 +79,11 @@ const SeeAllButton = styled.button`
 `;
 
 const NearbyButton = styled(SeeAllButton)`
-  background-color: #0ea5e9;
-
+  background-color: #facc15; /* Màu vàng nhẹ kiểu cổ */
+  color: #000; /* Cho màu chữ dễ đọc trên nền vàng */
+  
   &:hover {
-    background-color: #0284c7;
+    background-color: #eab308; /* Màu vàng đậm hơn khi hover */
   }
 `;
 

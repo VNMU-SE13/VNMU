@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import axios from "axios";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import toSlug from "../../utils/toSlug";
 
 // Styled Components
 const PageContainer = styled.div`
@@ -56,6 +57,18 @@ const NewsMeta = styled.p`
   font-size: 0.9rem;
   color: #6c757d;
   margin-bottom: 10px;
+
+  a {
+    color: #d9534f;           /* màu đỏ nổi bật */
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: #c9302c;           /* đậm hơn khi hover */
+    text-decoration: none;
+  }
 `;
 
 const NewsContent = styled.p`
@@ -130,6 +143,7 @@ const BackButton = styled.button`
   }
 `;
 
+
 export default function NewsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -175,9 +189,10 @@ export default function NewsDetail() {
     const comment = {
       content: formData.get("comment"),
       rating: 0,
-      eventId: id,
+      eventId: Number(id),
     };
 
+    console.log(comment)
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/Comment`, comment, {
         headers: {
@@ -238,13 +253,14 @@ export default function NewsDetail() {
         <Content>
           <Title>{selectedArticle.name}</Title>
           <NewsMeta>
-            {selectedArticle.museum} - {selectedArticle.startDate}
+            <Link to={`/museums/${toSlug(selectedArticle.museum)}`}>{selectedArticle.museum}</Link>
+             - {selectedArticle.startDate}
           </NewsMeta>
           <NewsImage src={selectedArticle.image} alt={selectedArticle.name} />
           <NewsContent>{selectedArticle.description}</NewsContent>
 
           <HashtagWrapper>
-            <Hashtag>{selectedArticle.hastag}</Hashtag>
+            <Hashtag>{selectedArticle.hastag.hashtag}</Hashtag>
           </HashtagWrapper>
 
           <CommentBox>

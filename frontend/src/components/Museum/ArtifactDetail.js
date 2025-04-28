@@ -128,7 +128,7 @@ const ArtifactDetail = () => {
       <div className="artifact-content">
         <div className="artifact-main">
           <div className="artifact-image">
-            <img src={artifact.image} alt={artifact.name} />
+            <img src={artifact.podcast} alt={artifact.name} />
 
             <div className="artifact-small-gallery">
               <button className="prev-set" onClick={handlePrevSet}>

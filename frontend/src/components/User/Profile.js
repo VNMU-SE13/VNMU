@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { LanguageContext } from "../../context/LanguageContext";
 import Swal from "sweetalert2";
+import axios from 'axios'
 
 const ProfileWrapper = styled.div`
   max-width: 700px;
@@ -100,37 +101,56 @@ const UserProfile = ({ user: propUser, onLogout }) => {
   const navigate = useNavigate();
   const { translated } = useContext(LanguageContext);
 
-  const storedUser = localStorage.getItem("user");
-  const [user, setUser] = useState(
-    propUser || (storedUser ? JSON.parse(storedUser) : null)
-  );
+  const [userInfo, setUserInfo] = useState();
 
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [phone, setPhone] = useState();
+  const [address, setAddress] = useState();
+  const [avatar, setAvatar] = useState();
+  const [loading, setLoading] = useState(true)
+  const [image, setImage] = useState()
 
   const fileInputRef = useRef();
 
   useEffect(() => {
-    if (!user) {
-      console.warn("⚠️ Chưa có user trong localStorage!");
-    } else {
-      console.log("✅ Đã lấy user từ localStorage:", user);
+    
+    const fetchData = async () => {
+      setLoading(true)
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/User/Profile`, {
+        headers: { 
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json" },
+      })
+      setUserInfo(res.data)
+      setPhone(res.data.phoneNumber)
+      setAddress(res.data.address)
+      setAvatar(res.data.image)
+      setLoading(false)
     }
-  }, [user]);
 
-  if (!user) return <div style={{ textAlign: "center" }}>Chưa đăng nhập</div>;
+    fetchData()
+    
+  }, []);
 
-  const handleSave = () => {
-    const updatedUser = {
-      ...user,
-      phone,
-      address,
-      avatar,
-    };
+  const handleSave = async () => {
+    const formData = new FormData();
+    formData.append("phoneNumber", phone);
+    formData.append("address", address);
+    formData.append("image", image ? image : avatar); 
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    const res = await axios.put(
+      `${process.env.REACT_APP_API_URL}/User/UpdateUserInfo?phoneNumber=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}` ,
+          'Content-Type': 'multipart/form-data'
+          
+        }
+      }
+    );
+
+    
+
     Swal.fire("Đã lưu!", "Thông tin cá nhân đã được cập nhật.", "success");
   };
 
@@ -139,6 +159,7 @@ const UserProfile = ({ user: propUser, onLogout }) => {
   };
 
   const handleAvatarChange = (e) => {
+    setImage(e.target.files[0])
     const file = e.target.files[0];
     if (!file) return;
 
@@ -149,11 +170,13 @@ const UserProfile = ({ user: propUser, onLogout }) => {
     reader.readAsDataURL(file);
   };
 
+  if (loading) return <p>Loading...</p>
+  else
   return (
     <ProfileWrapper>
       <div style={{ textAlign: "center" }}>
         <Avatar
-          src={avatar || "/image/default-avatar.png"}
+          src={avatar}
           alt="Avatar"
           onClick={handleAvatarClick}
         />
@@ -164,19 +187,12 @@ const UserProfile = ({ user: propUser, onLogout }) => {
           accept="image/*"
           onChange={handleAvatarChange}
         />
-        <UserName>{user.userName}</UserName>
-        <Email>{user.email}</Email>
-        <Points>🎯 Điểm tích lũy: {user.point || 0}</Points>
+        <UserName>{userInfo.usernmae}</UserName>
+        <Email>{userInfo.email}</Email>
       </div>
 
       <div>
         <Label>📷 URL ảnh đại diện (nếu có sẵn)</Label>
-        <Input
-          type="text"
-          value={avatar}
-          onChange={(e) => setAvatar(e.target.value)}
-          placeholder="Nhập link ảnh đại diện"
-        />
 
         <Label>📞 Số điện thoại</Label>
         <Input
@@ -197,11 +213,8 @@ const UserProfile = ({ user: propUser, onLogout }) => {
 
       <ButtonGroup>
         <ProfileButton onClick={handleSave}>💾 Lưu thay đổi</ProfileButton>
-        <ProfileButton onClick={() => navigate("/edit-profile")}>
-          ✏️ Chỉnh sửa hồ sơ
-        </ProfileButton>
-        <ProfileButton color="#ef4444" onClick={onLogout}>
-          🚪 Đăng xuất
+        <ProfileButton color="#ef4444" onClick={() => navigate("/")}>
+          🚪 Quay lại
         </ProfileButton>
       </ButtonGroup>
     </ProfileWrapper>

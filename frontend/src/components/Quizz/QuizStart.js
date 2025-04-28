@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useSearchParams  } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import axios from "axios";
 
 const QuizWrapper = styled.div`
   background-image: url('/image/bg-paper.jpg');
@@ -126,70 +128,10 @@ const NextButton = styled.button`
   }
 `;
 
-const questions = [
-  {
-    image: "/image/q1.jpg",
-    question: "Ai là người đã lãnh đạo cuộc khởi nghĩa Lam Sơn chống lại quân Minh và sáng lập ra triều đại nhà Lê ở Việt Nam?",
-    options: ["Nguyễn Huệ", "Lý Công Uẩn", "Lê Lợi", "Trần Hưng Đạo"],
-    answer: "Lê Lợi"
-  },
-  {
-    image: "/image/q2.jpg",
-    question: "Chiến thắng nào là mốc son chói lọi trong kháng chiến chống Pháp, năm 1954?",
-    options: ["Điện Biên Phủ", "Chiến khu Việt Bắc", "Chiến dịch Biên giới", "Chiến dịch Hồ Chí Minh"],
-    answer: "Điện Biên Phủ"
-  },
-  {
-    image: "/image/q3.jpg",
-    question: "Ai là vị tướng huyền thoại của Việt Nam trong kháng chiến chống Mỹ?",
-    options: ["Lê Duẩn", "Võ Nguyên Giáp", "Nguyễn Văn Linh", "Trường Chinh"],
-    answer: "Võ Nguyên Giáp"
-  },
-  {
-    image: "/image/q4.jpg",
-    question: "Chiến dịch nào đã giải phóng hoàn toàn miền Nam, thống nhất đất nước?",
-    options: ["Chiến dịch Tây Nguyên", "Chiến dịch Huế - Đà Nẵng", "Chiến dịch Hồ Chí Minh", "Chiến dịch Đường 9"],
-    answer: "Chiến dịch Hồ Chí Minh"
-  },
-  {
-    image: "/image/q5.jpg",
-    question: "Năm nào quân Nhật đảo chính Pháp ở Đông Dương?",
-    options: ["1945", "1941", "1930", "1943"],
-    answer: "1945"
-  },
-  {
-    image: "/image/q6.jpg",
-    question: "Sự kiện nào đánh dấu việc Nhật đầu hàng quân Đồng minh trong Thế chiến II?",
-    options: ["Hiệp định Giơ-ne-vơ", "Ngày 2/9/1945", "Ngày 15/8/1945", "Chiến thắng Stalingrad"],
-    answer: "Ngày 15/8/1945"
-  },
-  {
-    image: "/image/q7.jpg",
-    question: "Ai là người đã viết Tuyên ngôn Độc lập nước Việt Nam Dân chủ Cộng hòa?",
-    options: ["Trường Chinh", "Hồ Chí Minh", "Phạm Văn Đồng", "Lê Duẩn"],
-    answer: "Hồ Chí Minh"
-  },
-  {
-    image: "/image/q8.jpg",
-    question: "Cuộc chiến tranh biên giới phía Bắc chống Trung Quốc xảy ra vào năm nào?",
-    options: ["1979", "1984", "1975", "1980"],
-    answer: "1979"
-  },
-  {
-    image: "/image/q9.jpg",
-    question: "Chiến thắng nào mở đầu cho cuộc kháng chiến chống Pháp?",
-    options: ["Chiến thắng Cầu Giấy", "Chiến thắng Tuyên Quang", "Chiến thắng Việt Bắc", "Chiến thắng Phủ Thông"],
-    answer: "Chiến thắng Việt Bắc"
-  },
-  {
-    image: "/image/q10.jpg",
-    question: "Ai là Chủ tịch nước đầu tiên của nước Việt Nam Dân chủ Cộng hòa?",
-    options: ["Tôn Đức Thắng", "Hồ Chí Minh", "Trường Chinh", "Phạm Văn Đồng"],
-    answer: "Hồ Chí Minh"
-  }
-];
-
 const QuizStart = () => {
+  const [searchParams] = useSearchParams();
+  const level = searchParams.get('level');
+  const period = searchParams.get('period');
   const { language } = useContext(LanguageContext);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -200,25 +142,43 @@ const QuizStart = () => {
   const [timerRef, setTimerRef] = useState(null);
   const [translatedQuestion, setTranslatedQuestion] = useState("");
   const [translatedOptions, setTranslatedOptions] = useState([]);
-
-  const currentQ = questions[current] || {
-    question: '',
-    options: [],
-    image: '',
-    answer: ''
-  };
+  const [quiz, setQuiz] = useState()
+  const [questions, setQuestions] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const translate = async () => {
-      const q = await translateText(currentQ.question, language);
-      const opts = await Promise.all(
-        currentQ.options.map((o) => translateText(o, language))
-      );
-      setTranslatedQuestion(q);
-      setTranslatedOptions(opts);
-    };
-    translate();
-  }, [currentQ.question, currentQ.options, language]);
+    setLoading(true)
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${period}`)
+        setQuiz(res.data[0])
+        const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Question`)
+        const ques = res2.data.filter(q => q.quizId == res.data[0].id)
+        setQuestions(ques)
+
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+    setLoading(false)
+  }, [])
+
+  // useEffect(() => {
+  //   const translate = async () => {
+  //     const q = await translateText(questions[current].text, language);
+  //     console.log(q)
+  //     const opts = await Promise.all(
+  //       questions[current].answer.map((o) => translateText(o, language))
+  //     );
+  //     setTranslatedQuestion(q);
+  //     setTranslatedOptions(opts);
+  //   };
+
+  //   if(questions) translate();
+  // }, [current, language]);
 
   useEffect(() => {
     if (isFinished) return;
@@ -232,13 +192,13 @@ const QuizStart = () => {
         if (prev <= 1) {
           clearInterval(timer);
           setShowAnswer(true);
-
-          if (selected === currentQ.answer) {
+          
+          if (selected && [current].answers[(selected-1)%4].isCorrect) {
             setScore((prev) => prev + 1);
           }
 
           setTimeout(() => {
-            if (current + 1 < questions.length) {
+            if (questions && (current + 1 < questions.length)) {
               setCurrent((prev) => prev + 1);
             } else {
               setIsFinished(true);
@@ -267,8 +227,6 @@ const QuizStart = () => {
         title: score === 10 ? "Trạng Nguyên" : "Bảng Nhãn"
       };
 
-      const old = JSON.parse(localStorage.getItem("quizHistory") || "[]");
-      localStorage.setItem("quizHistory", JSON.stringify([...old, entry]));
     }
   }, [isFinished]);
 
@@ -281,8 +239,8 @@ const QuizStart = () => {
       clearInterval(timerRef);
       setTimeLeft(0);
       setShowAnswer(true);
-
-      if (selected === currentQ.answer) {
+      console.log(selected)
+      if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
         setScore((prev) => prev + 1);
       }
 
@@ -296,6 +254,8 @@ const QuizStart = () => {
     }
   };
 
+  if(!questions || loading) return <p>Loading...</p>
+  else
   return (
     <QuizWrapper>
       {isFinished ? (
@@ -321,6 +281,7 @@ const QuizStart = () => {
               onClick={() => {
                 setCurrent(0);
                 setScore(0);
+                setSelected(null)
                 setIsFinished(false);
               }}
             >
@@ -349,12 +310,12 @@ const QuizStart = () => {
         <>
           <QuestionRow>
             <QuestionBlock>
-              <QuestionText>{translatedQuestion}</QuestionText>
+              <QuestionText>{questions[current].text}</QuestionText>
               <OptionList>
-                {translatedOptions.map((option, index) => {
-                  const original = currentQ.options[index];
-                  const isCorrect = showAnswer && original === currentQ.answer;
-                  const isWrong = showAnswer && selected === original && original !== currentQ.answer;
+                {questions[current].answers.map((option, index) => {
+                  const original = option.id
+                  const isCorrect = showAnswer && option.isCorrect
+                  const isWrong = showAnswer && selected === original && option.isCorrect;
 
                   return (
                     <Option
@@ -363,16 +324,16 @@ const QuizStart = () => {
                       correct={isWrong ? false : undefined}
                       isAnswer={isCorrect}
                       disabled={showAnswer}
-                      onClick={() => handleSelect(original)}
+                      onClick={() => handleSelect(option.id)}
                     >
-                      {option}
+                      {option.text}
                     </Option>
                   );
                 })}
               </OptionList>
             </QuestionBlock>
 
-            <QuestionImage src={currentQ.image} alt="question" />
+            <QuestionImage src={questions[current].image} alt="question" />
           </QuestionRow>
 
           <ProgressBarWrapper>
