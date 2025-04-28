@@ -173,7 +173,7 @@ const ChatboxAI = ({ onClose }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5246/api/GPT/ChatGPT?searchText=${encodeURIComponent(inputText)}`
+        `${process.env.REACT_APP_API_URL}/GPT/ChatGPT?searchText=${encodeURIComponent(inputText)}`
       );
 
       setMessages([

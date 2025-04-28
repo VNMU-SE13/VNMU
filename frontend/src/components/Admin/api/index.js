@@ -55,7 +55,7 @@
 // };
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5246/api/";
+const BASE_URL = process.env.REACT_APP_API_URL + "/";
 
 export const ENDPIONTS = {
   CategoryArtifact: "CategoryArtifact",

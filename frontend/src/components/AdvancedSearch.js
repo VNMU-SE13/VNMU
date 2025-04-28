@@ -261,17 +261,17 @@ export default function AdvancedSearch() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    axios.get("http://localhost:5246/api/Museum").then((res) => setMuseums(res.data));
-    axios.get("http://localhost:5246/api/CategoryArtifact").then((res) => setCategories(res.data));
+    axios.get(`${process.env.REACT_APP_API_URL}/Museum`).then((res) => setMuseums(res.data));
+    axios.get(`${process.env.REACT_APP_API_URL}/CategoryArtifact`).then((res) => setCategories(res.data));
   }, []);
 
   useEffect(() => {
     if (filters.museum) {
-      axios.get(`http://localhost:5246/api/Museum/${filters.museum}`).then((res) => {
+      axios.get(`${process.env.REACT_APP_API_URL}/Museum/${filters.museum}`).then((res) => {
         setArtifacts(res.data.artifacts || []);
       });
     } else {
-      axios.get("http://localhost:5246/api/Artifact").then((res) => setArtifacts(res.data));
+      axios.get(`${process.env.REACT_APP_API_URL}/Artifact`).then((res) => setArtifacts(res.data));
     }
   }, [filters.museum]);
 

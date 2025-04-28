@@ -27,7 +27,7 @@ export default function MuseumArtifactManager() {
 
   const fetchArtifacts = async () => {
     try {
-      const res = await axios.get("http://localhost:5246/api/Artifact");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact`);
       setArtifacts(res.data);
     } catch (err) {
       console.error("Lỗi lấy dữ liệu hiện vật:", err);
@@ -70,7 +70,7 @@ export default function MuseumArtifactManager() {
     });
 
     try {
-      await axios.post("http://localhost:5246/api/Artifact", data, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/Artifact`, data, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       alert("Thêm hiện vật thành công!");
