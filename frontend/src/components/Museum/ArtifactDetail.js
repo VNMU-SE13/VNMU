@@ -9,7 +9,6 @@ import ArtifactsCarousel from "../Museum/ArtifactsCarousel";
 import axios from "axios";
 import "../../assets/css/ArtifactDetail.css";
 import toSlug from "../../utils/toSlug";
-import GLBViewer from "../GLBViewer";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 
@@ -18,7 +17,7 @@ const ArtifactDetail = () => {
   const { language } = useContext(LanguageContext);
 
   const [artifact, setArtifact] = useState(null);
-  const [qrUrl, setQrUrl] = useState("");
+  const [qrUrl, setQrUrl] = useState("");  // Store the QR code URL
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [allArtifacts, setAllArtifacts] = useState([]);
@@ -56,7 +55,10 @@ const ArtifactDetail = () => {
       const artifactsRes = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact`);
       setAllArtifacts(artifactsRes.data);
 
-      setQrUrl(response.data.podcast);
+      // Lấy URL từ thuộc tính `podcast` (URL tệp GLB từ BE)
+      const glbUrl = response.data.podcast;
+      // Tạo URL trỏ tới trang glb.ee
+      setQrUrl(`https://glb.ee/?model=${encodeURIComponent(glbUrl)}`);
       setLoading(false);
     };
 
@@ -209,9 +211,7 @@ const ArtifactDetail = () => {
       </div>
 
       <div className="artifact-info-container">
-        <ArtifactDescription
-          artifact={artifact}
-        />
+        <ArtifactDescription artifact={artifact} />
       </div>
 
       <div style={{ marginTop: "40px" }}>
@@ -219,25 +219,25 @@ const ArtifactDetail = () => {
       </div>
 
       {isQrModalOpen && (
-  <div className="qr-modal">
-    <div className="qr-modal-content" style={{ padding: "20px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center", justifyContent: "center" }}>
-      <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>
-        ×
-      </span>
-      
-      {/* Bên trái: QRCode */}
-      <div style={{ textAlign: "center" }}>
-        <h3 style={{ marginBottom: "10px" }}>{translatedLabels.scanQR}</h3>
-        <QRCode value={qrUrl} size={180} />
-      </div>
+        <div className="qr-modal">
+          <div className="qr-modal-content" style={{ padding: "20px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center", justifyContent: "center" }}>
+            <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>
+              ×
+            </span>
 
-      {/* Bên phải: GLBViewer */}
-      <div style={{ width: "300px", height: "300px", background: "#f8f8f8", borderRadius: "8px", overflow: "hidden" }}>
-        <GLBViewer url={artifact.podcast} />
-      </div>
-    </div>
-  </div>
-)}
+            {/* Bên trái: QRCode */}
+            <div style={{ textAlign: "center" }}>
+              <h3 style={{ marginBottom: "10px" }}>{translatedLabels.scanQR}</h3>
+              <QRCode value={qrUrl} size={180} />
+            </div>
+
+            {/* Bên phải: GLBViewer (Đã comment lại) */}
+            {/* <div style={{ width: "300px", height: "300px", background: "#f8f8f8", borderRadius: "8px", overflow: "hidden" }}>
+              <GLBViewer url={artifact.podcast} />
+            </div> */}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
