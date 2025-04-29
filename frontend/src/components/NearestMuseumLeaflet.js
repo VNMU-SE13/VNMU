@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Header from "./Home/Header";
 import {
   MapContainer,
   TileLayer,
@@ -145,12 +146,18 @@ const NearestMuseumLeaflet = () => {
 
   return (
     <div style={{ padding: "1rem" }}>
-      <h2>🗺️ Bản đồ bảo tàng</h2>
+      <Header />  {/* Thêm Header vào phía trên */}
+      <h2 style={{ marginTop: "20px" }}>🗺️ Bản đồ bảo tàng</h2>
       <MapContainer
         center={userLocation || [16.05, 108.22]}
         zoom={13}
         scrollWheelZoom={true}
-        style={{ height: "calc(100vh - 100px)", width: "100%", borderRadius: "12px" }}
+        style={{
+          height: "calc(100vh - 160px)", // Giảm chiều cao của bản đồ để tránh che khuất Header
+          width: "100%",
+          borderRadius: "12px",
+          paddingTop: "200px" // Tạo khoảng trống phía trên bản đồ
+        }}
       >
         <TileLayer
           attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'

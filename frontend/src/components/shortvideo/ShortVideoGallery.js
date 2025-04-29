@@ -126,7 +126,7 @@ const StyledVideo = styled.video`
   }
 `;
 
-const CATEGORIES = ['All', 'Phong Kiến', 'Cận Hiện Đại', 'AI'];
+const CATEGORIES = ['All', 'Phong Kiến', 'Cận Hiện Đại', 'Trí tuệ nhân tạo'];
 
 function ShortVideoGallery({ videos = [] }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -143,7 +143,11 @@ function ShortVideoGallery({ videos = [] }) {
   return (
     <PageWrapper>
       <Sidebar>
-        <SidebarTitle>Khám phá hệ thống VNMU</SidebarTitle>
+      <SidebarTitle>
+      <a href="https://vnmu.vercel.app" target="_blank" rel="noopener noreferrer">
+        Khám phá hệ thống VNMU
+      </a>
+    </SidebarTitle>
         <SidebarList>
           <SidebarItem>Bảo tàng</SidebarItem>
           <SidebarItem>Giai đoạn lịch sử</SidebarItem>

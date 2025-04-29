@@ -17,6 +17,7 @@ const ModalOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  
 `;
 
 const ModalContent = styled.div`
@@ -26,6 +27,7 @@ const ModalContent = styled.div`
   text-align: center;
   width: 400px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  
 `;
 
 const ModalButton = styled.button`
@@ -57,7 +59,7 @@ const SubmitForm = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [labels, setLabels] = useState({
-    title: "Đơn liên hệ",
+    title: "Yêu cầu",
     selectType: "Chọn loại đơn",
     typePlaceholder: "-- Chọn loại đơn --",
     complaint: "Đơn khiếu nại",
@@ -80,7 +82,7 @@ const SubmitForm = () => {
     const translateAll = async () => {
       if (language === "vi") {
         setLabels({
-          title: "Đơn liên hệ",
+          title: "Yêu cầu",
           selectType: "Chọn loại đơn",
           typePlaceholder: "-- Chọn loại đơn --",
           complaint: "Đơn khiếu nại",

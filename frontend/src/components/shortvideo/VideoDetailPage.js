@@ -220,7 +220,8 @@ function VideoDetailPage() {
         <Description>
           <strong>Người đăng:</strong> {video.author} <br />
           <strong>Mô tả:</strong> {video.description} <br />
-          <strong>Bài hát:</strong> {video.song}
+          <strong>Bài hát:</strong> {video.song}<br />
+          <strong>Nguồn từ đâu:</strong> {video.source} 
         </Description>
 
         <ActionsRow>

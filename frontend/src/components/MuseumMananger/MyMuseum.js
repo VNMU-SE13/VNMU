@@ -94,7 +94,7 @@ const MyMuseum = () => {
     const fetchMyMuseum = async () => {
       try {
         const museumId = localStorage.getItem("museumId");
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Museum/1`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Museum/2`);
         setMuseum(res.data);
       } catch (err) {
         console.error("Lỗi khi fetch thông tin bảo tàng:", err);
