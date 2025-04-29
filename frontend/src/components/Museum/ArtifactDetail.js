@@ -56,7 +56,7 @@ const ArtifactDetail = () => {
       const artifactsRes = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact`);
       setAllArtifacts(artifactsRes.data);
 
-      setQrUrl(`${window.location.origin}/image/Tuong_0417115605_texture.glb`);
+      setQrUrl(response.data.podcast);
       setLoading(false);
     };
 
@@ -233,7 +233,7 @@ const ArtifactDetail = () => {
 
       {/* Bên phải: GLBViewer */}
       <div style={{ width: "300px", height: "300px", background: "#f8f8f8", borderRadius: "8px", overflow: "hidden" }}>
-        <GLBViewer url={qrUrl} />
+        <GLBViewer url={artifact.podcast} />
       </div>
     </div>
   </div>

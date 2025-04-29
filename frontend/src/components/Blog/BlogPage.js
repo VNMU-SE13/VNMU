@@ -12,6 +12,8 @@ const Container = styled.div`
   min-height: 100vh;
   background: #f9fafb;
   margin-left: 240px; /* đẩy Content ra bằng đúng chiều rộng Sidebar */
+  flex-direction: column; /* Dọc để chứa các phần tử BlogItemRow */
+  gap: 1.5rem; /* Khoảng cách giữa các phần tử */
 `;
 
 
@@ -33,7 +35,9 @@ const BlogItemRow = styled.div`
   border-left: 5px solid #f59e0b;
   gap: 1.5rem;
   transition: all 0.3s ease;
-
+  flex: 1; /* Làm cho tất cả các phần tử có chiều rộng bằng nhau */
+  min-width: 0; /* Đảm bảo không bị co lại */
+  
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.1);
@@ -68,6 +72,11 @@ const BlogDescription = styled.p`
   color: #4b5563;
   line-height: 1.6;
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const DetailButton = styled.button`
@@ -128,6 +137,7 @@ const BlogPage = () => {
   const [blog, setBlog] = useState()
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [loading, setLoading] = useState()
 
   const totalPages = Math.ceil(listFilteredBlog.length / itemsPerPage);
   const paginatedBlogs = listFilteredBlog.slice(
@@ -188,9 +198,9 @@ const BlogPage = () => {
   const handleSelectStage = (stageId) => {
     setSelectedStage(stageId)
     setListFilteredBlog(() => {
-      return selectedStage == 0
+      return stageId == 0
         ? listBlog
-        : listBlog.filter((blog) => blog.categoryBlogId === selectedStage);
+        : listBlog.filter((blog) => blog.categoryBlogId === stageId);
     });  
   }
 
@@ -216,7 +226,7 @@ const BlogPage = () => {
                     <Thumbnail src={blog.image} alt="thumbnail" />
                     <BlogInfo>
                       <BlogTitle>{blog.title}</BlogTitle>
-                      <BlogDescription>{blog.content}</BlogDescription>
+                      <BlogDescription dangerouslySetInnerHTML={{ __html: blog.content }} />
                     </BlogInfo>
                     <DetailButton onClick={() => navigate(`/blog/${blog.id}`)}>
                       Xem chi tiết

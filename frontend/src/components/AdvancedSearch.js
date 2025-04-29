@@ -131,6 +131,13 @@ const ArtifactGridCard = styled.div`
     color: #555;
     margin: 0 0 8px;
     line-height: 1.5;
+
+    /* Thêm thuộc tính để cắt ngắn nội dung */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Giới hạn số dòng tối đa */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .museum-name {
@@ -155,6 +162,7 @@ const ArtifactGridCard = styled.div`
     }
   }
 `;
+
 
 const PaginationWrapper = styled.div`
   margin-top: auto;
@@ -212,6 +220,8 @@ const SectionTitle = styled.h2`
 
 const KeywordInputWrapper = styled.div`
   margin-top: 8px;
+  display: flex;
+  align-items: center;
 
   input {
     width: 100%;
@@ -220,7 +230,28 @@ const KeywordInputWrapper = styled.div`
     border: 1px solid #ccc;
     font-size: 14px;
   }
+
+  button {
+    padding: 8px 16px;
+    margin-left: 10px;  /* Khoảng cách giữa input và button */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.25s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
 `;
+
 
 const ResultCount = styled.p`
   font-size: 1rem;
@@ -240,20 +271,56 @@ const ResultCount = styled.p`
     margin-right: 8px;
     font-size: 1.1rem;
   }
+
+  /* Thêm cắt ngắn nội dung cho ResultCount */
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* Giới hạn 1 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #007bff;
+  
+  .spinner {
+    border: 4px solid #f3f3f3; /* Màu nền của spinner */
+    border-top: 4px solid #007bff; /* Màu của spinner */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+
 export default function AdvancedSearch() {
   const [artifacts, setArtifacts] = useState([]);
   const [filteredArtifacts, setFilteredArtifacts] = useState([]);
   const [paginatedArtifacts, setPaginatedArtifacts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [museums, setMuseums] = useState([]);
+  const [keyword, setKeyword] = useState()
   const navigate = useNavigate();
+  const [loading, setLoading] = useState()
 
   const [filters, setFilters] = useState({
     museum: "",
     category: "",
     condition: "",
-    keyword: "",
     year: "",
   });
 
@@ -282,13 +349,12 @@ export default function AdvancedSearch() {
       return (
         (!filters.category || item.categoryArtifactId === parseInt(filters.category)) &&
         (!filters.condition || item.condition === filters.condition) &&
-        (!filters.keyword || item.artifactName.toLowerCase().includes(filters.keyword.toLowerCase())) &&
         matchYear
       );
     });
     setFilteredArtifacts(filtered);
     setCurrentPage(1);
-  }, [filters.category, filters.condition, filters.keyword, filters.year, artifacts]);
+  }, [filters.category, filters.condition, filters.year, artifacts]);
 
   useEffect(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -311,6 +377,20 @@ export default function AdvancedSearch() {
     const found = museums.find((m) => m.id === museumId);
     return found ? found.name : "Không rõ";
   };
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/GPT/SearchData`,{
+        searchText: keyword
+      })
+      setFilteredArtifacts(res.data)
+    }
+    catch(err) {
+      console.log(err)
+    }
+    setLoading(false)
+  }
 
   const totalPages = Math.max(1, Math.ceil(filteredArtifacts.length / itemsPerPage));
 
@@ -388,32 +468,44 @@ export default function AdvancedSearch() {
               <input
                 type="text"
                 placeholder="Nhập từ khóa..."
-                onChange={(e) => handleFilterChange("keyword", e.target.value)}
+                onChange={(e) => setKeyword(e.target.value)}
               />
+              <button type="button" onClick={handleSubmit}>Tìm kiếm</button>
             </KeywordInputWrapper>
           </FilterSection>
+
         </Sidebar>
 
         <Content>
           <SectionTitle>Các hiện vật sau khi tìm kiếm</SectionTitle>
           <ResultCount>Tìm kiếm được {filteredArtifacts.length} hiện vật.</ResultCount>
-          <GridWrapper>
-            {paginatedArtifacts.length === 0 ? (
-              <p>Không tìm thấy hiện vật phù hợp.</p>
-            ) : (
-              paginatedArtifacts.map((item) => (
-                <ArtifactGridCard key={item.id}>
-                  <img src={item.image} alt={item.artifactName} />
-                  <h4>{item.artifactName}</h4>
-                  <p>{item.description}</p>
-                  <div className="museum-name">🏛 {getMuseumName(item.museumId)}</div>
-                  <button onClick={() => navigate(`/artifact/${item.id}`)}>
-                    Xem chi tiết
-                  </button>
-                </ArtifactGridCard>
-              ))
-            )}
-          </GridWrapper>
+          
+          {loading ? (
+            <LoadingWrapper>
+              <div className="spinner"></div>
+              <p>Đang tải...</p>
+            </LoadingWrapper>
+          ) : (
+            <GridWrapper>
+              {paginatedArtifacts.length === 0 ? (
+                <p>Không tìm thấy hiện vật phù hợp.</p>
+              ) : (
+                paginatedArtifacts.map((item) => (
+                  <ArtifactGridCard key={item.id}>
+                    <img src={item.image} alt={item.artifactName} />
+                    <h4>{item.artifactName}</h4>
+                    <p>{item.description}</p>
+                    <div className="museum-name">🏛 {getMuseumName(item.museumId)}</div>
+                    <button onClick={() => navigate(`/artifact/${item.id}`)}>
+                      Xem chi tiết
+                    </button>
+                  </ArtifactGridCard>
+                ))
+              )}
+            </GridWrapper>
+          )}
+
+
         </Content>
       </MainContent>
 

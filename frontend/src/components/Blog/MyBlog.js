@@ -136,6 +136,7 @@ const MyBlog = () => {
   const [listFilteredBlog, setListFilteredBlog] = useState([])
   const [listStage, setListStage] = useState([])
   const [selectedStage, setSelectedStage] = useState(0);
+  const [isSortedAsc, setIsSortedAsc] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -213,11 +214,23 @@ const MyBlog = () => {
   const handleSelectStage = (stageId) => {
     setSelectedStage(stageId)
     setListFilteredBlog(() => {
-      return selectedStage == 0
+      return stageId == 0
         ? listBlog
-        : listBlog.filter((blog) => blog.categoryBlogId === selectedStage);
+        : listBlog.filter((blog) => blog.categoryBlogId === stageId);
     });  
   }
+
+  const handleSortByDate = () => {
+    const sortedBlogs = [...listFilteredBlog].sort((a, b) => {
+      const dateA = new Date(a.createdDate);
+      const dateB = new Date(b.createdDate);
+      return isSortedAsc ? dateA - dateB : dateB - dateA; // Sắp xếp theo chiều tăng dần hoặc giảm dần
+    });
+  
+    setIsSortedAsc(!isSortedAsc);  // Đảo ngược trạng thái sắp xếp
+    setListFilteredBlog(sortedBlogs);
+  };
+  
 
 
   return (
@@ -229,40 +242,73 @@ const MyBlog = () => {
           handleSelectStage={handleSelectStage}
       />
       <Container>
-        <Content>
-          <BlogTable>
-            <thead>
-              <tr>
-                <Th></Th>
-                <Th>Tiêu đề</Th>
-                <Th>Lượt thích</Th>
-                <Th>Ngày</Th>
-                <Th>Action</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {listFilteredBlog.map((blog, index) => (
-                <tr key={index}>
-                  <Td><input type="checkbox" /></Td>
-                  <Td>
-                    <div>
-                      <strong>{blog.title}</strong>
-                    </div>
-                  </Td>
-                  <Td>0</Td>
-                  <Td>{toDateTime(blog.createdDate)}</Td>
-                  <Td>
-                    <div style={{ marginTop: "0.5rem" }}>
+          <Content>
+            <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-start' }}>
+              <button 
+                onClick={handleSortByDate}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+              >
+                Sắp xếp theo ngày
+                <span style={{ fontSize: '20px' }}>
+                  {isSortedAsc ? '↑' : '↓'}  {/* Hiển thị mũi tên lên hoặc xuống */}
+                </span>
+              </button>
+            </div>
+
+            <BlogTable>
+              <thead>
+                <tr>
+                  <Th></Th>
+                  <Th>Tiêu đề</Th>
+                  <Th>Lượt thích</Th>
+                  <Th onClick={handleSortByDate} style={{ cursor: 'pointer' }}>
+                    Ngày
+                    <span style={{ fontSize: '16px', marginLeft: '5px' }}>
+                      {isSortedAsc ? '↑' : '↓'}
+                    </span>
+                  </Th>
+                  <Th>Action</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {listFilteredBlog.map((blog, index) => (
+                  <tr key={index}>
+                    <Td><input type="checkbox" /></Td>
+                    <Td>
+                      <div>
+                        <strong>{blog.title}</strong>
+                      </div>
+                    </Td>
+                    <Td>0</Td>
+                    <Td>{toDateTime(blog.createdDate)}</Td>
+                    <Td>
+                      <div style={{ marginTop: "0.5rem" }}>
                         <EditButton onClick={() => handleEdit(blog.id)}>✏️ Chỉnh sửa</EditButton>
                         <DeleteButton onClick={() => handleDelete(blog.id)}>🗑 Xóa</DeleteButton>
                       </div>
                     </Td>
-                </tr>
-              ))}
-            </tbody>
-          </BlogTable>
-        </Content>
-      </Container>
+                  </tr>
+                ))}
+              </tbody>
+            </BlogTable>
+          </Content>
+        </Container>
+
     </>
   );
 };

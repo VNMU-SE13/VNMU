@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styled, { keyframes } from "styled-components";
@@ -346,7 +346,6 @@ const WriteDescription = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const quillRef = useRef(null);
 
   const [loading, setLoading] = useState(false)
 
@@ -518,9 +517,7 @@ const WriteDescription = () => {
 
   // handle change content
   const handleChangeContent = (e) => {   
-    const editor = quillRef.current?.getEditor();
-    const html = editor?.root.innerHTML; // HTML content
-    setContent(html);
+    setContent(e);
   };
   
   if (loading) return <Loading />
@@ -553,7 +550,6 @@ const WriteDescription = () => {
             <EditorTitle>Viết mô tả nội dung</EditorTitle>
             <EditorBox>
               <ReactQuill
-                ref={quillRef}
                 theme="snow"
                 value={content}
                 onChange={handleChangeContent}

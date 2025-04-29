@@ -154,7 +154,7 @@ const BlogDetail = ({ blog }) => {
       <Title>{blog.title}</Title>
       <BlogCenterWrapper>
         <BlogImage src={blog.image} alt={blog.title} />
-        <BlogDescription>{blog.content}</BlogDescription>
+        <BlogDescription dangerouslySetInnerHTML={{ __html: blog.content }} />
 
         <BlogMetaRow>
           {blog.hastagOfBlog.map((tag, index) => (

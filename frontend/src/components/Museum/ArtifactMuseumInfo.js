@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import { useNavigate } from "react-router-dom";
+import toSlug from "../../utils/toSlug";
 
 const MuseumContainer = styled.div`
   background-color: #fff;
@@ -93,6 +95,7 @@ const Button = styled.button`
 `;
 
 const ArtifactMuseumInfo = ({ museum }) => {
+  const navigate = useNavigate()
   const { language } = useContext(LanguageContext);
   const [labels, setLabels] = useState({
     viewMuseum: "Xem Bảo tàng",
@@ -134,7 +137,7 @@ const ArtifactMuseumInfo = ({ museum }) => {
       </MuseumInfo>
 
       <MuseumActions>
-        <Button>{labels.viewMuseum}</Button>
+        <Button onClick={() => navigate(`/museums/${toSlug(museum.name)}`)}>{labels.viewMuseum}</Button>
       </MuseumActions>
 
       <MuseumStats>
