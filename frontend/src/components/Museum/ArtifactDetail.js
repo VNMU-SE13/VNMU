@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import QRCode from "react-qr-code";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactMuseumInfo from "../Museum/ArtifactMuseumInfo";
@@ -11,19 +10,21 @@ import "../../assets/css/ArtifactDetail.css";
 import toSlug from "../../utils/toSlug";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import GLBViewer from "../GLBViewer";
+import data3D from "../data3d";
 
 const ArtifactDetail = () => {
   const { id } = useParams();
   const { language } = useContext(LanguageContext);
 
   const [artifact, setArtifact] = useState(null);
-  const [qrUrl, setQrUrl] = useState("");  // Store the QR code URL
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [allArtifacts, setAllArtifacts] = useState([]);
   const [artifactImages, setArtifactImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [museum, setMuseum] = useState(null);
+  const [glbUrl, setGlbUrl] = useState(null);
   const itemsPerPage = 4;
 
   const [translatedLabels, setTranslatedLabels] = useState({
@@ -55,10 +56,12 @@ const ArtifactDetail = () => {
       const artifactsRes = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact`);
       setAllArtifacts(artifactsRes.data);
 
-      // Lấy URL từ thuộc tính `podcast` (URL tệp GLB từ BE)
-      const glbUrl = response.data.podcast;
-      // Tạo URL trỏ tới trang glb.ee
-      setQrUrl(`https://glb.ee/?model=${encodeURIComponent(glbUrl)}`);
+      // Tìm file glb tương ứng từ data3D
+      const matchedModel = data3D.find(item => item.id === response.data.id);
+      if (matchedModel) {
+        setGlbUrl("/" + matchedModel.path);
+      }
+
       setLoading(false);
     };
 
@@ -130,17 +133,17 @@ const ArtifactDetail = () => {
       <div className="artifact-content">
         <div className="artifact-main">
           <div className="artifact-image">
-            <img src={artifact.podcast} alt={artifact.name} />
+            <img src={artifact.image} alt={artifact.name} />
 
             <div className="artifact-small-gallery">
               <button className="prev-set" onClick={handlePrevSet}>
                 {"<"}
               </button>
               <div className="small-gallery">
-                {artifactImages.map((image, index) => (
+                {artifactImages.map((img, index) => (
                   <img
                     key={index}
-                    src={image}
+                    src={img.imageUrl}
                     alt={`Chi tiết ${index + 1}`}
                     className="small-gallery-image"
                     onClick={() => handleThumbnailClick(index)}
@@ -219,25 +222,44 @@ const ArtifactDetail = () => {
       </div>
 
       {isQrModalOpen && (
-        <div className="qr-modal">
-          <div className="qr-modal-content" style={{ padding: "20px", display: "flex", flexDirection: "row", gap: "20px", alignItems: "center", justifyContent: "center" }}>
-            <span className="close-modal" onClick={() => setIsQrModalOpen(false)}>
-              ×
-            </span>
-
-            {/* Bên trái: QRCode */}
-            <div style={{ textAlign: "center" }}>
-              <h3 style={{ marginBottom: "10px" }}>{translatedLabels.scanQR}</h3>
-              <QRCode value={qrUrl} size={180} />
-            </div>
-
-            {/* Bên phải: GLBViewer (Đã comment lại) */}
-            {/* <div style={{ width: "300px", height: "300px", background: "#f8f8f8", borderRadius: "8px", overflow: "hidden" }}>
-              <GLBViewer url={artifact.podcast} />
-            </div> */}
-          </div>
-        </div>
-      )}
+  <div style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999
+  }}>
+    <div style={{
+      background: "#fff",
+      borderRadius: "10px",
+      padding: "20px",
+      position: "relative",
+      width: "600px",
+      height: "500px",
+      boxShadow: "0 0 20px rgba(0,0,0,0.2)"
+    }}>
+      <span
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "15px",
+          fontSize: "24px",
+          cursor: "pointer",
+          fontWeight: "bold"
+        }}
+        onClick={() => setIsQrModalOpen(false)}
+      >
+        ×
+      </span>
+      <GLBViewer url={glbUrl} />
+    </div>
+  </div>
+)}
 
       <Footer />
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useSearchParams  } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
@@ -129,9 +129,8 @@ const NextButton = styled.button`
 `;
 
 const QuizStart = () => {
-  const [searchParams] = useSearchParams();
-  const level = searchParams.get('level');
-  const period = searchParams.get('period');
+  const { id } = useParams()
+  const navigate = useNavigate()
   const { language } = useContext(LanguageContext);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -145,15 +144,16 @@ const QuizStart = () => {
   const [quiz, setQuiz] = useState()
   const [questions, setQuestions] = useState()
   const [loading, setLoading] = useState(true)
+  
 
   useEffect(() => {
     setLoading(true)
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${period}`)
-        setQuiz(res.data[0])
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/${id}`)
+        setQuiz(res.data)
         const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Question`)
-        const ques = res2.data.filter(q => q.quizId == res.data[0].id)
+        const ques = res2.data.filter(q => q.quizId == res.data.id)
         setQuestions(ques)
 
       }
@@ -164,7 +164,7 @@ const QuizStart = () => {
 
     fetchData()
     setLoading(false)
-  }, [])
+  }, [id])
 
   // useEffect(() => {
   //   const translate = async () => {
@@ -179,7 +179,6 @@ const QuizStart = () => {
 
   //   if(questions) translate();
   // }, [current, language]);
-
   useEffect(() => {
     if (isFinished) return;
 
@@ -189,26 +188,34 @@ const QuizStart = () => {
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
+        if (prev === 3) {
           setShowAnswer(true);
-          
-          if (selected && [current].answers[(selected-1)%4].isCorrect) {
+          if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
             setScore((prev) => prev + 1);
           }
 
-          setTimeout(() => {
-            if (questions && (current + 1 < questions.length)) {
-              setCurrent((prev) => prev + 1);
-            } else {
-              setIsFinished(true);
-            }
-          }, 3000);
+          // setTimeout(() => {
+          //   if (questions && (current + 1 < questions.length)) {
+          //     setCurrent((prev) => prev + 1);
+          //   } else {
+          //     setIsFinished(true);
+          //   }
+          // }, 1000);
+        }
 
+        if(prev === 0) {
+          if (questions && (current + 1 < questions.length)) {
+            setCurrent((prev) => prev + 1);
+          } else {
+            setIsFinished(true);
+          }
+          clearInterval(timer);
           return 0;
         }
+
         return prev - 1;
       });
+
     }, 1000);
 
     setTimerRef(timer);
@@ -239,7 +246,6 @@ const QuizStart = () => {
       clearInterval(timerRef);
       setTimeLeft(0);
       setShowAnswer(true);
-      console.log(selected)
       if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
         setScore((prev) => prev + 1);
       }
@@ -299,7 +305,7 @@ const QuizStart = () => {
                 cursor: 'pointer',
               }}
               onClick={() => {
-                window.location.href = '/quiz';
+                navigate('/quiz')
               }}
             >
               ⬅️ {language === 'vi' ? "Quay lại" : "Back"}

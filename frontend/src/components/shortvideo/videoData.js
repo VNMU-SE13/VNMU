@@ -163,7 +163,7 @@ const shortVideos = [
   {
     id: 'vid14',
     src: '/videos/AIvideo1.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: ' "Bạn tỉnh dậy trong một căn lán lợp lá cọ, tiếng kèn đồng vọng lên từ chân núi, và người bên cạnh thì thào: \"Dậy đi, trinh sát viên, chúng ta phải vượt rừng trước khi mặt trời mọc.\" Vẫn chưa hiểu chuyện gì xảy ra, bạn nhìn quanh: không có điện thoại, không có GPS – chỉ có một thanh đoản đao, một bộ áo vải bạc màu và chiếc bản đồ vẽ tay bằng mực tàu. Chào mừng bạn đến với **một ngày làm quân trinh sát triều Trần** – giữa thời kỳ sục sôi chuẩn bị kháng chiến chống Nguyên Mông.\n\nNhiệm vụ: len lỏi qua những cánh rừng Lạng Sơn, thám sát lộ trình tiến quân của giặc, bí mật ghi lại thông tin, và trở về trước khi trời tối. Một sai lầm nhỏ thôi cũng có thể khiến bạn bị phục kích hoặc không bao giờ quay lại. Không có máy bay trinh sát, không có vệ tinh – tất cả phụ thuộc vào đôi mắt, đôi tai và trí nhớ của bạn.\n\nBạn gặp những toán quân dã chiến, những dân binh địa phương sẵn sàng hy sinh để giữ kín thông tin. Bạn nghe chuyện về Thoát Hoan, về binh lực khổng lồ đang rục rịch phía Bắc, và trái tim bạn bắt đầu sục sôi – không chỉ vì sợ hãi, mà vì ý chí sống còn của một dân tộc.\n\nTrong một ngày ấy, bạn không còn là người hiện đại. Bạn là **mắt tai của quân đội nhà Trần**, là người sống giữa ranh giới của cái chết và chiến thắng. Bạn hiểu vì sao cha ông ta gọi giặc là "thiên binh vạn mã", và vì sao quyết không để giặc đặt chân đến Thăng Long thêm một lần nữa.\n\nKhi bạn trở lại lán an toàn, trời vừa kịp tối, bạn thở phào, và chỉ khi đó bạn mới nhận ra: một ngày làm quân trinh sát triều Trần, là cả một đời sống trong khí phách của một dân tộc chưa bao giờ cúi đầu."',
     song: 'AI Voice – Synthesized',
     author: 'Nguyễn Quang Tiên',
@@ -175,7 +175,7 @@ const shortVideos = [
   {
     id: 'vid15',
     src: '/videos/AIvideo2.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: ' "Tiếng trống trận vang dội, nước sông Bạch Đằng cuồn cuộn vỗ vào mạn thuyền. Bạn mở mắt, tay cầm mái chèo, chân dẫm trên sàn gỗ đầy dây neo và mồi dầu. Không còn bàn phím, không còn điện thoại – bạn vừa xuyên không trở thành **một thủy binh thời Trần**, ngay trước trận đánh lớn với đạo quân Nguyên Mông lẫy lừng.\n\nÁnh bình minh chưa kịp rạng, khói sương đã phủ mờ khắp cửa biển. Bạn đứng giữa hạm đội đang mai phục, quanh bạn là hàng trăm chiến thuyền ẩn mình sau những cọc gỗ lim vót nhọn – thứ vũ khí bí mật sắp sửa viết nên chiến thắng vang dội trong sử Việt.\n\nLệnh phát ra: "Giữ vững đội hình! Khi thủy triều lên, dụ chúng tiến sâu!". Tim bạn đập thình thịch, vừa háo hức, vừa kinh hãi. Phía xa là những con thuyền lớn của giặc, chiến kỹ dồn dập, cung tên sẵn sàng. Nhưng thủy binh Đại Việt không hoảng loạn. Bạn hiểu rằng mình là một phần của chiến thuật thiên tài – nơi thiên thời, địa lợi và nhân tâm hòa làm một.\n\nBạn cùng đồng đội dốc sức chèo lái, lùa quân giặc vào bãi cọc đã được bố trí từ trước. Khi nước rút, hàng ngàn cọc gỗ nhọn hoắt trồi lên khỏi mặt nước như nanh sói, xuyên thủng bụng tàu của giặc. Tiếng reo hò dậy sóng, khói lửa bốc lên giữa dòng Bạch Đằng. Đó không chỉ là chiến thắng, mà là **một bản tuyên ngôn bằng máu, nước và ý chí bất khuất của Đại Việt**.\n\nKhi bạn trở lại thực tại, tim vẫn còn đập dồn dập. Một ngày làm thủy binh nhà Trần không chỉ là cuộc chiến trên sông – mà là hành trình xuyên qua lòng kiêu hãnh dân tộc. Và bạn sẽ không bao giờ nhìn sông nước Việt Nam bằng ánh mắt cũ nữa."',
     song: 'Cảm Hứng Công Nghệ – Instrumental',
     author: 'Nguyễn Quang Tiên',
@@ -187,7 +187,7 @@ const shortVideos = [
   {
     id: 'vid16',
     src: '/videos/AIvideo3.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: ' "Bạn choàng tỉnh giữa làn hương trầm phảng phất, quanh mình là những bức rèm lụa mỏng manh, nền đá lát gạch hoa sen mát lạnh dưới chân. Không có điện thoại, không tiếng chuông báo thức – chỉ có tiếng chuông đồng ngân nga từ tháp Báo Thiên xa xa. Bạn vừa thức dậy… và trở thành **một tỳ nữ trong hậu cung triều Lý**.\n\nChiếc yếm đào mỏng nhẹ được xếp gọn trên chiếc tráp sơn son, áo tứ thân đính chỉ vàng là thứ phục trang bạn phải mặc mỗi sáng sớm trước giờ dâng trà cho công chúa. Bạn không có tên, chỉ có chức phận – là một trong hàng trăm người hầu sống trong cung đình nơi quyền lực và lễ nghi bủa vây như những sợi chỉ tơ giăng mắc.\n\nBạn học cách cúi đầu thật thấp, đi nhẹ, nói khẽ, hiểu từng ánh mắt của hoàng hậu, biết khi nào nên lùi, lúc nào cần im. Nhưng giữa chốn cung cấm ngỡ toàn yên bình ấy, bạn nghe được tin đồn về những biến động ngoài kinh thành – việc vua Lý Nhân Tông đang bàn luận cùng đại thần Lý Thường Kiệt, hay việc chùa Quốc Tử Giám sắp tuyển chọn tỳ nữ biết chữ để dạy cho công nương học nữ công, thi thư.\n\nTrong tim bạn dấy lên một điều lạ lùng: phải chăng mình không chỉ là một tỳ nữ vô danh? Phải chăng giữa triều đại rực rỡ ấy, một người con gái nhỏ bé vẫn có thể góp phần vào câu chuyện lớn lao của đất nước?\n\nMột ngày làm tỳ nữ thời Lý là như vậy – đầy lễ nghi, áp lực, nhưng cũng mở ra những góc nhìn hiếm hoi về cuộc sống hậu cung, về số phận người phụ nữ xưa. Bạn không chỉ xuyên không vào lịch sử – mà còn sống trong từng hơi thở của quá khứ, nơi mà từng lời nói, cử chỉ nhỏ cũng là một phần của dòng chảy ngàn năm văn hiến."',
     song: 'Bắc Bling - Hòa Minzy',
     author: 'Nguyễn Quang Tiên',
@@ -199,7 +199,7 @@ const shortVideos = [
   {
     id: 'vid17',
     src: '/videos/AIvideo4.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: '"Nước sông lạnh ngắt, bùn đất quánh dày, tay bạn tứa máu vì xiết chặt sợi thừng kéo cọc. Tiếng sấm vọng lại từ xa chẳng phải trời nổi giông – mà là tiếng giặc chuẩn bị kéo quân. Nhưng bạn không nhìn thấy kẻ thù. Thứ trước mắt bạn… là một chiếc cọc lim to bằng bắp đùi người, được vót nhọn như một mũi thương khổng lồ. Và nhiệm vụ của bạn: **ép nó xuống lòng sông Bạch Đằng.**\n\nBạn không phải tướng quân. Bạn không cần biết khi nào thủy triều lên hay rút. Bạn chỉ biết: khi hàng ngàn chiếc cọc này đứng vững dưới đáy sông, chúng sẽ biến cả dòng chảy thành một cái bẫy tử thần cho thuyền giặc. Mỗi cú đóng cọc là một lời thề. Mỗi tiếng gỗ rẽ bùn sâu là một bản tuyên ngôn thầm lặng cho độc lập.\n\nXung quanh bạn là những người nông dân bỏ ruộng, những trai tráng từ làng chài ven biển – ai cũng câm lặng mà làm. Mồ hôi hòa với bùn, máu thấm vào nước – không một ai than vãn. Bạn biết rằng **mình chỉ là một người vô danh**, nhưng bạn tin: chiến thắng chỉ đến khi có đủ những bàn tay vô danh như thế.\n\nSau này, sử sách nhắc nhiều đến Trần Hưng Đạo, đến mưu lược trận địa. Nhưng không mấy ai nhớ tên người lính ép cọc. **Người như bạn.** Và bạn chấp nhận điều đó, như cách bạn gục xuống bên bãi cọc cuối cùng – giữa nước triều rút – mỉm cười vì biết: lịch sử đã được đóng xuống lòng sông… bằng chính đôi tay này."',
     song: 'Translate Voices – AI Tools',
     author: 'Nguyễn Quang Tiên',
@@ -211,7 +211,7 @@ const shortVideos = [
   {
     id: 'vid18',
     src: '/videos/AIvideo5.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: ' "Bạn không cầm gươm, cũng chẳng bắn tên. Tay bạn chỉ có đôi quang gánh, vai trĩu nặng từng bao thóc, từng hũ muối, từng túi khô cá. Nhưng mỗi bước chân bạn đi, là một nhịp thở được giữ lại cho những người đang ở tuyến đầu. Bạn là lính vận lương. Một cái bóng lặng lẽ giữa đại quân rợp trời cờ xí.\n\nĐường vận chuyển không trải nhựa – mà là núi cao, khe sâu, bùn đất lầy lội. Có những đêm bạn vượt rừng, gió hú lạnh buốt, chân run vì đói. Có khi giặc rình rập ngay lối mòn, chỉ cần sơ suất là mất cả đoàn lương. Nhưng không ai than thở. Vì phía trước, đại quân đang chờ. **Không có lương, không có trận đánh. Không có bạn, không có chiến thắng.**\n\nBạn nhớ lần đầu được giao nhiệm vụ, người chỉ huy vỗ vai bảo: \"Đánh giặc là việc của tướng, nuôi quân là việc của dân. Nhưng một khi đã khoác áo trận, thì ai cũng là chiến sĩ.\" Câu nói ấy đi theo bạn qua bao con dốc, bao lần trượt chân, bao vết chai máu đỏ trên vai.\n\nKhi thóc đến nơi, bạn lùi lại. Không ai biết tên bạn. Không có chiến công. Nhưng bạn biết: từng nắm cơm họ ăn, từng giọt nước họ uống – là từ đôi vai của những người như bạn. Người ta ghi danh tướng soái. **Lịch sử âm thầm khắc tên bạn vào đá núi, vào đất đai – nơi những đoàn vận lương đi qua.**\n\nBạn là người lính vận chuyển lương thảo. Không cần chiến công, chỉ cần đất nước thắng trận. Thế là đủ."',
     song: 'Thơ Ca Dữ Liệu – AI Composition',
     author: 'Nguyễn Quang Tiên',
@@ -223,7 +223,7 @@ const shortVideos = [
   {
     id: 'vid19',
     src: '/videos/AIvideo6.mp4',
-    category: 'AI',
+    category: 'Trí tuệ nhân tạo',
     description: ' "Bạn choàng tỉnh giữa tiếng vó ngựa dồn dập, tay nắm chặt cán kiếm còn đẫm mồ hôi. Người hầu quỳ trước mặt, run giọng: "Thưa bệ hạ, quân Thanh đã vượt biên giới, Thăng Long thất thủ". Bạn ngỡ là một giấc mơ, nhưng rồi nhìn quanh: long bào vắt bên án thư, bản đồ trải rộng, chiếu chỉ còn chưa kịp đóng dấu. **Bạn… chính là Hoàng đế Quang Trung.**\n\nChỉ còn đúng 6 ngày để tập kết quân, vượt sông Hồng, và đánh tan 29 vạn quân Thanh đang hoành hành ngoài bắc. Mỗi giờ trôi qua là sinh mạng hàng ngàn người. Bạn – người xuyên không – giờ gánh cả vận mệnh đất nước trên vai.\n\nBạn triệu tập đại thần, lệnh khẩn cấp từ Phú Xuân ra Bắc. Trên lưng ngựa, bạn cảm nhận gió Tết lạnh buốt phả vào mặt. Quân sĩ đồng lòng, tiếng hô vang vọng: “Sống chết theo vua!” – và bạn hiểu: **đây không còn là một giấc mơ – mà là cơ hội viết nên lịch sử bằng chính tay mình.**\n\nTừng bước hành quân, từng mưu lược, từng trận đánh thần tốc Ngọc Hồi – Đống Đa như một bản giao hưởng chiến trận. Khi chiến thắng đến, cờ đỏ sao vàng chưa có, nhưng **ý chí Việt Nam đã tung bay ngút trời**.\n\nBạn đứng trên chiến trường, giữa xác pháo giặc, cởi giáp sắt ra và nhìn về kinh thành. Người đời gọi bạn là anh hùng, là thiên tài quân sự, là ‘Napoleon phương Đông’. Nhưng bạn – người từ tương lai – chỉ thầm nghĩ: "Nếu đây là định mệnh, ta xin sống nốt một đời này như một người xứng đáng với cái tên Quang Trung"."',
     song: 'Rewrite History – AI Remix',
     author: 'Nguyễn Quang Tiên',

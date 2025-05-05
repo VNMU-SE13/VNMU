@@ -110,10 +110,34 @@ const Header = ({ toggleSearchBar }) => {
         <div className="dropdown">
           <a href="#" className="dropdown-toggle">{translated.intro || "Giới Thiệu"}</a>
           <div className="dropdown-menu">
-            <a href="#bo-may" className="dropdown-item">Bộ máy tổ chức</a>
-            <a href="#lich-su" className="dropdown-item">Lịch sử phát triển</a>
-            <a href="#tam-nhin" className="dropdown-item">Tầm nhìn sứ mệnh</a>
-            <a href="#chuc-nang" className="dropdown-item">Chức năng, nhiệm vụ</a>
+            <a
+              className="dropdown-item"
+              onClick={() => navigate("/about#bo-may")}
+              style={{ cursor: "pointer" }}
+            >
+              Bộ máy tổ chức
+            </a>
+            <a
+              className="dropdown-item"
+              onClick={() => navigate("/about#lich-su")}
+              style={{ cursor: "pointer" }}
+            >
+              Lịch sử phát triển
+            </a>
+            <a
+              className="dropdown-item"
+              onClick={() => navigate("/about#tam-nhin")}
+              style={{ cursor: "pointer" }}
+            >
+              Tầm nhìn sứ mệnh
+            </a>
+            <a
+              className="dropdown-item"
+              onClick={() => navigate("/about#chuc-nang")}
+              style={{ cursor: "pointer" }}
+            >
+              Chức năng, nhiệm vụ
+            </a>
           </div>
         </div>
 

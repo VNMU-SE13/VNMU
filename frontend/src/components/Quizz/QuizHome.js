@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, use } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { LanguageContext } from "../../context/LanguageContext";
@@ -184,7 +184,7 @@ const QuizStartButton = styled(Button)`
 `;
 
 const SelectedButton = styled(Button)`
-  background-color: #7a0000 !important;
+  background-color: #d4af37 !important;
   border: 2px solid #4b0000;
 `;
 
@@ -236,6 +236,13 @@ const QuizHome = () => {
   const { language } = useContext(LanguageContext);
   const [periods, setPeriods] = useState()
   const [level, setLevel] = useState(null)
+  const [isNext, setIsNext] = useState(false)
+  const [listQuiz, setListQuiz] = useState()
+  const [selectedQuizId, setSelectedQuizId] = useState()
+  const [text, setText] = useState('')
+  const [modalAI, setModalAI] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [quizAI, setQuizAI] = useState()
 
   const t = {
     title: {
@@ -330,16 +337,37 @@ const QuizHome = () => {
 
   const handleStart = () => {
     const periodParam = encodeURIComponent(selectedPeriod);
-    navigate(`/quiz/start?level=${level}&period=${periodParam}`);
+    navigate(`/quiz/start/${selectedQuizId}`);
   };
+
+  const handleNext = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${selectedPeriod}`)
+      setListQuiz(res.data)
+      setIsNext(true)
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
 
   const handleSelectLevel = (selectedLevel) => {
     setLevel(selectedLevel)
     setSelectedPeriod(null)
+    setSelectedQuizId(null)
   }
 
   const handleSelectPeriod = (periodId) => {
     setSelectedPeriod(periodId)
+    setSelectedQuizId(null)
+  }
+
+  const handleSelectQuiz = (quizId) => {
+    setSelectedQuizId(quizId)
+  }
+
+  const handleSendToAI = () => {
+    navigate(`/quiz/startwithai?quiz=${encodeURIComponent(text)}`)
   }
 
   return (
@@ -361,43 +389,87 @@ const QuizHome = () => {
 
       <ButtonGroup>
         <Button onClick={() => setShowStartModal(true)}>{t.start[language]}</Button>
+        <Button onClick={() => setModalAI(true)}>Tạo quiz với AI</Button>
         <Button onClick={() => setShowGuide(true)}>{t.guide[language]}</Button>
         <Button onClick={() => setShowHistory(true)}>{t.history[language]}</Button>
         <Button onClick={() => navigate('/')}>Home</Button>
       </ButtonGroup>
+
+      {/* Nhập nội dung Quiz cho AI tạo */}
+      {modalAI && (
+        <ModalOverlay>
+          <ModalContentAnimated>
+            <Subtitle>Nhập yêu cầu của bạn để AI tạo quiz</Subtitle>
+            <textarea
+              style={{
+                width: '100%',
+                minHeight: '120px',
+                fontSize: '16px',
+                padding: '12px',
+                borderRadius: '10px',
+                border: '1px solid #ccc',
+                resize: 'vertical',
+                fontFamily: 'Times New Roman, serif',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Ví dụ: Hãy tạo 5 câu hỏi trắc nghiệm về lịch sử thời Trần..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+        
+            <QuizStartButton
+              onClick={() => {
+                if (!text.trim()) {
+                  alert("Vui lòng nhập nội dung!");
+                  return;
+                }
+                handleSendToAI(); 
+              }}
+              style={{ marginTop: '20px' }}
+            >
+              Gửi yêu cầu
+            </QuizStartButton>
+          </ModalContentAnimated>
+        </ModalOverlay>
+      )}
 
       {showStartModal && (
         <ModalOverlay>
           <ModalContentAnimated>
             <CloseButton onClick={() => {
               setShowStartModal(false);
+              setLevel(null)
               setSelectedPeriod(null);
+              setIsNext(false)
+              setSelectedQuizId(null)
             }}>×</CloseButton>
 
-            <ModalTitle>{t.selectTitle[language]}</ModalTitle>
+            <ModalTitle>CÂU ĐỐ LỊCH SỬ VIỆT NAM</ModalTitle>
 
             {/* Phần chọn Level */}
-            <Subtitle>Chọn Level</Subtitle>
-            <HorizontalGroup>
-              {[1, 2, 3].map(optLevel => (
-                level === optLevel ? (
-                  <SelectedButton key={optLevel} onClick={() => {
-                    handleSelectLevel()
-                  }}>
-                    Level {optLevel}
-                  </SelectedButton>
-                ) : (
-                  <Button key={optLevel} onClick={() => {
-                    handleSelectLevel(optLevel)
-                  }}>
-                    Level {optLevel}
-                  </Button>
-                )
-              ))}
-            </HorizontalGroup>
+            {!isNext && (<>
+              <Subtitle>Chọn Level</Subtitle>
+              <HorizontalGroup>
+                {[1, 2, 3].map(optLevel => (
+                  level === optLevel ? (
+                    <SelectedButton key={optLevel} onClick={() => {
+                      handleSelectLevel()
+                    }}>
+                      Level {optLevel}
+                    </SelectedButton>
+                  ) : (
+                    <Button key={optLevel} onClick={() => {
+                      handleSelectLevel(optLevel)
+                    }}>
+                      Level {optLevel}
+                    </Button>
+                  )
+                ))}
+              </HorizontalGroup>
+            </>)}
 
             {/* Phần chọn Giai đoạn */}
-            {level && (
+            {level && !isNext && (
               <>
                 <Subtitle>Chọn Giai đoạn</Subtitle>
                 <HorizontalGroup>
@@ -420,11 +492,48 @@ const QuizHome = () => {
               </>
             )}
 
-            {/* Nút bắt đầu quiz */}
-            {(level && selectedPeriod) && (
-              <QuizStartButton onClick={handleStart}>
-                {t.start[language]}
+            {
+              isNext && (
+                <>
+                  <Subtitle>Chọn Quiz</Subtitle>
+                  <HorizontalGroup>
+                    {listQuiz.map(quiz => (
+                      selectedQuizId === quiz.id ? (
+                        <SelectedButton key={quiz.id} onClick={() => {
+                          handleSelectQuiz()
+                        }}>
+                          {quiz.description}
+                        </SelectedButton>
+                      ) : (
+                        <Button key={quiz.id} onClick={() => {
+                          handleSelectQuiz(quiz.id)
+                        }}>
+                          {quiz.description}
+                        </Button>
+                      )
+                    ))}
+                  </HorizontalGroup>
+                </>
+              )
+            }
+
+            {/* Nút chuyển sang danh sách quiz */}
+            {(level && selectedPeriod && !isNext) && (
+              <QuizStartButton onClick={handleNext}>
+                Tiếp tục
               </QuizStartButton>
+            )}
+
+            {/* Nút bắt đầu làm quiz */}
+            {(isNext) && (
+              <>
+                <QuizStartButton onClick={handleStart}>
+                  Bắt đầu
+                </QuizStartButton>
+                <QuizStartButton onClick={() => setIsNext(false)}>
+                  Quay lại
+                </QuizStartButton>
+              </>
             )}
           </ModalContentAnimated>
 

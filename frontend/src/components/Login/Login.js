@@ -82,8 +82,7 @@ const Login = () => {
       if (response.status === 200) {
         toast.success("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId);
-        console.log("Login response:", response.data);
+        localStorage.setItem("userId", response.data.id);
         navigate(response.data.role === "admin" ? "/admin" : "/");
       } else {
         toast.error(response.data.message || "Đăng nhập thất bại.");
@@ -100,7 +99,6 @@ const Login = () => {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/User/google-login`, {
         idToken: credentialResponse.credential,
        });
-
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
       toast.success("Đăng nhập Google thành công!");

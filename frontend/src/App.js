@@ -30,6 +30,8 @@ import "react-toastify/dist/ReactToastify.css";
 import ShortVideoGallery from './components/shortvideo/ShortVideoGallery';
 import VideoDetailPage from './components/shortvideo/VideoDetailPage';
 import shortVideos from './components/shortvideo/videoData';
+import QuizStartWithAI from "./components/Quizz/QuizStartWithAI";
+import AboutVNMU from './components/Home/AboutVNMU';
 
 function App() {
   return (
@@ -49,7 +51,8 @@ function App() {
         <Route path="/news/:id" element={<NewsDetail />} />
         <Route path="/tags/:tagName" element={<HashtagPage />} />
         <Route path="/quiz" element={<QuizHome />} />
-        <Route path="/quiz/start" element={<QuizStart />} />
+        <Route path="/quiz/start/:id" element={<QuizStart />} />
+        <Route path="/quiz/startwithai" element={<QuizStartWithAI />} />
         <Route path="/blog" element={<BlogHome />} />
         <Route path="/listblog" element={<BlogPage />} />
         <Route path="/listblog/:hashtag" element={<BlogPage />} />
@@ -63,6 +66,8 @@ function App() {
         <Route path="/manager" element={<MuseumManager />} />
         <Route path="/shortvideo" element={<ShortVideoGallery videos={shortVideos} />} />
         <Route path="/descriptionvideo/:id" element={<VideoDetailPage />} />
+        <Route path="/about" element={<AboutVNMU />} />
+
       </Routes>
     </Router>
     <ToastContainer position="top-right" autoClose={3000} />

@@ -10,7 +10,7 @@ const fadeIn = keyframes`
 `;
 
 const PageWrapper = styled.div`
-  background-color: #2d1e1a;
+  background: linear-gradient(135deg, #1a1a1a, #2d1e1a);
   color: white;
   height: 100vh;
   display: flex;
@@ -25,10 +25,11 @@ const PageWrapper = styled.div`
 const VideoSection = styled.div`
   width: 455px;
   height: 731px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   background-color: black;
   flex-shrink: 0;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
 `;
 
 const FullVideo = styled.video`
@@ -44,12 +45,30 @@ const InfoSection = styled.div`
   gap: 16px;
   max-height: 731px;
   overflow-y: auto;
-  padding-right: 8px;
+  padding-right: 0;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
 `;
 
 const Description = styled.div`
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.7;
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  white-space: pre-line;
 `;
 
 const ActionsRow = styled.div`
@@ -75,9 +94,10 @@ const ReactionsMenu = styled.div`
 const ReactionIcon = styled.span`
   cursor: pointer;
   font-size: 20px;
-
+  transition: transform 0.2s ease, color 0.2s ease;
   &:hover {
-    transform: scale(1.3);
+    transform: scale(1.4);
+    color: #ffcc00;
   }
 `;
 
@@ -102,14 +122,12 @@ const ArrowButton = styled.button`
   font-size: 20px;
   cursor: pointer;
   transition: all 0.25s ease;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   &:hover {
     background-color: rgba(255, 255, 255, 0.25);
-    transform: scale(1.1);
+    transform: translateY(-2px) scale(1.1);
   }
 `;
 
@@ -130,7 +148,6 @@ const BackButton = styled.button`
   cursor: pointer;
   z-index: 20;
   transition: background 0.2s;
-
   &:hover {
     background-color: rgba(255, 255, 255, 0.25);
   }
@@ -147,11 +164,9 @@ function VideoDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const video = videoData.find((v) => v.id === id);
-
   const [reaction, setReaction] = useState(null);
   const [likeCount, setLikeCount] = useState(video.likes);
   const [showReactions, setShowReactions] = useState(false);
-
   const currentIndex = videoData.findIndex((v) => v.id === id);
 
   const goToPrev = () => {
@@ -194,36 +209,35 @@ function VideoDetailPage() {
   }, [reaction, likeCount, id]);
 
   if (!video) {
-    return (
-      <PageWrapper>
-        <div>Video không tồn tại.</div>
-      </PageWrapper>
-    );
+    return <PageWrapper><div>Video không tồn tại.</div></PageWrapper>;
   }
 
   return (
     <PageWrapper>
       <BackButton onClick={() => navigate('/shortvideo')}>&lt;</BackButton>
-
       <VideoSection>
         <FullVideo key={video.id} controls autoPlay loop>
           <source src={video.src} type="video/mp4" />
         </FullVideo>
       </VideoSection>
-
       <NavigateButtons>
         <ArrowButton onClick={goToPrev}><FiChevronUp /></ArrowButton>
         <ArrowButton onClick={goToNext}><FiChevronDown /></ArrowButton>
       </NavigateButtons>
-
       <InfoSection>
         <Description>
           <strong>Người đăng:</strong> {video.author} <br />
-          <strong>Mô tả:</strong> {video.description} <br />
+          <strong>Mô tả:</strong>
+          {video.description
+            .replace(/^"|"$/g, '')
+            .split('\n\n')
+            .map((para, idx) => (
+              <p key={idx} style={{ marginTop: '12px', textAlign: 'justify' }}>{para}</p>
+            ))}
+          <br />
           <strong>Bài hát:</strong> {video.song}<br />
-          <strong>Nguồn từ đâu:</strong> {video.source} 
+          <strong>Nguồn từ đâu:</strong> {video.source}
         </Description>
-
         <ActionsRow>
           <ReactionArea
             onMouseEnter={() => setShowReactions(true)}
@@ -251,15 +265,24 @@ function VideoDetailPage() {
                 ))}
               </ReactionsMenu>
             )}
-
-            <span style={{ cursor: 'pointer' }}>
+            <span style={{
+              cursor: 'pointer',
+              background: '#333',
+              padding: '6px 12px',
+              borderRadius: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s',
+            }}>
               {reaction ? emojiMap[reaction] : '👍'} {likeCount}
             </span>
           </ReactionArea>
-
-          <span style={{ cursor: 'pointer' }} onClick={handleShare}>
-            📤 Share
-          </span>
+          <span
+            style={{ cursor: 'pointer' }}
+            onClick={handleShare}
+          >📤 Share</span>
         </ActionsRow>
       </InfoSection>
     </PageWrapper>

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BookOpen, FileText, LogOut, Landmark, MessageCircle } from "lucide-react";
 import MuseumArtifactManager from "./MuseumArtifactManager";
 import MuseumNewsManager from "./MuseumNewsManager";
 import MyMuseum from "./MyMuseum";
 import ChatAdmin from "./ChatAdmin";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -60,6 +61,21 @@ const Content = styled.div`
 
 export default function MuseumManager() {
   const [active, setActive] = useState("artifact");
+  const [museum, setMuseum] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`)
+        setMuseum(res.data.filter(m => m.user && m.user.id === localStorage.getItem("userId")))
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <Container>
@@ -96,12 +112,12 @@ export default function MuseumManager() {
         </MenuButton>
       </Sidebar>
 
-      <Content>
-        {active === "artifact" && <MuseumArtifactManager />}
+      {museum && (<Content>
+        {active === "artifact" && <MuseumArtifactManager museum={museum[0]} />}
         {active === "news" && <MuseumNewsManager />}
         {active === "myMuseum" && <MyMuseum />}
         {active === "chat" && <ChatAdmin />}
-      </Content>
+      </Content>)}
     </Container>
   );
 }
