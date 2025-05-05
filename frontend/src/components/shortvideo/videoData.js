@@ -62,7 +62,7 @@ const shortVideos = [
   },
   {
     id: 'vid6',
-    src: '/videos/KCvideo6.mp4',
+    src: '/videos/Kcvideo6.mp4',
     category: 'Cận Hiện Đại',
     description: '"\"Mẹ ơi, trong ngày khải hoàn, sẽ không có con của mẹ đâu...\" – câu nói nghẹn ngào từ trang nhật ký của nữ bác sĩ Đặng Thùy Trâm đã làm lay động hàng triệu trái tim. Trong phim *Đừng Đốt*, câu nói ấy không chỉ là lời tạm biệt, mà là tiếng lòng của cả một thế hệ thanh niên đã sống, chiến đấu và ngã xuống vì Tổ quốc.\n\nKhi mới 27 tuổi, Đặng Thùy Trâm đã rời bỏ phòng khám, mái nhà, và vòng tay cha mẹ để đến với chiến trường ác liệt miền Trung. Giữa mưa bom, bão đạn, chị vẫn kiên cường làm nhiệm vụ cứu chữa thương binh, viết nhật ký mỗi đêm bằng tình yêu tha thiết dành cho cuộc sống, cho quê hương, và cho mẹ.\n\nTrong những dòng cuối cùng, chị viết cho mẹ bằng tất cả bình thản và can đảm: không oán than, không sợ hãi, chỉ có tình yêu và lời xin lỗi. Vì chị biết, ngày đất nước hoà bình, chị sẽ không thể có mặt. Nhưng sự hy sinh ấy không vô nghĩa. Chị đã sống một cuộc đời rực cháy, sống đẹp đến giây phút cuối cùng.\n\nBức thư ấy, trang nhật ký ấy – và cả bộ phim *Đừng Đốt* – là minh chứng sống cho tinh thần bất khuất, cho lý tưởng cao đẹp và trái tim chan chứa nhân ái của một người con gái Việt Nam. Nó nhắc chúng ta rằng: hòa bình hôm nay được đánh đổi bằng máu, bằng nước mắt, và bằng tình yêu lớn lao của những người không trở về."',
     song: 'Mẹ Yêu Con ',
