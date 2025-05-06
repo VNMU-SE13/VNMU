@@ -12,8 +12,9 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(2px);
+  background: rgba(128, 128, 128, 0.2); // xám trong suốt
+  backdrop-filter: blur(4px); // làm mờ nền sau
+  -webkit-backdrop-filter: blur(4px); // cho Safari
   display: flex;
   justify-content: center;
   align-items: center;

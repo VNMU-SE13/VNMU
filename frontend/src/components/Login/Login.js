@@ -98,7 +98,7 @@ const Login = () => {
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/User/google-login`, {
         idToken: credentialResponse.credential,
-       });
+      });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
       toast.success("Đăng nhập Google thành công!");
@@ -110,7 +110,12 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div
+      className="login-container"
+      style={{
+        background: 'url("/image/background.jpg") center/cover no-repeat',
+      }}
+    >
       <ToastContainer />
       {loading && (
         <div className="loading-overlay">
@@ -119,12 +124,18 @@ const Login = () => {
         </div>
       )}
 
-      <div className="login-header">
+      <div
+        className="login-header"
+        style={{
+          background: 'url("/image/background-nho.jpg") center/cover no-repeat',
+        }}
+      >
         <Link to="/">
           <img src="/image/LOGO-white.png" alt="VNMU Logo" className="login-logo" />
         </Link>
         <h2>{labels.welcome}</h2>
       </div>
+
 
       <div className="login-form">
         <h3>{labels.loginTitle}</h3>
@@ -167,7 +178,6 @@ const Login = () => {
         </button>
 
         <div className="login-social">
-          <span>{labels.orLoginWith}</span>
           <div className="social-icons">
             <GoogleLogin
               onSuccess={handleGoogleLoginSuccess}

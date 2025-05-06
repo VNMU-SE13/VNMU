@@ -325,7 +325,7 @@ export default function AdvancedSearch() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/Museum`).then((res) => setMuseums(res.data));

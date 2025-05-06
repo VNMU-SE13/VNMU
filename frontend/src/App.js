@@ -32,7 +32,7 @@ import VideoDetailPage from './components/shortvideo/VideoDetailPage';
 import shortVideos from './components/shortvideo/videoData';
 import QuizStartWithAI from "./components/Quizz/QuizStartWithAI";
 import AboutVNMU from './components/Home/AboutVNMU';
-
+import LoadingPage from './components/common/LoadingPage';
 function App() {
   return (
     <LanguageProvider>
@@ -67,7 +67,7 @@ function App() {
         <Route path="/shortvideo" element={<ShortVideoGallery videos={shortVideos} />} />
         <Route path="/descriptionvideo/:id" element={<VideoDetailPage />} />
         <Route path="/about" element={<AboutVNMU />} />
-
+        <Route path="/loading" element={<LoadingPage />} />
       </Routes>
     </Router>
     <ToastContainer position="top-right" autoClose={3000} />

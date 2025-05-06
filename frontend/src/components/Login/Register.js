@@ -147,7 +147,12 @@ const Register = () => {
       )}
 
       <div className="register-box">
-        <div className="register-header">
+        <div
+          className="register-header"
+          style={{
+            background: 'url("/image/background-nho.jpg") center/cover no-repeat',
+          }}
+        >
           <Link to="/">
             <img src="/image/LOGO-white.png" alt="VNMU Logo" className="register-logo" />
           </Link>
