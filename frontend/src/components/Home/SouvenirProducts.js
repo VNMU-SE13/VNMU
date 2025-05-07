@@ -6,27 +6,27 @@ import translateText from "../../utils/translate";
 const initialProducts = [
   {
     id: 1,
-    name: "Tượng cô gái Việt Nam",
+    name: "Móc khóa hình xe tăng T-54",
     image: "/image/souvenir/souvenir1.jpg",
     price: "1.000 điểm"
   },
   {
     id: 2,
-    name: "Mô hình nón lá mini",
+    name: "Sổ tay bản đồ chiến dịch",
     image: "/image/souvenir/souvenir2.jpg",
     price: "2.000 điểm"
   },
   {
     id: 3,
-    name: "Bộ bưu thiếp nghệ thuật",
+    name: "Cốc sứ in hình Quốc Kỳ",
     image: "/image/souvenir/souvenir3.jpg",
-    price: "500 điểm"
+    price: "5.000 điểm"
   },
   {
     id: 4,
-    name: "Lọ gốm sứ Bát Tràng",
+    name: "Vòng tay thổ cẩm Chăm",
     image: "/image/souvenir/souvenir4.jpg",
-    price: "5.000 điểm"
+    price: "2.000 điểm"
   }
 ];
 

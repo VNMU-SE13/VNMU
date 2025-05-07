@@ -137,7 +137,7 @@ const ArtifactDescription = ({artifact}) => {
 
         <DescriptionText>{translatedDesc}</DescriptionText>
 
-      <DetailsTable>
+      {/* <DetailsTable>
         <tbody>
           {translatedDetails.map((detail, index) => (
             <tr key={index}>
@@ -146,7 +146,7 @@ const ArtifactDescription = ({artifact}) => {
             </tr>
           ))}
         </tbody>
-      </DetailsTable>
+      </DetailsTable> */}
     </ArtifactContainer>
   );
 };

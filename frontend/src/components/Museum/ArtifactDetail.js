@@ -40,7 +40,7 @@ const ArtifactDetail = () => {
     condition: "Tình trạng",
     origin: "Nguồn gốc",
     scanQR: "Quét mã QR để mở mô hình 3D",
-    qrBtn: "Mã QR",
+    qrBtn: "Mô Hình 3D",
     rating: "đánh giá",
   });
 
@@ -84,7 +84,7 @@ const ArtifactDetail = () => {
           condition: "Tình trạng",
           origin: "Nguồn gốc",
           scanQR: "Quét mã QR để mở mô hình 3D",
-          qrBtn: "Mã QR",
+          qrBtn: "Mô Hình 3D",
           rating: "đánh giá",
         });
       } else {

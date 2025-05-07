@@ -22,8 +22,8 @@ const souvenirs = [
     },
     {
         id: 3,
-        title: "Cốc sứ in hình Bác Hồ và chiến sĩ",
-        description: "Cốc uống nước gốm sứ, in hình Bác Hồ và các chiến sĩ giải phóng, món quà ý nghĩa cho người yêu nước.",
+        title: "Cốc sứ in hình Quốc kỳ",
+        description: "Cốc uống nước gốm sứ, in hình Quốc kỳ, Bác Hồ và các chiến sĩ giải phóng, món quà ý nghĩa cho người yêu nước.",
         image: "/image/souvenir/souvenir3.jpg",
         museum: "Bảo Tàng Quân Khu 5",
         slug: "bao-tang-quan-khu-5",

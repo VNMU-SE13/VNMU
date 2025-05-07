@@ -3,10 +3,11 @@ import "../../assets/css/QuizAndStore.css";
 import SouvenirProducts from "./SouvenirProducts";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const { language } = useContext(LanguageContext);
-
+  const navigate = useNavigate();
   const [title, setTitle] = useState("Cửa hàng lưu niệm");
   const [desc, setDesc] = useState(
     "Khám phá hàng trăm sản phẩm độc đáo lấy cảm hứng từ nghệ thuật, từ trang sức, sách đến đồ trang trí nhà cửa."
@@ -37,6 +38,10 @@ const Store = () => {
     translateStore();
   }, [language]);
 
+  const handleShopClick = () => {
+    navigate("/souvenir");
+  };
+
   return (
     <div className="store-section">
       <div className="store-header reverse-layout">
@@ -50,7 +55,9 @@ const Store = () => {
         <div className="store-content">
           <h2>{title}</h2>
           <p>{desc}</p>
-          <button className="store-shop-button">{btnText}</button>
+          <button className="store-shop-button" onClick={handleShopClick}>
+            {btnText}
+          </button>
         </div>
       </div>
 
