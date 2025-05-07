@@ -163,9 +163,15 @@ const Header = ({ toggleSearchBar }) => {
           )}
         </div>
 
-        <a href="#news" className="nav-link">{translated.news || "Tin Tức và Sự Kiện"}</a>
-        <a href="#quiz" className="nav-link">{translated.quiz || "Đố vui"}</a>
-        <a href="#support" className="nav-link">{translated.support || "Quà Lưu Niệm"}</a>
+        <a onClick={() => navigate("/news")} className="nav-link" style={{ cursor: "pointer" }}>
+          {translated.news || "Tin Tức và Sự Kiện"}
+        </a>
+        <a onClick={() => navigate("/quiz")} className="nav-link" style={{ cursor: "pointer" }}>
+          {translated.quiz || "Đố vui"}
+        </a>
+        <a onClick={() => navigate("/souvenir")} className="nav-link" style={{ cursor: "pointer" }}>
+          {translated.support || "Quà Lưu Niệm"}
+        </a>
 
         <NavLink to="/blog" className="nav-link">
           {translated.forum || "Diễn đàn"}

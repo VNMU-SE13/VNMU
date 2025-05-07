@@ -32,6 +32,8 @@ import VideoDetailPage from './components/shortvideo/VideoDetailPage';
 import shortVideos from './components/shortvideo/videoData';
 import QuizStartWithAI from "./components/Quizz/QuizStartWithAI";
 import AboutVNMU from './components/Home/AboutVNMU';
+import Souvenir from './components/Souvenir/Souvenir';
+import SouvenirDetail from './components/Souvenir/SouvenirDetail';
 
 function App() {
   return (
@@ -67,6 +69,9 @@ function App() {
         <Route path="/shortvideo" element={<ShortVideoGallery videos={shortVideos} />} />
         <Route path="/descriptionvideo/:id" element={<VideoDetailPage />} />
         <Route path="/about" element={<AboutVNMU />} />
+        <Route path="/souvenir" element={<Souvenir />} />
+        <Route path="/souvenir/:id" element={<SouvenirDetail />} />
+
       </Routes>
     </Router>
     <ToastContainer position="top-right" autoClose={3000} />

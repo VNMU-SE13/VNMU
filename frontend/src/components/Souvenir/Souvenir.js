@@ -1,60 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FaLandmark } from "react-icons/fa";
+import Header from "../Home/Header";
+import souvenirs from "./souvenirdata";
+import { Link } from "react-router-dom";
 
-const souvenirs = [
-  {
-    id: 1,
-    title: "Tượng Bác Hồ và Các Chiến Sĩ Miền Nam",
-    description:
-      "Tượng Bác Hồ và Các Chiến Sĩ Miền Nam là một tác phẩm điêu khắc có ý nghĩa sâu sắc...",
-    image: "/image/souvenir1.jpg",
-    museum: "Bảo Tàng Quân Khu 5",
-  },
-  {
-    id: 2,
-    title: "Khuyên tai hình hai đầu thú Văn hóa Sa Huỳnh",
-    description:
-      "Khuyên tai hình hai đầu thú là một trong những hiện vật tiêu biểu của nền văn hóa Sa Huỳnh...",
-    image: "/image/souvenir2.jpg",
-    museum: "Bảo tàng Điêu khắc Chăm",
-  },
-  {
-    id: 3,
-    title: "Súng trường M1 Carbine thời kỳ Kháng chiến chống Mỹ",
-    description:
-      "Súng trường M1 Carbine là một trong những vũ khí quan trọng và phổ biến trong thời kỳ...",
-    image: "/image/souvenir3.jpg",
-    museum: "Bảo tàng Đà Nẵng",
-  },
-  {
-    id: 4,
-    title: "Công cụ làm bánh tráng Túy Loan",
-    description:
-      "Nghề làm bánh tráng Túy Loan nổi bật với kỹ thuật chế biến tinh tế và công cụ đặc trưng...",
-    image: "/image/souvenir4.jpg",
-    museum: "Bảo tàng Đà Nẵng",
-  },
-];
 
 const Souvenir = () => {
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(souvenirs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = souvenirs.slice(startIndex, startIndex + itemsPerPage);
+
   return (
-    <Container>
-      {souvenirs.map((item) => (
-        <Card key={item.id}>
-          <Image src={item.image} alt={item.title} />
-          <Content>
-            <Title>{item.title}</Title>
-            <Description>{item.description}</Description>
-            <Museum>
-              <FaLandmark style={{ marginRight: 6 }} />
-              {item.museum}
-            </Museum>
-            <Button>Xem chi tiết</Button>
-          </Content>
-        </Card>
-      ))}
-    </Container>
+    <>
+      <Header />
+      <TitleHeader>Một số quà lưu niệm của các bảo tàng</TitleHeader>
+      <Container>
+        {currentItems.map((item) => (
+          <Card key={item.id}>
+            <Image src={item.image} alt={item.title} />
+            <Content>
+              <Title>{item.title}</Title>
+              <Description>{item.description}</Description>
+              <Museum>
+                <FaLandmark style={{ marginRight: 6 }} />
+                {item.museum}
+              </Museum>
+              <DetailLink to={`/souvenir/${item.id}`}>
+                <Button>Xem chi tiết</Button>
+              </DetailLink>
+
+
+            </Content>
+          </Card>
+        ))}
+      </Container>
+
+      <Pagination>
+        <PageButton
+          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Trang trước
+        </PageButton>
+        <PageNumber>
+          Trang {currentPage} / {totalPages}
+        </PageNumber>
+        <PageButton
+          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Trang sau
+        </PageButton>
+      </Pagination>
+    </>
   );
 };
 
@@ -67,7 +69,7 @@ const Container = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  padding: 30px;
+  padding: 50px 30px 30px 30px;
 `;
 
 const Card = styled.div`
@@ -109,6 +111,11 @@ const Description = styled.p`
   font-size: 14px;
   color: #4b5563;
   margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;       /* Số dòng muốn hiển thị */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Museum = styled.div`
@@ -120,7 +127,8 @@ const Museum = styled.div`
 `;
 
 const Button = styled.button`
-  align-self: flex-start;
+  margin-top: auto;
+  align-self: center; /* căn giữa theo chiều ngang */
   padding: 8px 16px;
   background-color: #2563eb;
   color: white;
@@ -133,4 +141,66 @@ const Button = styled.button`
   &:hover {
     background-color: #1e40af;
   }
+`;
+const TitleHeader = styled.h2`
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 40px 30px 10px 30px;
+  padding-top: 90px;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(90deg, #2563eb, #1e3a8a, #2563eb);
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 3s linear infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+`;
+
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+  gap: 20px;
+`;
+
+const PageButton = styled.button`
+  padding: 8px 16px;
+  background-color: #e5e7eb;
+  color: #111827;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #d1d5db;
+  }
+`;
+
+const PageNumber = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+`;
+const DetailLink = styled(Link)`
+  align-self: center;
+  text-decoration: none;
+  width: fit-content;
 `;
