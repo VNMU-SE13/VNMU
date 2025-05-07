@@ -10,10 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -25,16 +21,18 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: frontend
 
     - name: Debug node_modules
       run: |
-        echo "Listing react-router-dom:"
-        ls -la node_modules/react-router-dom || echo "❌ NOT FOUND"
-        echo "Listing node_modules:"
         ls -la node_modules
+        ls -la node_modules/react-router-dom || echo "❌ NOT FOUND"
+      working-directory: frontend
 
     - name: Run tests
       run: CI=true npm test
+      working-directory: frontend
 
     - name: Build project
       run: npm run build
+      working-directory: frontend
