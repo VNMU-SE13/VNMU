@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend  
+        working-directory: frontend
 
     steps:
     - name: Checkout code
@@ -23,8 +23,13 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install dependencies
-      run: npm install
+    - name: Clean install (optional)
+      run: |
+        rm -rf node_modules package-lock.json
+        npm install
+
+    - name: Debug installed packages
+      run: ls -la node_modules/react-router-dom || echo "react-router-dom not found"
 
     - name: Run tests
       run: CI=true npm test
