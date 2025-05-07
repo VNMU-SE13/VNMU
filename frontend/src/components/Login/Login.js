@@ -99,8 +99,13 @@ const Login = () => {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/User/google-login`, {
         idToken: credentialResponse.credential,
       });
+      console.log("Google login API response:", res.data);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
+
+      console.log("Saved token:", localStorage.getItem("token"));
+      console.log("Saved userId:", localStorage.getItem("userId"));
+      
       toast.success("Đăng nhập Google thành công!");
       navigate(res.data.role === "admin" ? "/admin" : "/");
     } catch (error) {
