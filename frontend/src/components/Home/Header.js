@@ -43,6 +43,7 @@ const Header = ({ toggleSearchBar }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("✅ Thông tin user trả về:", response.data);
+        console.log("✅ Thông tin user trả về:", response.data);
         if (response.status === 200) {
           setUser(response.data);
         }
