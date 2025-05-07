@@ -23,13 +23,15 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Clean install (optional)
-      run: |
-        rm -rf node_modules package-lock.json
-        npm install
+    - name: Install dependencies
+      run: npm install
 
-    - name: Debug installed packages
-      run: ls -la node_modules/react-router-dom || echo "react-router-dom not found"
+    - name: Debug node_modules
+      run: |
+        echo "Listing react-router-dom:"
+        ls -la node_modules/react-router-dom || echo "❌ NOT FOUND"
+        echo "Listing node_modules:"
+        ls -la node_modules
 
     - name: Run tests
       run: CI=true npm test
