@@ -1,5 +1,98 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import styled from "styled-components";
+import FullPageLoading from '../common/FullPageLoading'
+import { toast } from 'react-toastify';
+import Swal from "sweetalert2";
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const Label = styled.label`
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+`;
+
+const Textarea = styled.textarea`
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  background-color: #fff;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+`;
+
+const Section = styled.div`
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f3f4f6;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+`;
+
+const SectionTitle = styled.h4`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const FileGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const FileInput = styled.input`
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  padding: 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  width: 100%;
+
+  &:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+`;
 
 
 export default function MuseumArtifactManager({museum}) {
@@ -43,7 +136,7 @@ export default function MuseumArtifactManager({museum}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-
+  
     data.append("Name", editId ? editArtifact.artifactName : formData.name);
     data.append("Description", editId ? editArtifact.description : formData.description);
     data.append("DateDiscovered", editId ? editArtifact.dateDiscovered : formData.dateDiscovered);
@@ -55,39 +148,47 @@ export default function MuseumArtifactManager({museum}) {
     data.append("Origin", editId ? editArtifact.origin : formData.origin);
     data.append("MuseumId", museum.id);
     data.append("CategoryArtifactId", editId ? editArtifact.categoryArtifactId : formData.categoryArtifactId);
-    data.append("Image", formData.image)
-
+    data.append("Image", formData.image);
+  
     if (formData.podcast) {
       data.append("Podcast", formData.podcast);
     }
-
+  
     formData.images.forEach((img) => {
-      data.append("images", img); 
+      data.append("images", img);
     });
-
-    console.log(data.get("Image"))
-                                       
+  
     try {
-      let res
+      setLoading(true);
+      let res;
+  
       if (editId) {
         res = await axios.put(`${process.env.REACT_APP_API_URL}/Artifact/${editId}`, data, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` ,"Content-Type": "multipart/form-data" }
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
         });
-        setEditId(null)
-        setEditArtifact(null)
-      }
-      else {
+        setEditId(null);
+        setEditArtifact(null);
+      } else {
         res = await axios.post(`${process.env.REACT_APP_API_URL}/Artifact`, data, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` ,"Content-Type": "multipart/form-data" }
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
         });
         setShowForm(false);
       }
-      const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact/GetAllByMuseumId?museumId=${museum.id}`)
-      setArtifacts(res2.data)
-      alert("Thành công!");
+  
+      const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Artifact/GetAllByMuseumId?museumId=${museum.id}`);
+      setArtifacts(res2.data);
+      toast.success("Thao tác thành công!");
     } catch (err) {
       console.error("Lỗi khi thêm hiện vật:", err.response || err);
-      alert("Thêm thất bại: " + (err.response?.data || "Lỗi không xác định"));
+      toast.error("Thất bại: " + (err.response?.data || "Lỗi không xác định"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,20 +199,33 @@ export default function MuseumArtifactManager({museum}) {
   };
  
   const handleDelete =  async (id) => {
-    const confirmDelete = window.confirm("Bạn có chắc muốn xóa hiện vật này?");
-    if (confirmDelete) {
+    const result = await Swal.fire({
+      title: "Xác nhận xóa?",
+      text: "Bạn có chắc muốn xóa hiện vật này? Hành động này không thể hoàn tác.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy"
+    });
+    if (result.isConfirmed) {
       try {
+        setLoading(true)
         const res = await axios.delete(`${process.env.REACT_APP_API_URL}/Artifact/${id}`)
         if (res.status === 200) {
           setArtifacts(prev => prev.filter(artifact => artifact.id !== id))
-          alert("Xóa hiện vật thành công!")
+          toast.success("Xóa hiện vật thành công");
         }
         else {
-          alert("Xóa thất bại")
+          toast.error("Lỗi không xác định: "+res.status);
         }
       }
       catch(err) {
-        console.log(err)
+        toast.error("Thất bại: " + (err.response?.data || "Lỗi không xác định"));
+      }
+      finally {
+        setLoading(false)
       }
     }
   };
@@ -144,7 +258,7 @@ export default function MuseumArtifactManager({museum}) {
     return text?.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
-  if(loading || !artifacts) return <p>Loading...</p>
+  if(loading || !artifacts) return <FullPageLoading isLoading={true}/>
   else
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif", backgroundColor: "#f9fafb", minHeight: "100vh" }}>
@@ -197,70 +311,98 @@ export default function MuseumArtifactManager({museum}) {
           <form onSubmit={handleSubmit} style={modalForm}>
             <h3 style={{ color: "#78350F", marginBottom: "0.5rem" }}>🗿 Thêm hiện vật</h3>
 
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
-            }}>
-              <input name="name" placeholder="Tên hiện vật" style={inputStyle} required onChange={handleFormChange} />
-              <input name="dateDiscovered" style={inputStyle} onChange={handleFormChange} />
-              <input name="dimenson" placeholder="Kích thước" style={inputStyle} onChange={handleFormChange} />
-              <input name="weight" placeholder="Cân nặng" style={inputStyle} onChange={handleFormChange} />
-              <input name="material" placeholder="Chất liệu" style={inputStyle} onChange={handleFormChange} />
-              <input name="function" placeholder="Chức năng" style={inputStyle} onChange={handleFormChange} />
-              <input name="condition" placeholder="Tình trạng" style={inputStyle} onChange={handleFormChange} />
-              <input name="origin" placeholder="Xuất xứ" style={inputStyle} onChange={handleFormChange} />
-              <input name="categoryArtifactId" placeholder="Mã danh mục" type="number" style={inputStyle} onChange={handleFormChange} />
-            </div>
+            <FormGrid>
+              <FormGroup>
+                <Label htmlFor="name">Tên hiện vật</Label>
+                <Input id="name" name="name" required onChange={handleFormChange} />
+              </FormGroup>
 
-            <textarea name="description" placeholder="Mô tả" rows="3" style={{ ...inputStyle, width: "100%" }} onChange={handleFormChange} />
+              <FormGroup>
+                <Label htmlFor="dateDiscovered">Ngày phát hiện</Label>
+                <Input id="dateDiscovered" name="dateDiscovered" onChange={handleFormChange} />
+              </FormGroup>
 
-            <div style={{
-              borderTop: "1px solid #e5e7eb",
-              paddingTop: "1.5rem",
-              marginTop: "1rem",
-              backgroundColor: "#f9fafb",
-              borderRadius: "8px",
-              padding: "1rem",
-              boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.05)"
-            }}>
-              <h4 style={{ color: "#1f2937", marginBottom: "1rem" }}>🖼️ Hình ảnh hiện vật</h4>
+              <FormGroup>
+                <Label htmlFor="dimenson">Kích thước</Label>
+                <Input id="dimenson" name="dimenson" onChange={handleFormChange} />
+              </FormGroup>
 
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={labelStyle}>Ảnh chính</label><br />
-                <input
+              <FormGroup>
+                <Label htmlFor="weight">Cân nặng</Label>
+                <Input id="weight" name="weight" onChange={handleFormChange} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="material">Chất liệu</Label>
+                <Input id="material" name="material" onChange={handleFormChange} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="function">Chức năng</Label>
+                <Input id="function" name="function" onChange={handleFormChange} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="condition">Tình trạng</Label>
+                <Input id="condition" name="condition" onChange={handleFormChange} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="origin">Xuất xứ</Label>
+                <Input id="origin" name="origin" onChange={handleFormChange} />
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="categoryArtifactId">Mã danh mục</Label>
+                <Input id="categoryArtifactId" name="categoryArtifactId" type="number" onChange={handleFormChange} />
+              </FormGroup>
+            </FormGrid>
+
+
+            <FormGroup style={{ gridColumn: "1 / -1" }}>
+              <Label htmlFor="description">Mô tả</Label>
+              <Textarea id="description" name="description" onChange={handleFormChange} />
+            </FormGroup>
+
+            <Section>
+              <SectionTitle>🖼️ Hình ảnh hiện vật</SectionTitle>
+
+              <FileGroup>
+                <Label htmlFor="image">Ảnh chính</Label>
+                <FileInput
+                  id="image"
                   name="image"
                   type="file"
-                  multiple
                   accept="image/*"
                   onChange={handleFormChange}
-                  style={fileInputStyle}
                 />
-              </div>
+              </FileGroup>
 
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={labelStyle}>Ảnh chi tiết (nhiều file)</label><br />
-                <input
+              <FileGroup>
+                <Label htmlFor="images">Ảnh chi tiết (nhiều file)</Label>
+                <FileInput
+                  id="images"
                   name="images"
                   type="file"
                   multiple
                   accept="image/*"
                   onChange={handleFormChange}
-                  style={fileInputStyle}
                 />
-              </div>
+              </FileGroup>
 
-              <div>
-                <label style={labelStyle}>Hình ảnh 3D</label><br />
-                <input
+              <FileGroup>
+                <Label htmlFor="podcast">Hình ảnh 3D</Label>
+                <FileInput
+                  id="podcast"
                   name="podcast"
                   type="file"
                   accept="image/*"
                   onChange={handleFormChange}
-                  style={fileInputStyle}
                 />
-              </div>
-            </div>
+              </FileGroup>
+            </Section>
+
+
 
 
             <div style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>

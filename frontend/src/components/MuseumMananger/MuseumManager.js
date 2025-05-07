@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { BookOpen, FileText, LogOut, Landmark, MessageCircle } from "lucide-react";
+import { BookOpen, FileText, LogOut, Landmark, MessageCircle, Home } from "lucide-react";
 import MuseumArtifactManager from "./MuseumArtifactManager";
 import MuseumNewsManager from "./MuseumNewsManager";
 import MyMuseum from "./MyMuseum";
@@ -62,6 +63,7 @@ const Content = styled.div`
 export default function MuseumManager() {
   const [active, setActive] = useState("artifact");
   const [museum, setMuseum] = useState()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,6 +106,11 @@ export default function MuseumManager() {
         <MenuButton active={active === "chat"} onClick={() => setActive("chat")}>
           <MessageCircle size={18} />
           Trò chuyện với admin
+        </MenuButton>
+
+        <MenuButton active={active === "chat"} onClick={() => navigate('/')}>
+          <Home size={18} />
+          Trở về Home
         </MenuButton>
 
         <MenuButton>

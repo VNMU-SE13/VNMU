@@ -4,6 +4,7 @@ import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import axios from "axios";
+import FullPageLoading from '../common/FullPageLoading'
 
 const QuizWrapper = styled.div`
   background-image: url('/image/bg-paper.jpg');
@@ -147,9 +148,9 @@ const QuizStart = () => {
   
 
   useEffect(() => {
-    setLoading(true)
     const fetchData = async () => {
       try {
+        setLoading(true)
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/${id}`)
         setQuiz(res.data)
         const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Question`)
@@ -160,10 +161,12 @@ const QuizStart = () => {
       catch(err) {
         console.log(err)
       }
+      finally {
+        setLoading(false)
+      }
     }
 
     fetchData()
-    setLoading(false)
   }, [id])
 
   // useEffect(() => {
@@ -193,14 +196,6 @@ const QuizStart = () => {
           if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
             setScore((prev) => prev + 1);
           }
-
-          // setTimeout(() => {
-          //   if (questions && (current + 1 < questions.length)) {
-          //     setCurrent((prev) => prev + 1);
-          //   } else {
-          //     setIsFinished(true);
-          //   }
-          // }, 1000);
         }
 
         if(prev === 0) {
@@ -260,7 +255,7 @@ const QuizStart = () => {
     }
   };
 
-  if(!questions || loading) return <p>Loading...</p>
+  if(!questions || loading) return <FullPageLoading isLoading={true}/>
   else
   return (
     <QuizWrapper>

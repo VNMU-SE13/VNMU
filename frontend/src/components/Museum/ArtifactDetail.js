@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactMuseumInfo from "../Museum/ArtifactMuseumInfo";
@@ -12,6 +12,7 @@ import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import GLBViewer from "../GLBViewer";
 import data3D from "../data3d";
+import FullPageLoading from '../common/FullPageLoading'
 
 const ArtifactDetail = () => {
   const { id } = useParams();
@@ -115,25 +116,25 @@ const ArtifactDetail = () => {
     );
   };
 
-  if (loading || !artifact || !museum) return <p>Loading...</p>;
+  if (loading || !artifact || !museum) return <FullPageLoading isLoading={true}/>;
 
   return (
     <div className="artifact-detail">
       <Header />
 
       <div className="breadcrumb">
-        <a href="/">{translatedLabels.home}</a> /
-        <a href="/all-museums">{translatedLabels.allMuseums}</a> /
-        <a href={`/museums/${toSlug(museum.name)}`} className="museum-link">
+        <Link to="/">{translatedLabels.home}</Link> /{" "}
+        <Link to="/all-museums">{translatedLabels.allMuseums}</Link> /{" "}
+        <Link to={`/museums/${toSlug(museum.name)}`} className="museum-link">
           {museum.name}
-        </a>{" "}
+        </Link>{" "}
         / <span className="current-artifact">{artifact.artifactName}</span>
       </div>
 
       <div className="artifact-content">
         <div className="artifact-main">
           <div className="artifact-image">
-            <img src={artifact.image} alt={artifact.name} />
+            <img src={artifactImages[currentImageIndex].imageUrl} alt={artifact.name} />
 
             <div className="artifact-small-gallery">
               <button className="prev-set" onClick={handlePrevSet}>

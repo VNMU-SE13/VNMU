@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import axios from 'axios'
-import Loading from '../common/Loading'
+import LoadingWrapper from '../common/LoadingWrapper'
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import toDateTime from '../../utils/toDateTime'

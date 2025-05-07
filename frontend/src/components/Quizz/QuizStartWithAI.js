@@ -4,6 +4,7 @@ import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
+import FullPageLoading from "../common/FullPageLoading";
 
 const QuizWrapper = styled.div`
   background-image: url('/image/bg-paper.jpg');
@@ -278,7 +279,7 @@ const QuizStartWithAI = () => {
     }
   };
 
-  if(!quiz || loading) return <p>Loading...</p>
+  if(!quiz || loading) return <FullPageLoading isLoading={true}/>
   else
   return (
     <QuizWrapper>

@@ -8,6 +8,7 @@ import axios from "axios";
 import toSlug from "../../utils/toSlug";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import FullPageLoading from '../common/FullPageLoading'
 
 // Animations
 const fadeIn = keyframes`from { opacity: 0; } to { opacity: 1; }`;
@@ -131,8 +132,10 @@ const Breadcrumb = styled.div`
 
 const MuseumDetail = () => {
   const { language } = useContext(LanguageContext);
+  const [loading, setLoading] = useState(true)
   const { slug } = useParams();
   const [museums, setMuseums] = useState([]);
+  const [museum, setMuseum] = useState()
   const [translatedMuseum, setTranslatedMuseum] = useState(null);
   const [labels, setLabels] = useState({
     home: "Trang chủ",
@@ -147,17 +150,20 @@ const MuseumDetail = () => {
   useEffect(() => {
     const fetchMuseums = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`);
         setMuseums(response.data);
+        setMuseum(response.data.find((m) => toSlug(m.name) === slug))
       } catch (err) {
         console.error("Lỗi khi gọi API:", err);
+      }
+      finally {
+        setLoading(false)
       }
     };
 
     fetchMuseums();
   }, []);
-
-  const museum = museums.find((m) => toSlug(m.name) === slug);
 
   useEffect(() => {
     const translateMuseum = async () => {
@@ -209,10 +215,8 @@ const MuseumDetail = () => {
     translateLabels();
   }, [language]);
 
-  if (!translatedMuseum) {
-    return <p>{labels.notFound}</p>;
-  }
-
+  if (!translatedMuseum || loading) return <FullPageLoading isLoading={true}/>
+  else
   return (
     <MuseumDetailContainer>
       <Header />

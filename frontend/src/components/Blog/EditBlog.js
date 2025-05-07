@@ -5,7 +5,7 @@ import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import axios from "axios";
-import Loading from "../common/Loading";
+import LoadingWrapper from "../common/LoadingWrapper";
 import Swal from 'sweetalert2';
 import "react-quill/dist/quill.snow.css";
 import ImageResize from "quill-image-resize-module-react";
@@ -540,7 +540,7 @@ const EditBlog = () => {
       setContent(html);
     }
 
-  if (loading || !listCategories) return <Loading />
+  if (loading || !listCategories) return <p>Loading...</p>
   else
   return (
     <>

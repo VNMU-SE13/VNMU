@@ -195,7 +195,7 @@ const Header = ({ toggleSearchBar }) => {
         <div className="top-actions">
           {user ? (
             <div className="user-info">
-              <span className="username">👤 {user.username}</span>
+              <span className="username">👤 {user.usernmae}</span>
 
               <button
                 className="action-button"
@@ -204,6 +204,14 @@ const Header = ({ toggleSearchBar }) => {
               >
                 {translated.profile || "Trang Cá Nhân"}
               </button>
+
+              {user.roles.includes("manager") && (<button
+                className="action-button"
+                onClick={() => navigate("/manager")}
+                style={{ marginLeft: "0.5rem" }}
+              >
+                Bảo tàng của tôi
+              </button>)}
 
               <button
                 className="action-button logout-button"
