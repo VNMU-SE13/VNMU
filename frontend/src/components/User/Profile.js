@@ -119,7 +119,9 @@ const UserProfile = ({ user: propUser, onLogout }) => {
         headers: { 
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json" },
+          
       })
+      console.log("✅ Dữ liệu trả về từ /User/Profile:", res.data);
       setUserInfo(res.data)
       setPhone(res.data.phoneNumber)
       setAddress(res.data.address)

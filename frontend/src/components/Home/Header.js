@@ -35,12 +35,14 @@ const Header = ({ toggleSearchBar }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
+      console.log("🔑 Token hiện tại:", token);
       if (!token) return;
 
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/User/Profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("✅ Thông tin user trả về:", response.data);
         if (response.status === 200) {
           setUser(response.data);
         }
