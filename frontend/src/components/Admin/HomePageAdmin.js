@@ -36,6 +36,7 @@ import CategoryHistoricalManager from "./CategoryHistorical/CategoryHistoricalMa
 import CategoryFigureManager from "./CategoryFigure/CategoryFigureManager";
 import CategoryProductManager from "./CategoryProduct/CategoryProductManager";
 import ChatUser from "./ChatUser";
+import Dashboard from "./DashBoard/DashBoard";
 
 // Styled-components
 const Container = styled.div`
@@ -192,6 +193,7 @@ const groupedMenuItems = [
     title: "Thống kê",
     icon: BarChart2,
     items: [
+      {name: 'DashBoardDashBoard', compo: Dashboard}
     ],
   },
   {

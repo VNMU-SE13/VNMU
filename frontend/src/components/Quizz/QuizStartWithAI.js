@@ -218,7 +218,7 @@ const QuizStartWithAI = () => {
             return 0;
           }
   
-          return prev - 1;
+          return loading ? prev : prev - 1;
         });
   
       }, 1000);
@@ -231,15 +231,20 @@ const QuizStartWithAI = () => {
   useEffect(() => {
     if (isFinished) {
       const now = new Date();
-      const entry = {
-        datetime: now.toLocaleString("vi-VN"),
-        total: quiz.length,
-        correct: score,
-        score: score * 10,
-        rank: score === 10 ? "Top 1" : "Top 10",
-        title: score === 10 ? "Trạng Nguyên" : "Bảng Nhãn"
-      };
+      const fetchSubmit = async () => {
+        try {
+          setLoading(true)
+          const res = await axios.post(`${process.env.REACT_APP_API_URL}/Quiz/${quiz.id}/submit?userId=${localStorage.getItem('userId')}&totalPoints=${score}`)
+        }
+        catch (err) {
+          console.log(err)
+        }
+        finally {
+          setLoading(false)
+        }
+      }
 
+      fetchSubmit()
     }
   }, [isFinished]);
 

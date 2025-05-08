@@ -156,7 +156,7 @@ const NearestMuseumLeaflet = () => {
           height: "calc(100vh - 160px)", // Giảm chiều cao của bản đồ để tránh che khuất Header
           width: "100%",
           borderRadius: "12px",
-          paddingTop: "200px" // Tạo khoảng trống phía trên bản đồ
+          marginTop: "50px" // Tạo khoảng trống phía trên bản đồ
         }}
       >
         <TileLayer

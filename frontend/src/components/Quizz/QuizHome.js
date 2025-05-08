@@ -24,11 +24,15 @@ const PageWrapper = styled.div`
   background-size: cover;
   background-position: center;
   min-height: 100vh;
-  padding: 60px 20px 40px 20px;
   position: relative;
   text-align: center;
   overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 `;
+
 
 const Title = styled.h1`
   font-size: 42px;
@@ -48,6 +52,7 @@ const ImageContainer = styled.div`
 
   img {
     width: 100%;
+    height: auto;
     border-radius: 14px;
     display: block;
   }
@@ -93,15 +98,17 @@ const Button = styled.button`
 const Decoration = styled.img`
   position: absolute;
   z-index: 2;
+  max-width: 20vw;
+  height: auto;
 
-  &.kid-top-left { top: 140px; left: 350px; width: 220px; }
-  &.lantern-top-left { top: 10px; left: 30px; width: 120px; }
-  &.kid-top-right { top: 140px; right: 350px; width: 220px; }
-  &.lantern-top-right { top: 10px; right: 20px; width: 200px; }
-  &.kid-bottom-left { bottom: -10px; left: 30px; width: 500px; }
-  &.kid-bottom-right { bottom: 40px; right: 30px; width: 360px; }
-  &.cloud-left { bottom: -30px; left: 10px; width: 180px; }
-  &.cloud-right { bottom: -20px; right: -10px; width: 200px; }
+  &.kid-top-left { top: 140px; left: 10px; width: 160px; }
+  &.lantern-top-left { top: 10px; left: 10px; width: 80px; }
+  &.kid-top-right { top: 140px; right: 10px; width: 160px; }
+  &.lantern-top-right { top: 10px; right: 10px; width: 100px; }
+  &.kid-bottom-left { bottom: 0; left: 10px; width: 260px; }
+  &.kid-bottom-right { bottom: 20px; right: 10px; width: 220px; }
+  &.cloud-left { bottom: -30px; left: 10px; width: 150px; }
+  &.cloud-right { bottom: -20px; right: 10px; width: 150px; }
 `;
 
 const ModalOverlay = styled.div`
@@ -358,7 +365,12 @@ const QuizHome = () => {
   const handleNext = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${selectedPeriod}`)
-      setListQuiz(res.data)
+      if (res.data && res.data.length>5) {
+        setListQuiz(res.data.filter((quiz, index) => index < 5))
+      }
+      else {
+        setListQuiz(res.data)
+      }
       setIsNext(true)
     }
     catch(err) {

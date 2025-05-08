@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import Sidebar from "./Sidebar";
@@ -9,6 +9,8 @@ import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import toSlug from "../../utils/toSlug";
 import toDateTime from "../../utils/toDateTime"
+import Swal from 'sweetalert2';
+
 
 // Styled Components
 const PageContainer = styled.div`
@@ -325,6 +327,34 @@ const DropdownItem = styled.div`
   }
 `;
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 6px solid #e0e0e0;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: ${spin} 0.8s linear infinite;
+`;
+
+const LoadingText = styled.p`
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #555;
+`;
+
 export default function NewsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -377,45 +407,59 @@ export default function NewsDetail() {
   };
 
   const handleCommentSubmit = async (e) => {
-    setLoading(true)
     e.preventDefault();
     const formData = new FormData(e.target);
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-
-    if (!token || !userId) {
-      alert(await t("Bạn cần đăng nhập để bình luận."));
-      return;
+  
+    if (!localStorage.getItem('token')) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Vui lòng đăng nhập',
+            text: 'Bạn cần đăng nhập để bình luận.',
+            confirmButtonText: 'Đăng nhập ngay'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate('/login');
+            }
+          });
+          return;
     }
-
+  
     const comment = {
       content: formData.get("comment"),
       rating: 0,
       eventId: Number(id),
     };
-
+  
     try {
+      setLoading(true);
       await axios.post(`${process.env.REACT_APP_API_URL}/Comment`, comment, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/Comment/GetByEventId?eventId=${id}`)
-      setComments(res.data)
+  
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/Comment/GetByEventId?eventId=${id}`);
+      setComments(res.data);
       e.target.reset();
     } catch (err) {
       console.log("Lỗi khi gửi bình luận:", err);
-      alert(await t("Không gửi được bình luận. Vui lòng thử lại."));
+      await Swal.fire({
+        icon: 'error',
+        title: await t(err.response.data),
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
   };
 
   useEffect(() => {
-    setLoading(true)
     const fetchNews = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Event/${id}`);
         const translatedDesc = await t(response.data.description);
         const translatedName = await t(response.data.name);
@@ -426,10 +470,12 @@ export default function NewsDetail() {
       } catch (err) {
         console.log(err);
       }
+      finally {
+        setLoading(false)
+      }
     };
 
     fetchNews();
-    setLoading(false)
   }, [id, language]);
 
   if (!selectedArticle) {
@@ -447,8 +493,7 @@ export default function NewsDetail() {
       </PageContainer>
     );
   }
-  if(loading) return <p>Loading...</p>
-  else
+
   return (
     <PageContainer>
       <Header />
@@ -466,7 +511,10 @@ export default function NewsDetail() {
             <Hashtag>{selectedArticle.hastag.hashtag}</Hashtag>
           </HashtagWrapper>
 
-          <CommentBox>
+          {loading ?   <LoadingWrapper>
+                        <Spinner />
+                        <LoadingText>Đang tải dữ liệu...</LoadingText>
+                      </LoadingWrapper> : (<CommentBox>
             <h3>{language === 'vi' ? "Bình luận" : "Comments"}</h3>
             {comments &&
               comments.map((comment, index) => (
@@ -517,7 +565,7 @@ export default function NewsDetail() {
                 {language === 'vi' ? "Gửi bình luận" : "Submit Comment"}
               </SubmitButton>
             </Form>
-          </CommentBox>
+          </CommentBox>)}
 
 
           <BackButton onClick={() => navigate(-1)}>{language === 'vi' ? "Quay lại" : "Go back"}</BackButton>

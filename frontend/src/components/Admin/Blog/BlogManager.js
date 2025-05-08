@@ -212,7 +212,17 @@ export default function BlogManager() {
               searchList.map((item, idx) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.content}</TableCell>
+                  <TableCell
+                    sx={{
+                      maxWidth: 200,
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis"
+                    }}
+                  >
+                      <span dangerouslySetInnerHTML={{ __html: item.content }} />
+                  </TableCell>
+
 
                   <TableCell>
                     <img src={item.image} alt="Image" width={50} height={50} />

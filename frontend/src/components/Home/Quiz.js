@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import { motion } from "framer-motion";
+import Swal from 'sweetalert2';
+
 
 const QuizContainer = styled.div`
   display: flex;
@@ -159,6 +161,23 @@ const Quiz = () => {
     translateContent();
   }, [language]);
 
+  const handleClickStart = () => {
+    if (!localStorage.getItem('token')) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng đăng nhập',
+        text: 'Bạn cần đăng nhập để làm bài Quiz.',
+        confirmButtonText: 'Đăng nhập ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
+      return;
+    } 
+    navigate('/quiz')
+  }
+
   return (
     <QuizContainer>
       <QuizSection
@@ -182,7 +201,7 @@ const Quiz = () => {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300 }}
-            onClick={() => navigate("/quiz")}
+            onClick={() => handleClickStart()}
           >
             {buttonText}
           </StartButton>

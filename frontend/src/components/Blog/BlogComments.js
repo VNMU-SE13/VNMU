@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import axios from 'axios'
@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import toDateTime from '../../utils/toDateTime'
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+
 
 // ----- Bình luận UI -----
 const CommentSection = styled.div`
@@ -160,6 +161,28 @@ const DropdownItem = styled.div`
   }
 `;
 
+const SpinnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: ${spin} 0.9s linear infinite;
+`;
+
 
 
 
@@ -204,20 +227,29 @@ const BlogComments = ( {blogId} ) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState("");
   const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [user, setUser] = useState()
 
   useEffect(() => {
-    try {
-      setLoading(true)
       const fetchData = async () => {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Rate/GetByBlogId?eventId=${blogId}`)
-        setComments(res.data)
+        try {
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}/Rate/GetByBlogId?eventId=${blogId}`)
+          setComments(res.data)
+          const resUser = await axios.get(`${process.env.REACT_APP_API_URL}/User/Profile`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          })
+          setUser(resUser.data)
+        }
+        catch(err) {
+          console.log(err)
+        }
+        finally {
+          setLoading(false)
+        }
       }
-      fetchData()
-      setLoading(false)
-    }
-    catch(err) {
-      console.log(err)
-    }
+      fetchData()    
   }, [])
 
   const startEdit = (comment) => {
@@ -360,14 +392,19 @@ const BlogComments = ( {blogId} ) => {
     }
   };
 
-  if(loading) return <p>Loading...</p>
+  if (loading) return (
+    <SpinnerContainer>
+      <Spinner />
+      <p>Đang tải dữ liệu...</p>
+    </SpinnerContainer>
+  )
   else
   return (
     <CommentSection>
       {comments.map((comment) => (
         <div key={comment.id}>
           <CommentBox>
-            <Avatar src={comment.avatar} alt={comment.user?.userName} />
+            <Avatar src={comment?.user?.image} alt={comment.user?.userName} />
             <CommentContent>
               <CommentAuthor>{comment.user?.userName}</CommentAuthor>
               <span style={{ fontSize: "0.8rem", color: "#999" }}>
@@ -412,7 +449,7 @@ const BlogComments = ( {blogId} ) => {
       ))}
 
       <InputRow>
-        <Avatar src="/image/avatar1.jpg" alt="me" />
+        <Avatar src={user ? user.image : ''} alt="me" />
         <Input
           placeholder={translated.placeholder}
           value={commentText}

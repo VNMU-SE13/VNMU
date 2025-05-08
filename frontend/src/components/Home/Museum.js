@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import axios from 'axios';
 import { motion } from "framer-motion";
 import toSlug from "../../utils/toSlug";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import Swal from 'sweetalert2';
+
 
 // Styled Components
 const MuseumContainer = styled.div`
@@ -171,6 +173,34 @@ const MuseumText = styled.p`
   min-height: 50px;
 `;
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: ${spin} 0.9s linear infinite;
+`;
+
+const LoadingText = styled.p`
+  margin-top: 12px;
+  font-weight: 500;
+  color: #555;
+`;
+
 export default function Museum() {
   const navigate = useNavigate();
   const [museums, setMuseums] = useState([]);
@@ -179,6 +209,7 @@ export default function Museum() {
   const [translatedNearby, setTranslatedNearby] = useState("Bảo tàng gần bạn nhất");
   const [translatedMuseums, setTranslatedMuseums] = useState([]);
   const { language } = useContext(LanguageContext);
+  const [loading, setLoading] = useState()
 
   const handleTitleClick = (slug) => {
     navigate(`/museums/${slug}`);
@@ -189,16 +220,33 @@ export default function Museum() {
   };
 
   const handleNearbyClick = () => {
+    if (!localStorage.getItem('token')) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng đăng nhập',
+        text: 'Bạn cần đăng nhập để xem bảo tàng gần nhất.',
+        confirmButtonText: 'Đăng nhập ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
+      return;
+    }
     navigate("/nearest-museum");
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Museum`);
         setMuseums(response.data);
       } catch (err) {
         console.error('Lỗi khi gọi API:', err);
+      }
+      finally {
+        setLoading(false)
       }
     };
 
@@ -233,6 +281,12 @@ export default function Museum() {
     translateStatic();
   }, [language, museums]);
 
+  if (loading) return (
+    <LoadingWrapper>
+      <Spinner />
+      <LoadingText>Đang tải dữ liệu...</LoadingText>
+    </LoadingWrapper>
+  );
   return (
     <MuseumContainer>
       <MuseumHeader>

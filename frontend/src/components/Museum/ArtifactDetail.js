@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "../Home/Header";
 import Footer from "../Home/Footer";
 import ArtifactMuseumInfo from "../Museum/ArtifactMuseumInfo";
@@ -13,6 +13,7 @@ import translateText from "../../utils/translate";
 import GLBViewer from "../GLBViewer";
 import data3D from "../data3d";
 import FullPageLoading from '../common/FullPageLoading'
+import Swal from 'sweetalert2';
 
 const ArtifactDetail = () => {
   const { id } = useParams();
@@ -26,6 +27,7 @@ const ArtifactDetail = () => {
   const [loading, setLoading] = useState(true);
   const [museum, setMuseum] = useState(null);
   const [glbUrl, setGlbUrl] = useState(null);
+  const navigate = useNavigate()
   const itemsPerPage = 4;
 
   const [translatedLabels, setTranslatedLabels] = useState({
@@ -116,6 +118,26 @@ const ArtifactDetail = () => {
     );
   };
 
+  const handle3DOpen = () => {
+    if (!localStorage.getItem('token')) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng đăng nhập',
+        text: 'Bạn cần đăng nhập để xem mô hình 3D.',
+        confirmButtonText: 'Đăng nhập ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
+      return;
+    } else {
+      setIsQrModalOpen(true);
+    }
+
+    // Các xử lý tiếp theo nếu đã đăng nhập
+  };
+
   if (loading || !artifact || !museum) return <FullPageLoading isLoading={true}/>;
 
   return (
@@ -171,7 +193,7 @@ const ArtifactDetail = () => {
             </div>
 
             <div className="artifact-actions">
-              <button className="qr-button" onClick={() => setIsQrModalOpen(true)}>
+              <button className="qr-button" onClick={() => handle3DOpen()}>
                 {translatedLabels.qrBtn}
               </button>
             </div>

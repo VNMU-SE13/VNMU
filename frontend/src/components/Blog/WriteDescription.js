@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import BlogHeader from "./BlogHeader";
 import Swal from 'sweetalert2';
 import axios from "axios";
-import LoadingWrapper from "../common/LoadingWrapper";
+import FullPageLoading from "../common/FullPageLoading";
 
 Quill.register("modules/imageResize", ImageResize);
 const fadeIn = keyframes`
@@ -520,7 +520,7 @@ const WriteDescription = () => {
     setContent(e);
   };
   
-  if (loading) return <p>Loading</p>
+  if (loading) return <FullPageLoading isLoading={true}/>
   else
   return (
     <>

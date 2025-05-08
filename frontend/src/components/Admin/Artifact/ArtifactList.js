@@ -210,8 +210,16 @@ export default function ArtifactList(props) {
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     {item.artifactName}
                   </TableCell>
-                  <TableCell onClick={(e) => showForUpdate(item.id)}>
-                    {item.description}
+                  <TableCell
+                    onClick={() => showForUpdate(item.id)}
+                    sx={{
+                      maxWidth: 200,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                      <span>{item.description}</span>
                   </TableCell>
                   <TableCell onClick={(e) => showForUpdate(item.id)}>
                     {Array.isArray(item.images) ? (

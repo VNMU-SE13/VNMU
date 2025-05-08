@@ -4,6 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock"; // Biểu tượng khóa (đóng)
 import LockOpenIcon from "@mui/icons-material/LockOpen"; // Biểu tượng mở khóa
 import Notification from "./layouts/Notification";
+import { Pagination, Stack } from "@mui/material";
 import {
   Table,
   TableBody,
@@ -29,6 +30,9 @@ export default function UserManager() {
   const [newRole, setNewRole] = useState("");
   const [open, setOpen] = useState(false);
   const [notify, setNotify] = useState({ isOpen: false });
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
 
   useEffect(() => {
     fetchUsers();
@@ -54,16 +58,16 @@ export default function UserManager() {
     setSelectedUser(null);
   };
 
-  const handleUpdateRole = () => {
-    if (!selectedUser) return;
-    createAPIEndpoint(ENDPIONTS.Role)
-      .update("updateRole", { userId: selectedUser.id, newRole: newRole })
-      .then(() => {
-        fetchUsers();
-        handleCloseDialog();
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleUpdateRole = () => {
+  //   if (!selectedUser) return;
+  //   createAPIEndpoint(ENDPIONTS.Role)
+  //     .update("updateRole", { userId: selectedUser.id, newRole: newRole })
+  //     .then(() => {
+  //       fetchUsers();
+  //       handleCloseDialog();
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const lockUser = (userId) => {
     if (window.confirm("Are you sure you want to lock this user?")) {
@@ -85,6 +89,12 @@ export default function UserManager() {
     }
   };
 
+  const paginatedUsers = userItem.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+  
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -101,16 +111,13 @@ export default function UserManager() {
                 <b>Role</b>
               </TableCell>
               <TableCell>
-                <b>Actions</b>
-              </TableCell>
-              <TableCell>
                 <b>Lock</b>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {userItem.length > 0 ? (
-              userItem.map((item) => {
+              paginatedUsers.map((item) => {
                 const isLocked = item.lockoutEnd !== null;
                 const isAdmin = item.roles.includes("admin");
                 return (
@@ -118,16 +125,6 @@ export default function UserManager() {
                     <TableCell>{item.userName}</TableCell>
                     <TableCell>{item.email}</TableCell>
                     <TableCell>{item.roles.join(", ")}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        startIcon={<EditIcon />}
-                        onClick={() => handleOpenDialog(item)}
-                        disabled={isAdmin}
-                      >
-                        Update Role
-                      </Button>
-                    </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() =>
@@ -152,10 +149,20 @@ export default function UserManager() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Stack spacing={2} mt={3} alignItems="center">
+        <Pagination
+          count={Math.ceil(userItem.length / rowsPerPage)}
+          page={page}
+          onChange={(event, value) => setPage(value)}
+          color="primary"
+          shape="rounded"
+        />
+      </Stack>
+
 
       {/* Dialog Update Role */}
       <Dialog open={open} onClose={handleCloseDialog}>
-        <DialogTitle>Update User Role</DialogTitle>
+        {/* <DialogTitle>Update User Role</DialogTitle> */}
         <DialogContent>
           {selectedUser && (
             <>
@@ -178,7 +185,7 @@ export default function UserManager() {
             </>
           )}
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button onClick={handleCloseDialog} color="secondary">
             Cancel
           </Button>
@@ -189,7 +196,7 @@ export default function UserManager() {
           >
             Save
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
 
       <Notification {...{ notify, setNotify }} />

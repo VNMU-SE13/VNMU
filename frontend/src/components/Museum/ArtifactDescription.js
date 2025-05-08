@@ -2,6 +2,9 @@ import React, { useRef, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+
 
 // Styled Components
 const ArtifactContainer = styled.div`
@@ -73,6 +76,7 @@ const ValueCell = styled(TableCell)`
 const ArtifactDescription = ({artifact}) => {
   const synthRef = useRef(window.speechSynthesis);
   const { language } = useContext(LanguageContext);
+  const navigate = useNavigate()
 
   const [translatedName, setTranslatedName] = useState(artifact.artifactName);
   const [translatedDesc, setTranslatedDesc] = useState(artifact.description);
@@ -114,7 +118,20 @@ const ArtifactDescription = ({artifact}) => {
 
   const speakDescription = () => {
     const synth = synthRef.current;
-
+    if (!localStorage.getItem('token')) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Vui lòng đăng nhập',
+            text: 'Bạn cần đăng nhập để sử dụng podcast.',
+            confirmButtonText: 'Đăng nhập ngay'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate('/login');
+            }
+          });
+          return;
+    } 
+    
     if (synth.speaking) {
       synth.cancel();
       return;

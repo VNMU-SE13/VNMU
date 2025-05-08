@@ -40,12 +40,17 @@ const BlogDescription = styled.p`
 `;
 
 const BlogImage = styled.img`
-  width: 180px;
-  height: 180px;
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  display: block;
   object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 `;
+
+
 
 const Title = styled.h2`
   margin-bottom: 1.25rem;
