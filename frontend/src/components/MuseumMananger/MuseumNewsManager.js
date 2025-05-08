@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import toDateTime from "../../utils/toDateTime";
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -203,7 +204,7 @@ export default function MuseumNewsManager() {
                 <Description>{event.description}</Description>
               </Td>
               <Td>
-                {event.startDate} - {event.endDate}
+                {toDateTime(event.startDate)} - {toDateTime(event.endDate)}
               </Td>
               <Td>{event.location}</Td>
               <Td>

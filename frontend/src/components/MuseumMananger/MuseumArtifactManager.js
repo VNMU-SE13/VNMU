@@ -116,6 +116,26 @@ export default function MuseumArtifactManager({museum}) {
   const [loading, setLoading] = useState(false)
   const [editId, setEditId] = useState(null)
   const [editArtifact, setEditArtifact] = useState()
+  const [categories, setCategories] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryArtifact`)
+        setCategories(res.data)
+      }
+      catch(err) {
+        console.log(err)
+      }
+      finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
 
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;

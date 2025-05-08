@@ -4,6 +4,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import axios from 'axios';
 import { LanguageContext } from "../../context/LanguageContext";
+import toDateTime from "../../utils/toDateTime"
 import translateText from "../../utils/translate";
 
 // Styled Components
@@ -269,7 +270,7 @@ const NewsEvents = () => {
               <CardDescription>{event.description}</CardDescription>
               <MuseumName>{event.museum.name}</MuseumName>
               <ReadMore to={`/news/${event.id}`}>Xem Chi Tiết</ReadMore>
-              <DateLabel>{event.startDate}</DateLabel>
+              <DateLabel>{toDateTime(event.startDate)}</DateLabel>
             </NewsCard>
           ))}
         </NewsSlider>

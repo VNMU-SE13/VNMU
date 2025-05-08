@@ -163,7 +163,7 @@ const MuseumDetail = () => {
     };
 
     fetchMuseums();
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
     const translateMuseum = async () => {
@@ -232,10 +232,9 @@ const MuseumDetail = () => {
         <MuseumInfo>
           <MuseumTextWithMap>
             <TextColumn>
-              <SectionTitle>{labels.open}</SectionTitle>
-              <Text>{translatedMuseum.hours}</Text>
+              <SectionTitle>{labels.open}: 8h</SectionTitle>
               <Text>
-                <strong>{labels.closed}:</strong> {translatedMuseum.closed}
+                <strong>{labels.closed}: 17h</strong> {translatedMuseum.closed}
               </Text>
 
               <SectionTitle>{labels.address}</SectionTitle>

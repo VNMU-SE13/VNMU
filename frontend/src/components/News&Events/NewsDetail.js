@@ -457,7 +457,7 @@ export default function NewsDetail() {
           <Title>{selectedArticle.name}</Title>
           <NewsMeta>
             <Link to={`/museums/${toSlug(selectedArticle.museum)}`}>{selectedArticle.museum}</Link>
-             - {selectedArticle.startDate}
+             - {toDateTime(selectedArticle.startDate)}
           </NewsMeta>
           <NewsImage src={selectedArticle.image} alt={selectedArticle.name} />
           <NewsContent>{selectedArticle.description}</NewsContent>

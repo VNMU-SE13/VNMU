@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { LanguageContext } from "../../context/LanguageContext";
 import axios from "axios";
+import toDateTime from "../../utils/toDateTime"
 
 // === Global animation for modal ===
 // === Global animation for modal ===
@@ -224,6 +225,25 @@ const Subtitle = styled.h3`
   text-align: center;
 `;
 
+const EmptyQuizNotice = styled.div`
+  background-color: #fff7e6;
+  border: 2px dashed #ffbb33;
+  padding: 20px 30px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  margin: 20px auto 0 auto;
+  animation: fadeScale 0.3s ease-in-out;
+
+  h5 {
+    margin: 8px 0;
+    color: #b35a00;
+    font-weight: 600;
+    font-size: 16px;
+  }
+`;
+
+
 
 
 const QuizHome = () => {
@@ -240,9 +260,9 @@ const QuizHome = () => {
   const [listQuiz, setListQuiz] = useState()
   const [selectedQuizId, setSelectedQuizId] = useState()
   const [text, setText] = useState('')
-  const [modalAI, setModalAI] = useState(false)
   const [loading, setLoading] = useState(false)
   const [quizAI, setQuizAI] = useState()
+  const [history, setHistory] = useState()
 
   const t = {
     title: {
@@ -314,6 +334,8 @@ const QuizHome = () => {
       try {
         const resPeriod = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`)
         setPeriods(resPeriod.data)
+        const resHis = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/${localStorage.getItem('userId')}/GetAllResult`)
+        setHistory(resHis.data)
       }
       catch(err) {
         console.log(err)
@@ -328,13 +350,6 @@ const QuizHome = () => {
     document.head.appendChild(style);
   }, []);
 
-  useEffect(() => {
-    if (showHistory) {
-      const stored = localStorage.getItem("quizHistory");
-      setHistoryData(stored ? JSON.parse(stored).reverse() : []);
-    }
-  }, [showHistory]);
-
   const handleStart = () => {
     const periodParam = encodeURIComponent(selectedPeriod);
     navigate(`/quiz/start/${selectedQuizId}`);
@@ -348,6 +363,10 @@ const QuizHome = () => {
     }
     catch(err) {
       console.log(err)
+      if(err.status === 404) {
+        setListQuiz([])
+        setIsNext(true)
+      }
     }
   }
 
@@ -367,7 +386,7 @@ const QuizHome = () => {
   }
 
   const handleSendToAI = () => {
-    navigate(`/quiz/startwithai?quiz=${encodeURIComponent(text)}`)
+    navigate(`/quiz/startwithai?level=${level}&period=${selectedPeriod}`)
   }
 
   return (
@@ -389,49 +408,10 @@ const QuizHome = () => {
 
       <ButtonGroup>
         <Button onClick={() => setShowStartModal(true)}>{t.start[language]}</Button>
-        <Button onClick={() => setModalAI(true)}>Tạo quiz với AI</Button>
         <Button onClick={() => setShowGuide(true)}>{t.guide[language]}</Button>
         <Button onClick={() => setShowHistory(true)}>{t.history[language]}</Button>
         <Button onClick={() => navigate('/')}>Home</Button>
       </ButtonGroup>
-
-      {/* Nhập nội dung Quiz cho AI tạo */}
-      {modalAI && (
-        <ModalOverlay>
-          <ModalContentAnimated>
-            <Subtitle>Nhập yêu cầu của bạn để AI tạo quiz</Subtitle>
-            <textarea
-              style={{
-                width: '100%',
-                minHeight: '120px',
-                fontSize: '16px',
-                padding: '12px',
-                borderRadius: '10px',
-                border: '1px solid #ccc',
-                resize: 'vertical',
-                fontFamily: 'Times New Roman, serif',
-                boxSizing: 'border-box'
-              }}
-              placeholder="Ví dụ: Hãy tạo 5 câu hỏi trắc nghiệm về lịch sử thời Trần..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            />
-        
-            <QuizStartButton
-              onClick={() => {
-                if (!text.trim()) {
-                  alert("Vui lòng nhập nội dung!");
-                  return;
-                }
-                handleSendToAI(); 
-              }}
-              style={{ marginTop: '20px' }}
-            >
-              Gửi yêu cầu
-            </QuizStartButton>
-          </ModalContentAnimated>
-        </ModalOverlay>
-      )}
 
       {showStartModal && (
         <ModalOverlay>
@@ -497,6 +477,12 @@ const QuizHome = () => {
                 <>
                   <Subtitle>Chọn Quiz</Subtitle>
                   <HorizontalGroup>
+                  {listQuiz.length === 0 && (
+                    <EmptyQuizNotice>
+                      <h5>Hiện không có bài Quiz phù hợp</h5>
+                      <h5>Thử với AI nhé!</h5>
+                    </EmptyQuizNotice>
+                  )}
                     {listQuiz.map(quiz => (
                       selectedQuizId === quiz.id ? (
                         <SelectedButton key={quiz.id} onClick={() => {
@@ -530,6 +516,7 @@ const QuizHome = () => {
                 <QuizStartButton onClick={handleStart}>
                   Bắt đầu
                 </QuizStartButton>
+                <QuizStartButton onClick={() => handleSendToAI()}>Tạo quiz với AI</QuizStartButton>
                 <QuizStartButton onClick={() => setIsNext(false)}>
                   Quay lại
                 </QuizStartButton>
@@ -557,29 +544,31 @@ const QuizHome = () => {
           <ModalContent>
             <CloseButton onClick={() => setShowHistory(false)}>×</CloseButton>
             <ModalTitle>{t.history[language]}</ModalTitle>
-            {historyData.length === 0 ? (
+            {history.length === 0 ? (
               <NoData>{t.historyEmpty[language]}</NoData>
             ) : (
               <Table>
                 <thead>
                   <tr>
+                    <Th>QuizId</Th>
                     <Th>Ngày & Giờ</Th>
-                    <Th>Số câu</Th>
-                    <Th>Đúng</Th>
+                    {/* <Th>Số câu</Th> */}
+                    
                     <Th>Điểm</Th>
-                    <Th>Xếp Hạng</Th>
-                    <Th>Danh Hiệu</Th>
+                    {/* <Th>Xếp Hạng</Th>
+                    <Th>Danh Hiệu</Th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {historyData.map((item, index) => (
+                  {history.map((item, index) => (
                     <tr key={index}>
-                      <Td>{item.datetime}</Td>
-                      <Td>{item.total}</Td>
-                      <Td>{item.correct}</Td>
+                      <Td>{item.quizId}</Td>
+                      <Td>{toDateTime(item.completedAt)}</Td>
+                      {/* <Td>{item.total}</Td>  */}
+                  
                       <Td>{item.score}</Td>
-                      <Td>{item.rank}</Td>
-                      <Td>{item.title}</Td>
+                      {/* <Td>{item.rank}</Td>
+                      <Td>{item.title}</Td> */}
                     </tr>
                   ))}
                 </tbody>

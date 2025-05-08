@@ -140,12 +140,12 @@ const MyMuseum = () => {
         <MuseumTextWithMap>
           <TextColumn>
             <SectionTitle>
-              Giờ mở cửa {isEditing && !edited.closed && (
+              Giờ mở cửa: 8h {isEditing && !edited.closed && (
                 <span onClick={() => handleEditField("closed")} style={{ cursor: "pointer", color: "#888" }}>🖊</span>
               )}
             </SectionTitle>
             {!isEditing || !edited.closed ? (
-              <Text><strong>Đóng cửa:</strong> {museum.closed || "Chưa có thông tin"}</Text>
+              <Text><strong>Đóng cửa: </strong> 17h</Text>
             ) : (
               <>
                 <label>Đóng cửa:</label>{" "}

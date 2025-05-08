@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate  } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
@@ -133,18 +133,18 @@ const QuizStart = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { language } = useContext(LanguageContext);
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState();
   const [selected, setSelected] = useState(null);
   const [timeLeft, setTimeLeft] = useState(10);
   const [showAnswer, setShowAnswer] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [timerRef, setTimerRef] = useState(null);
   const [translatedQuestion, setTranslatedQuestion] = useState("");
   const [translatedOptions, setTranslatedOptions] = useState([]);
   const [quiz, setQuiz] = useState()
   const [questions, setQuestions] = useState()
   const [loading, setLoading] = useState(true)
+  const timerRef = useRef(null);
   
 
   useEffect(() => {
@@ -156,7 +156,7 @@ const QuizStart = () => {
         const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Question`)
         const ques = res2.data.filter(q => q.quizId == res.data.id)
         setQuestions(ques)
-
+        setCurrent(0)
       }
       catch(err) {
         console.log(err)
@@ -189,6 +189,10 @@ const QuizStart = () => {
     setSelected(null);
     setTimeLeft(10);
 
+    if (timerRef.current) {
+      clearInterval(timerRef.current); // clear trước nếu đang tồn tại
+    }
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev === 3) {
@@ -208,27 +212,33 @@ const QuizStart = () => {
           return 0;
         }
 
-        return prev - 1;
+        return loading ? prev : prev - 1;
       });
 
     }, 1000);
 
-    setTimerRef(timer);
+    timerRef.current = timer;
+
     return () => clearInterval(timer);
   }, [current]);
 
   useEffect(() => {
     if (isFinished) {
       const now = new Date();
-      const entry = {
-        datetime: now.toLocaleString("vi-VN"),
-        total: questions.length,
-        correct: score,
-        score: score * 10,
-        rank: score === 10 ? "Top 1" : "Top 10",
-        title: score === 10 ? "Trạng Nguyên" : "Bảng Nhãn"
-      };
+      const fetchSubmit = async () => {
+        try {
+          setLoading(true)
+          const res = await axios.post(`${process.env.REACT_APP_API_URL}/Quiz/${quiz.id}/submit?userId=${localStorage.getItem('userId')}&totalPoints=${score}`)
+        }
+        catch (err) {
+          console.log(err)
+        }
+        finally {
+          setLoading(false)
+        }
+      }
 
+      fetchSubmit()
     }
   }, [isFinished]);
 
@@ -239,7 +249,7 @@ const QuizStart = () => {
   const handleNext = () => {
     if (!showAnswer) {
       clearInterval(timerRef);
-      setTimeLeft(0);
+      // setTimeLeft(0);
       setShowAnswer(true);
       if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
         setScore((prev) => prev + 1);

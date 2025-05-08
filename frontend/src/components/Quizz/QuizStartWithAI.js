@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
@@ -131,46 +131,38 @@ const NextButton = styled.button`
 
 const QuizStartWithAI = () => {
   const [ searchParams ] = useSearchParams()
-  const textParam = searchParams.get('quiz')
+  const level = searchParams.get('level')
+  const period = searchParams.get('period')
   const { language } = useContext(LanguageContext);
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState();
   const [selected, setSelected] = useState(null);
   const [timeLeft, setTimeLeft] = useState(10);
   const [showAnswer, setShowAnswer] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [timerRef, setTimerRef] = useState(null);
   const [translatedQuestion, setTranslatedQuestion] = useState("");
   const [translatedOptions, setTranslatedOptions] = useState([]);
   const [quiz, setQuiz] = useState()
   const [loading, setLoading] = useState(true)
-
-  function isPlainObject(obj) {
-    return (
-      obj !== null &&
-      typeof obj === 'object' &&
-      !Array.isArray(obj)
-    );
-  }  
+  const timerRef = useRef()
+  const [questions, setQuestions] = useState()
 
   useEffect(() => {
     setLoading(true)
     const fetchData = async () => {
       try {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/GPT/ChatGPTGeneQuiz`, {
-          searchText: textParam
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/Quiz/geneQuiz`, {
+          title: 'Quiz created by AI '+Date.now(),
+          description: 'Quiz created by AI '+Date.now(),
+          timeLimit: 60,
+          level: level,
+          isActive: true,
+          categoryHistoricalId: period
         })
-        if(res.data) {
-          if(isPlainObject(res.data.questions[0].answers)) {
-            const newQuiz = res.data.questions.map(q => {return {...q, answers: Object.values(q.answers), correct_answer: q.correct.charCodeAt(0)-65}})
-            setQuiz(newQuiz)
-          }
-          else {
-            const newQuiz = res.data.questions.map(q => {return {...q, correct_answer: q.correct_answer.charCodeAt(0)-65}})
-            setQuiz(newQuiz)
-          }
-        }
-        
+        const resQuiz = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/${res.data.quizId}`)
+        setQuiz(resQuiz.data)
+        setQuestions(resQuiz.data.questions)
+        setCurrent(0)
       }
       catch(err) {
         console.log(err)
@@ -181,7 +173,7 @@ const QuizStartWithAI = () => {
     }
 
     fetchData()
-  }, [textParam])
+  }, [period, level])
   // useEffect(() => {
   //   const translate = async () => {
   //     const q = await translateText(questions[current].text, language);
@@ -197,48 +189,44 @@ const QuizStartWithAI = () => {
   // }, [current, language]);
 
   useEffect(() => {
-    if (isFinished) return;
-
-    setShowAnswer(false);
-    setSelected(null);
-    setTimeLeft(10);
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev === 3) {
-          setShowAnswer(true);
-          if (selected && quiz[current].correct_answer === selected) {
-            setScore((prev) => prev + 1);
-          } 
-
-          // setTimeout(() => {
-          //   if (quiz && current + 1 < quiz.length) {
-          //     setCurrent((prev) => prev + 1);
-          //   } else {
-          //     setIsFinished(true);
-          //   }
-          // }, 3000);
-
-          
-        }
-
-        if (prev === 0) {
-          if (quiz && current + 1 < quiz.length) {
-            setCurrent((prev) => prev + 1);
-          } else {
-            setIsFinished(true);
+      if (isFinished) return;
+  
+      setShowAnswer(false);
+      setSelected(null);
+      setTimeLeft(10);
+  
+      if (timerRef.current) {
+        clearInterval(timerRef.current); // clear trước nếu đang tồn tại
+      }
+  
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev === 3) {
+            setShowAnswer(true);
+            if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
+              setScore((prev) => prev + 1);
+            }
           }
-          clearInterval(timer);
-          return 0; 
-        }
-
-        return loading ? prev : prev - 1;
-      });
-    }, 1000);
-
-    setTimerRef(timer);
-    return () => clearInterval(timer);
-  }, [current]);
+  
+          if(prev === 0) {
+            if (questions && (current + 1 < questions.length)) {
+              setCurrent((prev) => prev + 1);
+            } else {
+              setIsFinished(true);
+            }
+            clearInterval(timer);
+            return 0;
+          }
+  
+          return prev - 1;
+        });
+  
+      }, 1000);
+  
+      timerRef.current = timer;
+  
+      return () => clearInterval(timer);
+    }, [current]);
 
   useEffect(() => {
     if (isFinished) {
@@ -262,15 +250,14 @@ const QuizStartWithAI = () => {
   const handleNext = () => {
     if (!showAnswer) {
       clearInterval(timerRef);
-      setTimeLeft(0);
+      // setTimeLeft(0);
       setShowAnswer(true);
-      console.log(selected)
-      if (selected && quiz[current].correct_answer == selected) {
+      if (selected && questions[current].answers[(selected-1)%4].isCorrect) {
         setScore((prev) => prev + 1);
       }
 
       setTimeout(() => {
-        if (current + 1 < quiz.length) {
+        if (current + 1 < questions.length) {
           setCurrent((prev) => prev + 1);
         } else {
           setIsFinished(true);
@@ -279,7 +266,7 @@ const QuizStartWithAI = () => {
     }
   };
 
-  if(!quiz || loading) return <FullPageLoading isLoading={true}/>
+  if(!questions || loading) return <FullPageLoading isLoading={true}/>
   else
   return (
     <QuizWrapper>
@@ -289,7 +276,7 @@ const QuizStartWithAI = () => {
             🎉 {language === 'vi' ? "Bạn đã hoàn thành bài thi Trạng Nguyên!" : "You've completed the quiz!"}
           </h1>
           <h2 style={{ fontSize: '24px', color: '#333', marginBottom: '40px' }}>
-            {language === 'vi' ? "Điểm số của bạn" : "Your score"}: {score} / {quiz.length}
+            {language === 'vi' ? "Điểm số của bạn" : "Your score"}: {score} / {questions.length}
           </h2>
 
           <div style={{ display: 'flex', gap: '20px' }}>
@@ -335,30 +322,30 @@ const QuizStartWithAI = () => {
         <>
           <QuestionRow>
             <QuestionBlock>
-              <QuestionText>{quiz[current].question}</QuestionText>
+              <QuestionText>{questions[current].text}</QuestionText>
               <OptionList>
-                {quiz[current].answers.map((option, index) => {
-                  const isCorrect = showAnswer && quiz[current].correct_answer === index;
-                  const isWrong = showAnswer && selected === index && quiz[current].correct_answer === index;
+                {questions[current].answers.map((option, index) => {
+                  const original = option.id
+                  const isCorrect = showAnswer && option.isCorrect
+                  const isWrong = showAnswer && selected === original && option.isCorrect;
 
                   return (
                     <Option
-                      key={index}
-                      selected={selected === index}
+                      key={original}
+                      selected={selected === original}
                       correct={isWrong ? false : undefined}
                       isAnswer={isCorrect}
                       disabled={showAnswer}
-                      onClick={() => handleSelect(index)}
+                      onClick={() => handleSelect(option.id)}
                     >
-                      {option}
+                      {option.text}
                     </Option>
                   );
-
-                })}                                
+                })}
               </OptionList>
             </QuestionBlock>
 
-            <QuestionImage src={""} alt="question" />
+            <QuestionImage src={questions[current].image} alt="question" />
           </QuestionRow>
 
           <ProgressBarWrapper>
