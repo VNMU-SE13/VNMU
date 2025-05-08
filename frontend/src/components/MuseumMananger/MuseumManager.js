@@ -108,7 +108,7 @@ export default function MuseumManager() {
           Trò chuyện với admin
         </MenuButton>
 
-        <MenuButton active={active === "chat"} onClick={() => navigate('/')}>
+        <MenuButton active={active === "home"} onClick={() => navigate('/')}>
           <Home size={18} />
           Trở về Home
         </MenuButton>
@@ -121,7 +121,7 @@ export default function MuseumManager() {
 
       {museum && (<Content>
         {active === "artifact" && <MuseumArtifactManager museum={museum[0]} />}
-        {active === "news" && <MuseumNewsManager />}
+        {active === "news" && <MuseumNewsManager museum={museum[0]} />}
         {active === "myMuseum" && <MyMuseum />}
         {active === "chat" && <ChatAdmin />}
       </Content>)}

@@ -373,8 +373,26 @@ export default function MuseumArtifactManager({museum}) {
               </FormGroup>
 
               <FormGroup>
-                <Label htmlFor="categoryArtifactId">Mã danh mục</Label>
-                <Input id="categoryArtifactId" name="categoryArtifactId" type="number" onChange={handleFormChange} />
+                <Label htmlFor="categoryArtifactId">Danh mục</Label>
+                <select
+                  id="categoryArtifactId"
+                  name="categoryArtifactId"
+                  value={formData.categoryArtifactId || ""}
+                  onChange={handleFormChange}
+                  style={{
+                    padding: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    width: "100%",
+                  }}
+                >
+                  <option value="">-- Chọn danh mục --</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </FormGroup>
             </FormGrid>
 

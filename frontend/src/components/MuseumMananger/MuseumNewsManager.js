@@ -103,7 +103,7 @@ const ModalForm = styled.form`
   gap: 1rem;
 `;
 
-export default function MuseumNewsManager() {
+export default function MuseumNewsManager({museum}) {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -116,8 +116,6 @@ export default function MuseumNewsManager() {
     hashtagDto: [],
     hashtagInput: "",
   });
-
-  const museumId = parseInt(localStorage.getItem("museumId"));
 
   useEffect(() => {
     fetchEvents();
@@ -159,13 +157,15 @@ export default function MuseumNewsManager() {
     data.append("StartDate", formData.startDate);
     data.append("EndDate", formData.endDate);
     data.append("Location", formData.location);
-    data.append("MuseumId", museumId);
+    data.append("MuseumId", museum.id);
     if (formData.image) {
       data.append("Image", formData.image);
     }
     formData.hashtagDto.forEach(tag => {
       data.append("hashtagDto", tag);
     });
+
+    console.log(data.getAll('hashtagDto'))
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/Event`, data);

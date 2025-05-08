@@ -165,7 +165,7 @@ const groupedMenuItems = [
     icon: Users,
     items: [
       { name: "Quản lý tài khoản", compo: UserManager },
-      { name: "Quản lý đơn ứng tuyển", compo: AppliManager },
+      // { name: "Quản lý đơn ứng tuyển", compo: AppliManager },
     ],
   },
   {
@@ -177,7 +177,7 @@ const groupedMenuItems = [
       { name: "Quản lý bài kiểm tra", compo: QuizManager },
       { name: "Quản lý sự kiện", compo: EventManager },
       // { name: "Quản lý báo cáo", compo: ReportManager },
-      { name: "Quản lý các giai đoạn lịch sử", compo: HistoricalManager },
+      // { name: "Quản lý các giai đoạn lịch sử", compo: HistoricalManager },
       // { name: "Quản lý nhân vật lịch sử", compo: FigureManager },
       { name: "Quản lý bảo tàng", compo: MuseumManager },
       // { name: "Quản lý sản phẩm", compo: ProductManager },
