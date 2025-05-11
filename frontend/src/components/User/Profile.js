@@ -102,7 +102,7 @@ const UserProfile = ({ user: propUser, onLogout }) => {
   const { translated } = useContext(LanguageContext);
 
   const [userInfo, setUserInfo] = useState();
-
+  const [phoneError, setPhoneError] = useState("");
   const [phone, setPhone] = useState();
   const [address, setAddress] = useState();
   const [avatar, setAvatar] = useState();
@@ -133,28 +133,39 @@ const UserProfile = ({ user: propUser, onLogout }) => {
     
   }, []);
 
-  const handleSave = async () => {
-    const formData = new FormData();
-    formData.append("phoneNumber", phone);
-    formData.append("address", address);
-    formData.append("image", image ? image : avatar); 
+const handleSave = async () => {
+  const phoneRegex = /^0\d{9}$/;
+  if (!phoneRegex.test(phone)) {
+    setPhoneError("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0.");
+    return;
+  } else {
+    setPhoneError(""); // Xóa lỗi nếu hợp lệ
+  }
 
+  const formData = new FormData();
+  formData.append("phoneNumber", phone);
+  formData.append("address", address);
+  formData.append("image", image ? image : avatar); 
+
+  try {
     const res = await axios.put(
       `${process.env.REACT_APP_API_URL}/User/UpdateUserInfo?phoneNumber=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`,
       formData,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}` ,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           'Content-Type': 'multipart/form-data'
-          
         }
       }
     );
 
-    
-
     Swal.fire("Đã lưu!", "Thông tin cá nhân đã được cập nhật.", "success");
-  };
+  } catch (error) {
+    console.error("Lỗi khi cập nhật thông tin:", error);
+    Swal.fire("Lỗi", "Không thể cập nhật thông tin. Vui lòng thử lại.", "error");
+  }
+};
+
 
   const handleAvatarClick = () => {
     fileInputRef.current.click();
@@ -197,12 +208,15 @@ const UserProfile = ({ user: propUser, onLogout }) => {
         <Label>📷 URL ảnh đại diện (nếu có sẵn)</Label>
 
         <Label>📞 Số điện thoại</Label>
+        
         <Input
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="Nhập số điện thoại"
         />
+        {phoneError && <p style={{ color: "red", marginTop: "-10px", fontSize: "14px" }}>{phoneError}</p>}
+
 
         <Label>🏠 Địa chỉ</Label>
         <Input

@@ -190,4 +190,10 @@
     transform: rotate(360deg);
   }
 }
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
 

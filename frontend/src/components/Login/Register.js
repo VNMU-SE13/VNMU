@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -16,7 +16,7 @@ import translateText from "../../utils/translate";
 
 const Register = () => {
   const { language } = useContext(LanguageContext);
-
+  const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [user, setUser] = useState("");
@@ -24,6 +24,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const [labels, setLabels] = useState({
     welcome: "Chào mừng bạn đến với VNMU",
@@ -71,6 +73,11 @@ const Register = () => {
   const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
   const toggleConfirmPasswordVisibility = () => setConfirmPasswordVisible(!confirmPasswordVisible);
 
+  const isPasswordStrong = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -79,9 +86,18 @@ const Register = () => {
       return;
     }
 
-    if (password !== confirmPassword) {
-      toast.error("Mật khẩu xác nhận không khớp!", { position: "top-right" });
+    if (!isPasswordStrong(password)) {
+      setPasswordError("Mật khẩu phải có ít nhất 1 chữ in hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.");
       return;
+    } else {
+      setPasswordError("");
+    }
+
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Mật khẩu xác nhận không khớp!");
+      return;
+    } else {
+      setConfirmPasswordError("");
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -104,11 +120,11 @@ const Register = () => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        toast.success("Đăng ký thành công! Chuyển hướng đến trang đăng nhập...", {
+        toast.success("Đăng ký thành công! Vui lòng nhập mã xác thực gửi về mail của bạn.", {
           position: "top-right",
         });
         setTimeout(() => {
-          window.location.href = "/login";
+          navigate("/otp");
         }, 2000);
       } else {
         toast.error(response.data.message || "Đăng ký thất bại!", { position: "top-right" });
@@ -202,6 +218,7 @@ const Register = () => {
                 onClick={togglePasswordVisibility}
               />
             </div>
+            {passwordError && <p className="error-text">{passwordError}</p>}
           </div>
 
           <div className="form-group">
@@ -220,6 +237,7 @@ const Register = () => {
                 onClick={toggleConfirmPasswordVisibility}
               />
             </div>
+            {confirmPasswordError && <p className="error-text">{confirmPasswordError}</p>}
           </div>
 
           <div className="form-links">

@@ -6,6 +6,7 @@ import toSlug from "../../utils/toSlug";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 
+
 const Header = ({ toggleSearchBar }) => {
   const [user, setUser] = useState();
   const [isMuseumDropdownOpen, setIsMuseumDropdownOpen] = useState(false);
@@ -14,6 +15,8 @@ const Header = ({ toggleSearchBar }) => {
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const navigate = useNavigate();
   const { language, setLanguage } = useContext(LanguageContext);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
 
   const originalLabels = {
     intro: "Giới Thiệu",
@@ -203,33 +206,40 @@ const Header = ({ toggleSearchBar }) => {
       <div className="actions">
         <div className="top-actions">
           {user ? (
-            <div className="user-info">
+            <div className="user-info" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <span className="username">👤 {user.usernmae}</span>
 
-              <button
-                className="action-button"
-                onClick={() => navigate("/profile")}
-                style={{ marginLeft: "0.5rem" }}
-              >
-                {translated.profile || "Trang Cá Nhân"}
-              </button>
+              <div className="dropdown profile-dropdown">
+                <button
+                  className="dropdown-toggle action-button"
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                >
+                  Hồ sơ của tôi
+                </button>
+                <button className="action-button" onClick={() => setShowUpgradePopup(true)}>
+                  Nâng cấp thành viên
+                </button>
 
-              {user.roles.includes("manager") && (<button
-                className="action-button"
-                onClick={() => navigate("/manager")}
-                style={{ marginLeft: "0.5rem" }}
-              >
-                Bảo tàng của tôi
-              </button>)}
+                {isProfileMenuOpen && (
+                  <div className="dropdown-menu show">
 
-              <button
-                className="action-button logout-button"
-                onClick={handleLogout}
-                style={{ marginLeft: "0.5rem" }}
-              >
+                    <a onClick={() => navigate("/profile")} className="dropdown-item">
+                      {translated.profile || "Trang Cá Nhân"}
+                    </a>
+                    {user.roles.includes("manager") && (
+                      <a onClick={() => navigate("/manager")} className="dropdown-item">
+                        Bảo tàng của tôi
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <button className="action-button logout-button" onClick={handleLogout}>
                 {translated.logout || "Đăng Xuất"}
               </button>
             </div>
+
           ) : (
             <button className="action-button" onClick={goToLogin}>
               {translated.login || "Trở Thành Thành Viên"}
@@ -256,6 +266,28 @@ const Header = ({ toggleSearchBar }) => {
           </div>
         </div>
       </div>
+      {showUpgradePopup && (
+        <div className="upgrade-popup-overlay" onClick={() => setShowUpgradePopup(false)}>
+          <div className="upgrade-popup" onClick={(e) => e.stopPropagation()}>
+            <h3>🎉 Nâng cấp thành viên VIP</h3>
+            <p>Khi trở thành thành viên VIP, bạn có thể sử dụng những chức năng mới:</p>
+            <ul>
+              <li>✨ Xem hình ảnh 3D của hiện vật</li>
+              <li>🎧 Nghe Podcast nội dung hiện vật</li>
+            </ul>
+            <div className="upgrade-actions">
+              <button className="upgrade-button" onClick={() => navigate("/upgrade")}>
+                Tôi muốn nâng cấp
+              </button>
+              <button className="close-button" onClick={() => setShowUpgradePopup(false)}>
+                Đóng
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </header>
   );
 };
