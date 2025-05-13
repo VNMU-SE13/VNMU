@@ -226,6 +226,9 @@ const Header = ({ toggleSearchBar }) => {
                     <a onClick={() => navigate("/profile")} className="dropdown-item">
                       {translated.profile || "Trang Cá Nhân"}
                     </a>
+                    <a onClick={() => navigate("/paymenthistory")} className="dropdown-item">
+                      Lịch sử giao dịch
+                    </a>
                     {user.roles.includes("manager") && (
                       <a onClick={() => navigate("/manager")} className="dropdown-item">
                         Bảo tàng của tôi
