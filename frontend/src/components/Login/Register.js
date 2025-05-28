@@ -123,6 +123,7 @@ const Register = () => {
         toast.success("Đăng ký thành công! Vui lòng nhập mã xác thực gửi về mail của bạn.", {
           position: "top-right",
         });
+        localStorage.setItem('emailConfirm', email)
         setTimeout(() => {
           navigate("/otp");
         }, 2000);

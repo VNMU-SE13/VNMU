@@ -4,6 +4,8 @@ import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import FullPageLoading from "../common/FullPageLoading";
 
 
 // Styled Components
@@ -77,6 +79,7 @@ const ArtifactDescription = ({artifact}) => {
   const synthRef = useRef(window.speechSynthesis);
   const { language } = useContext(LanguageContext);
   const navigate = useNavigate()
+  const [loading, setLoading] = useState()
 
   const [translatedName, setTranslatedName] = useState(artifact.artifactName);
   const [translatedDesc, setTranslatedDesc] = useState(artifact.description);
@@ -116,14 +119,66 @@ const ArtifactDescription = ({artifact}) => {
     translateArtifact();
   }, [language]);
 
+  const handleUpgrade = async () => {
+    const successUrl = "http://localhost:3000/payment-success";
+    const cancelUrl = "http://localhost:3000/";
+    try {
+      setLoading(true)
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/PayOs/create-payment?successUrl=${encodeURIComponent(successUrl)}&cancelUrl=${encodeURIComponent(cancelUrl)}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (res.status === 200 && res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl; // Điều hướng tới trang thanh toán
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    finally {
+      setLoading(false)
+    }
+  };
+
   const speakDescription = () => {
     const synth = synthRef.current;
     if (!localStorage.getItem('token')) {
           Swal.fire({
             icon: 'warning',
             title: 'Vui lòng đăng nhập',
-            text: 'Bạn cần đăng nhập để sử dụng podcast.',
-            confirmButtonText: 'Đăng nhập ngay'
+            text: 'Bạn chưa đăng nhập.',
+            confirmButtonText: 'Đăng nhập ngay!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate('/login');
+            }
+          });
+          return;
+    } 
+
+    if (!localStorage.getItem('isPremium') || localStorage.getItem('isPremium')=='false') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng thử lại',
+        text: 'Bạn chưa phải là hội viên!',
+        confirmButtonText: 'Nâng cấp hội viên ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleUpgrade()
+        }
+      });
+      return;
+    } 
+
+    if (!localStorage.getItem('token')) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Vui lòng đăng nhập',
+            text: 'Bạn chưa đăng nhập.',
+            confirmButtonText: 'Đăng nhập ngay!'
           }).then((result) => {
             if (result.isConfirmed) {
               navigate('/login');
@@ -145,6 +200,7 @@ const ArtifactDescription = ({artifact}) => {
     synth.speak(utterance);
   };
 
+  if (loading) return <FullPageLoading isLoading={true} />
   return (
     <ArtifactContainer>
       <TitleRow>

@@ -5,6 +5,7 @@ import axios from "axios";
 import toSlug from "../../utils/toSlug";
 import { LanguageContext } from "../../context/LanguageContext";
 import translateText from "../../utils/translate";
+import FullPageLoading from '../common/FullPageLoading'
 
 
 const Header = ({ toggleSearchBar }) => {
@@ -17,6 +18,7 @@ const Header = ({ toggleSearchBar }) => {
   const { language, setLanguage } = useContext(LanguageContext);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
+  const [loading, setLoading] = useState()
 
   const originalLabels = {
     intro: "Giới Thiệu",
@@ -38,16 +40,13 @@ const Header = ({ toggleSearchBar }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
-      console.log("🔑 Token hiện tại:", token);
-      if (!token) return;
 
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/User/Profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("✅ Thông tin user trả về:", response.data);
-        console.log("✅ Thông tin user trả về:", response.data);
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         if (response.status === 200) {
+          localStorage.setItem('isPremium', response.data.isPremium)
           setUser(response.data);
         }
       } catch (error) {
@@ -97,6 +96,7 @@ const Header = ({ toggleSearchBar }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem('isPremium')
     setUser(null);
     navigate("/");
   };
@@ -106,6 +106,31 @@ const Header = ({ toggleSearchBar }) => {
     setShowLanguageMenu(false);
   };
 
+ const handleUpgrade = async () => {
+  const successUrl = "http://localhost:3000/payment-success";
+  const cancelUrl = "http://localhost:3000/";
+  try {
+    setLoading(true)
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/PayOs/create-payment?successUrl=${encodeURIComponent(successUrl)}&cancelUrl=${encodeURIComponent(cancelUrl)}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+
+    if (res.status === 200 && res.data.checkoutUrl) {
+      window.location.href = res.data.checkoutUrl; // Điều hướng tới trang thanh toán
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  finally {
+    setLoading(false)
+  }
+};
+
+  if (loading) return <FullPageLoading isLoading={true} />
   return (
     <header className="homepage-header">
       <div className="logo" onClick={goToHome} style={{ cursor: "pointer" }}>
@@ -216,9 +241,9 @@ const Header = ({ toggleSearchBar }) => {
                 >
                   Hồ sơ của tôi
                 </button>
-                <button className="action-button" onClick={() => setShowUpgradePopup(true)}>
+                {localStorage.getItem('isPremium')=='false' && (<button className="action-button" onClick={() => setShowUpgradePopup(true)}>
                   Nâng cấp thành viên
-                </button>
+                </button>)}
 
                 {isProfileMenuOpen && (
                   <div className="dropdown-menu show">
@@ -276,7 +301,7 @@ const Header = ({ toggleSearchBar }) => {
               <li>🎧 Nghe Podcast nội dung hiện vật</li>
             </ul>
             <div className="upgrade-actions">
-              <button className="upgrade-button" onClick={() => navigate("/upgrade")}>
+              <button className="upgrade-button" onClick={() => handleUpgrade()}>
                 Tôi muốn nâng cấp
               </button>
               <button className="close-button" onClick={() => setShowUpgradePopup(false)}>

@@ -233,9 +233,8 @@ const MuseumDetail = () => {
           <MuseumTextWithMap>
             <TextColumn>
               <SectionTitle>{labels.open}: 8h</SectionTitle>
-              <Text>
-                <strong>{labels.closed}: 17h</strong> {translatedMuseum.closed}
-              </Text>
+              <SectionTitle>{labels.closed}: 17h</SectionTitle>
+             
 
               <SectionTitle>{labels.address}</SectionTitle>
               <Text>{translatedMuseum.location}</Text>

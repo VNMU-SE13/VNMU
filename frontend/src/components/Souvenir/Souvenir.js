@@ -1,19 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaLandmark } from "react-icons/fa";
 import Header from "../Home/Header";
 import souvenirs from "./souvenirdata";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import FullPageLoading from "../common/FullPageLoading";
 
 
 const Souvenir = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [listProduct, setListProduct] = useState()
+  const [loading, setLoading] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/Product`)
+        setListProduct(res.data)
+        console.log(res.data)
+      }
+      catch(err) {
+        console.log(err)
+      }
+      finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const totalPages = Math.ceil(souvenirs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = souvenirs.slice(startIndex, startIndex + itemsPerPage);
 
+  if (loading) return <FullPageLoading isLoading={true} />
   return (
     <>
       <Header />

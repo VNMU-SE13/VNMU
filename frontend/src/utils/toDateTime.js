@@ -12,5 +12,4 @@ const toDateTime = (string) => {
 
     return formatted
 }
-
 export default toDateTime

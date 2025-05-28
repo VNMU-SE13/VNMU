@@ -118,12 +118,36 @@ const ArtifactDetail = () => {
     );
   };
 
+  const handleUpgrade = async () => {
+    const successUrl = "http://localhost:3000/payment-success";
+    const cancelUrl = "http://localhost:3000/";
+    try {
+      setLoading(true)
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/PayOs/create-payment?successUrl=${encodeURIComponent(successUrl)}&cancelUrl=${encodeURIComponent(cancelUrl)}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (res.status === 200 && res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl; // Điều hướng tới trang thanh toán
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    finally {
+      setLoading(false)
+    }
+  };
+
   const handle3DOpen = () => {
     if (!localStorage.getItem('token')) {
       Swal.fire({
         icon: 'warning',
         title: 'Vui lòng đăng nhập',
-        text: 'Bạn cần đăng nhập để xem mô hình 3D.',
+        text: 'Bạn chưa đăng nhập!',
         confirmButtonText: 'Đăng nhập ngay'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -131,11 +155,22 @@ const ArtifactDetail = () => {
         }
       });
       return;
-    } else {
-      setIsQrModalOpen(true);
-    }
+    } 
+    if (!localStorage.getItem('isPremium') || localStorage.getItem('isPremium')=='false') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng thử lại',
+        text: 'Bạn chưa phải là hội viên!',
+        confirmButtonText: 'Nâng cấp hội viên ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleUpgrade()
+        }
+      });
+      return;
+    } 
+    setIsQrModalOpen(true);
 
-    // Các xử lý tiếp theo nếu đã đăng nhập
   };
 
   if (loading || !artifact || !museum) return <FullPageLoading isLoading={true}/>;

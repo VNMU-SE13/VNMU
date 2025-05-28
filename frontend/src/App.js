@@ -35,6 +35,8 @@ import AboutVNMU from './components/Home/AboutVNMU';
 import Souvenir from './components/Souvenir/Souvenir';
 import SouvenirDetail from './components/Souvenir/SouvenirDetail';
 import OTP from "./components/Login/ConfirmOTP";
+import PaymentSuccess from "./components/common/PaymentSuccess";
+import PaymentHistory from "./components/PaymentHistory";
 
 function App() {
   return (
@@ -73,6 +75,8 @@ function App() {
           <Route path="/souvenir" element={<Souvenir />} />
           <Route path="/souvenir/:id" element={<SouvenirDetail />} />
           <Route path="/otp" element={<OTP />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-history" element={<PaymentHistory />} />
         </Routes>
       </Router>
       <ToastContainer position="top-right" autoClose={3000} />

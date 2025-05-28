@@ -80,7 +80,7 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-        toast.success("Đăng nhập thành công!");
+        // toast.success("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.id);
         navigate(response.data.role === "admin" ? "/admin" : "/");

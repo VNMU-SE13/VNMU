@@ -11,7 +11,6 @@ const ConfirmOTP = () => {
   const { language } = useContext(LanguageContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email || "";
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -34,13 +33,14 @@ const ConfirmOTP = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/User/ConfirmOTP`, {
-        email,
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/User/confirm-otp`, {
+        email: localStorage.getItem('emailConfirm'),
         otp: code,
       });
 
       if (response.status === 200) {
         toast.success("Xác thực OTP thành công!");
+        localStorage.removeItem('emailConfirm')
         setTimeout(() => navigate("/login"), 2000);
       }
     } catch (error) {
@@ -78,7 +78,7 @@ const ConfirmOTP = () => {
       <div className="login-form">
         <h3>Nhập mã OTP</h3>
         <p style={{ textAlign: "center", marginBottom: "20px", color: "#555" }}>
-          Mã xác nhận đã được gửi tới <b>{email}</b>
+          Mã xác nhận đã được gửi tới <b>{localStorage.getItem('emailConfirm')}</b>
         </p>
 
         <div style={{ display: "flex", justifyContent: "space-between", gap: "8px", marginBottom: "20px" }}>
