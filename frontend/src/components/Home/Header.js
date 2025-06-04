@@ -233,14 +233,20 @@ const Header = ({ toggleSearchBar }) => {
         <div className="top-actions">
           {user ? (
             <div className="user-info" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span className="username">👤 {user.usernmae}</span>
+              {localStorage.getItem('isPremium')=='true' ? (<span style={{
+                fontSize: "1.2rem",
+                color: "yellow",
+                animation: "crownGlow 1.5s infinite alternate"
+              }}>
+                👑 {user.usernmae}
+              </span>) : (<span className="username">👤 {user.usernmae}</span>)}
 
               <div className="dropdown profile-dropdown">
                 <button
                   className="action-button"
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 >
-                  Hồ sơ của tôi
+                  Actions
                 </button>
                 {localStorage.getItem('isPremium')=='false' && (<button className="action-button" onClick={() => setShowUpgradePopup(true)}>
                   Nâng cấp thành viên
@@ -259,6 +265,9 @@ const Header = ({ toggleSearchBar }) => {
                     )}
                     <a onClick={() => navigate("/payment-history")} className="dropdown-item">
                       {"Lịch sử thanh toán"}
+                    </a>
+                    <a onClick={() => navigate("/cart")} className="dropdown-item">
+                      {"Giỏ hàng"}
                     </a>
                   </div>
                 )}

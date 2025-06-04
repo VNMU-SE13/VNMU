@@ -3,20 +3,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import FullPageLoading from '../common/FullPageLoading'
 import axios from 'axios'
 
-const accountOrders = [
-  { time: '2025-05-09', id: '8097357', product: 'Canva Pro', qty: 1, price: '25.000đ', status: 'PAIDED', userName: 'Nguyễn Văn A' },
-  { time: '2025-05-02', id: '8075939', product: 'ChatGPT Plus', qty: 1, price: '20.000đ', status: 'PAIDED', userName: 'Trần Thị B' },
-  { time: '2025-04-30', id: '8067432', product: 'Canva Pro', qty: 1, price: '25.000đ', status: 'PENDING', userName: 'Lê Văn C' },
-];
-
-const souvenirOrders = [
-  { time: '2025-05-05', id: '9051234', product: 'Móc khóa VNMU', qty: 2, price: '60.000đ', status: 'Đang Giao', userName: 'Trịnh Thị F' },
-  { time: '2025-04-25', id: '9044321', product: 'Sổ tay', qty: 1, price: '45.000đ', status: 'Đã Giao', userName: 'Đặng Văn G' },
-  { time: '2025-04-20', id: '9041122', product: 'Áo thun VNMU', qty: 1, price: '120.000đ', status: 'Đã Hủy', userName: 'Ngô Thị H' },
-];
-
-const parsePrice = price => Number(price.replace(/\./g, '').replace('đ', '').trim());
-
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#00bcd4'];
 
 const cardStyle = {
@@ -37,10 +23,10 @@ const PaymentStatic = () => {
       try {
         setLoading(true)
         // fetch order
-        const resOrder = await axios.get(`${process.env.REACT_APP_API_URL}/Order`)
+        const resOrder = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransaction`)
         setOrders(resOrder.data)
         // fetch product
-        const resProduct = await axios.get(`${process.env.REACT_APP_API_URL}/Product`)
+        const resProduct = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransactionProduct`)
         setProducts(resProduct.data)
       }
       catch(err) {
@@ -56,45 +42,56 @@ const PaymentStatic = () => {
   }, [])
 
   const [activeTab, setActiveTab] = useState('summary');
-  const allOrders = [...accountOrders, ...souvenirOrders];
+  const allOrders = orders || [];
 
-  const totalRevenue = orders?.reduce((sum, order) => {
-    const price = order.totalAmount;
-    return ['PAIDED'].includes(order.status) ? sum + price : sum;
+  const totalRevenueOrder = orders?.reduce((sum, order) => {
+    const price = order.totalPrice;
+    return ['PAID'].includes(order.status) ? sum + price : sum;
   }, 0);
 
-  const totalOrderCount = orders?.length;
+  const totalRevenueProduct = products?.reduce((sum, product) => {
+    const price = product.totalPrice;
+    return ['PAID'].includes(product.status) ? sum + price : sum;
+  }, 0);
+
+  const totalOrderCount = orders?.length + products?.length;
   const totalQuantity = products?.length;
 
-  const statusStats = ['PAIDED', 'PENDING', 'CANCELED', 'Đang Giao', 'Đã Giao', 'Đã Hủy'].map(status => ({
+  const statusStats = ['PAIDED', 'PAID', 'PENDING', 'CANCELLED', 'Đang Giao', 'Đã Giao', 'Đã Hủy'].map(status => ({
     status,
-    count: allOrders.filter(o => o.status === status).length
+    count: (orders?.filter(o => o.status === status).length) + (products?.filter(o => o.status === status).length)
   }));
 
-  const statusPieData = [
-    {
-      name: 'Đơn thành công',
-      value: statusStats.filter(s => ['PAIDED', 'Đang Giao', 'Đã Giao'].includes(s.status)).reduce((sum, s) => sum + s.count, 0),
-    },
-    {
-      name: 'Đơn đang xử lý',
-      value: statusStats.find(s => s.status === 'PENDING')?.count || 0,
-    },
-    {
-      name: 'Đơn bị hủy',
-      value: statusStats.filter(s => ['CANCELED', 'Đã Hủy'].includes(s.status)).reduce((sum, s) => sum + s.count, 0),
-    },
-  ];
 
-  const monthStats = {};
-  allOrders.forEach(order => {
-    const month = order.time.slice(0, 7);
-    if (!monthStats[month]) monthStats[month] = 0;
-    if (['PAIDED', 'Đang Giao', 'Đã Giao'].includes(order.status)) {
-      monthStats[month] += parsePrice(order.price);
-    }
-  });
-  const revenueByMonth = Object.entries(monthStats).map(([month, revenue]) => ({ month, revenue }));
+const statusPieData = [
+  {
+    name: 'Đơn thành công',
+    value: statusStats
+      .filter(s => ['PAID', 'PAIDED', 'Đang Giao', 'Đã Giao'].includes(s.status))
+      .reduce((sum, s) => sum + s.count, 0),
+  },
+  {
+    name: 'Đơn đang xử lý',
+    value: statusStats.find(s => s.status === 'PENDING')?.count || 0,
+  },
+  {
+    name: 'Đơn bị hủy',
+    value: statusStats
+      .filter(s => ['CANCELLED', 'Đã Hủy'].includes(s.status))
+      .reduce((sum, s) => sum + s.count, 0),
+  },
+];
+
+
+const monthStats = {};
+products?.forEach(order => {
+  const month = order.created?.slice(0, 7);
+  if (!monthStats[month]) monthStats[month] = 0;
+  if (['PAID', 'PAIDED', 'Đang Giao', 'Đã Giao'].includes(order.status)) {
+    monthStats[month] += order.totalPrice;
+  }
+});
+const revenueByMonth = Object.entries(monthStats).map(([month, revenue]) => ({ month, revenue }));
 
   const productCount = {};
   allOrders.forEach(order => {
@@ -102,10 +99,39 @@ const PaymentStatic = () => {
     if (!productCount[key]) productCount[key] = 0;
     productCount[key] += order.qty;
   });
-  const topProducts = Object.entries(productCount)
-    .map(([product, qty]) => ({ product, qty }))
-    .sort((a, b) => b.qty - a.qty)
-    .slice(0, 5);
+
+const topProducts = [];
+
+if (orders && products) {
+  const paidOrderIds = new Set(
+    orders
+      .filter(order => ['PAID', 'PAIDED', 'Đang Giao', 'Đã Giao'].includes(order.status))
+      .map(order => order.id)
+  );
+
+  const productStats = {};
+
+  products.forEach(p => {
+    if (paidOrderIds.has(p.orderId)) {
+      const productName = p.productName; // Đảm bảo trường này tồn tại trong dữ liệu thực tế
+      const quantity = p.quantity;
+
+      if (productName && typeof quantity === 'number') {
+        if (!productStats[productName]) {
+          productStats[productName] = 0;
+        }
+        productStats[productName] += quantity;
+      }
+    }
+  });
+
+  const sorted = Object.entries(productStats)
+    .map(([name, quantity]) => ({ name, quantity }))
+    .sort((a, b) => b.quantity - a.quantity);
+
+  topProducts.push(...sorted.slice(0, 5)); // Lấy top 5
+}
+
 
   if(loading) return <FullPageLoading isLoading={true} />
   return (
@@ -115,7 +141,7 @@ const PaymentStatic = () => {
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         <button onClick={() => setActiveTab('summary')} style={{ padding: '10px 16px', borderRadius: 10, border: 'none', backgroundColor: activeTab === 'summary' ? '#007bff' : '#e0e0e0', color: activeTab === 'summary' ? '#fff' : '#333', fontWeight: 600, cursor: 'pointer' }}>Đơn hàng</button>
         <button onClick={() => setActiveTab('charts')} style={{ padding: '10px 16px', borderRadius: 10, border: 'none', backgroundColor: activeTab === 'charts' ? '#007bff' : '#e0e0e0', color: activeTab === 'charts' ? '#fff' : '#333', fontWeight: 600, cursor: 'pointer' }}>Biểu đồ</button>
-        <button onClick={() => setActiveTab('products')} style={{ padding: '10px 16px', borderRadius: 10, border: 'none', backgroundColor: activeTab === 'products' ? '#007bff' : '#e0e0e0', color: activeTab === 'products' ? '#fff' : '#333', fontWeight: 600, cursor: 'pointer' }}>SP bán chạy</button>
+        {/* <button onClick={() => setActiveTab('products')} style={{ padding: '10px 16px', borderRadius: 10, border: 'none', backgroundColor: activeTab === 'products' ? '#007bff' : '#e0e0e0', color: activeTab === 'products' ? '#fff' : '#333', fontWeight: 600, cursor: 'pointer' }}>SP bán chạy</button> */}
       </div>
 
       {activeTab === 'summary' && (
@@ -125,7 +151,7 @@ const PaymentStatic = () => {
           <div style={{ display: 'flex', gap: 40, marginBottom: 20 }}>
             <div><strong>Tổng số đơn hàng:</strong> {totalOrderCount}</div>
             <div><strong>Tổng sản phẩm:</strong> {totalQuantity}</div>
-            <div><strong>Tổng doanh thu:</strong> {totalRevenue?.toLocaleString('vi-VN')}đ</div>
+            <div><strong>Tổng doanh thu:</strong> {(totalRevenueOrder+totalRevenueProduct)?.toLocaleString('vi-VN')}đ</div>
           </div>
 
           <ResponsiveContainer width="100%" height={300}>

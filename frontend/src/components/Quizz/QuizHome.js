@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { LanguageContext } from "../../context/LanguageContext";
 import axios from "axios";
-import toDateTime from "../../utils/toDateTime"
+import toDateTime from "../../utils/toDateTime";
 
 // === Global animation for modal ===
 // === Global animation for modal ===
@@ -20,7 +20,7 @@ const keyframes = `
 }`;
 
 const PageWrapper = styled.div`
-  background-image: url('/image/bg-paper.jpg');
+  background-image: url("/image/bg-paper.jpg");
   background-size: cover;
   background-position: center;
   min-height: 100vh;
@@ -33,10 +33,9 @@ const PageWrapper = styled.div`
   box-sizing: border-box;
 `;
 
-
 const Title = styled.h1`
   font-size: 42px;
-  font-family: 'SVN-Voga', serif;
+  font-family: "SVN-Voga", serif;
   color: #4b2e2e;
   margin-bottom: 30px;
 `;
@@ -101,14 +100,46 @@ const Decoration = styled.img`
   max-width: 20vw;
   height: auto;
 
-  &.kid-top-left { top: 140px; left: 10px; width: 160px; }
-  &.lantern-top-left { top: 10px; left: 10px; width: 80px; }
-  &.kid-top-right { top: 140px; right: 10px; width: 160px; }
-  &.lantern-top-right { top: 10px; right: 10px; width: 100px; }
-  &.kid-bottom-left { bottom: 0; left: 10px; width: 260px; }
-  &.kid-bottom-right { bottom: 20px; right: 10px; width: 220px; }
-  &.cloud-left { bottom: -30px; left: 10px; width: 150px; }
-  &.cloud-right { bottom: -20px; right: 10px; width: 150px; }
+  &.kid-top-left {
+    top: 140px;
+    left: 10px;
+    width: 160px;
+  }
+  &.lantern-top-left {
+    top: 10px;
+    left: 10px;
+    width: 80px;
+  }
+  &.kid-top-right {
+    top: 140px;
+    right: 10px;
+    width: 160px;
+  }
+  &.lantern-top-right {
+    top: 10px;
+    right: 10px;
+    width: 100px;
+  }
+  &.kid-bottom-left {
+    bottom: 0;
+    left: 10px;
+    width: 260px;
+  }
+  &.kid-bottom-right {
+    bottom: 20px;
+    right: 10px;
+    width: 220px;
+  }
+  &.cloud-left {
+    bottom: -30px;
+    left: 10px;
+    width: 150px;
+  }
+  &.cloud-right {
+    bottom: -20px;
+    right: 10px;
+    width: 150px;
+  }
 `;
 
 const ModalOverlay = styled.div`
@@ -132,13 +163,13 @@ const ModalContent = styled.div`
   max-width: 650px;
   width: 100%;
   position: relative;
-  font-family: 'Times New Roman', serif;
+  font-family: "Times New Roman", serif;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 `;
 
 const ModalContentAnimated = styled(ModalContent)`
   animation: fadeScale 0.4s ease-in-out;
-  background-image: url('/image/background.jpg');
+  background-image: url("/image/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -168,7 +199,7 @@ const CloseButton = styled.button`
 
 const ModalTitle = styled.h2`
   font-size: 30px;
-  font-family: 'SVN-Voga', serif;
+  font-family: "SVN-Voga", serif;
   text-align: center;
   margin-bottom: 24px;
   color: #4b2e2e;
@@ -225,7 +256,7 @@ const NoData = styled.p`
 
 const Subtitle = styled.h3`
   font-size: 22px;
-  font-family: 'SVN-Voga', serif;
+  font-family: "SVN-Voga", serif;
   color: #5c4033;
   margin-bottom: 10px;
   margin-top: 20px;
@@ -250,9 +281,6 @@ const EmptyQuizNotice = styled.div`
   }
 `;
 
-
-
-
 const QuizHome = () => {
   const navigate = useNavigate();
   const [showGuide, setShowGuide] = useState(false);
@@ -261,48 +289,49 @@ const QuizHome = () => {
   const [showStartModal, setShowStartModal] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
   const { language } = useContext(LanguageContext);
-  const [periods, setPeriods] = useState()
-  const [level, setLevel] = useState(null)
-  const [isNext, setIsNext] = useState(false)
-  const [listQuiz, setListQuiz] = useState()
-  const [selectedQuizId, setSelectedQuizId] = useState()
-  const [text, setText] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [quizAI, setQuizAI] = useState()
-  const [history, setHistory] = useState()
+  const [periods, setPeriods] = useState();
+  const [level, setLevel] = useState(null);
+  const [isNext, setIsNext] = useState(false);
+  const [listQuiz, setListQuiz] = useState();
+  const [selectedQuizId, setSelectedQuizId] = useState();
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [quizAI, setQuizAI] = useState();
+  const [history, setHistory] = useState();
+  const [errorMessage, setErrorMessage] = useState(""); // để hiển thị lỗi
 
   const t = {
     title: {
       vi: "Trạng nguyên lịch sử Việt",
-      en: "Vietnam History Master"
+      en: "Vietnam History Master",
     },
     start: {
       vi: "Bắt đầu",
-      en: "Start"
+      en: "Start",
     },
     guide: {
       vi: "Hướng dẫn",
-      en: "Guide"
+      en: "Guide",
     },
     history: {
       vi: "Lịch sử câu đố",
-      en: "Quiz History"
+      en: "Quiz History",
     },
     selectTitle: {
       vi: "Chọn giai đoạn & chủ đề",
-      en: "Select Period & Topic"
+      en: "Select Period & Topic",
     },
     selectedTopic: {
       vi: "Đã chọn chủ đề:",
-      en: "Selected topic:"
+      en: "Selected topic:",
     },
     noTopic: {
       vi: "Chưa chọn chủ đề. Bạn có thể thi toàn bộ giai đoạn.",
-      en: "No topic selected. You can take the full period."
+      en: "No topic selected. You can take the full period.",
     },
     historyEmpty: {
       vi: "Chưa có dữ liệu",
-      en: "No data available"
+      en: "No data available",
     },
     guideText: {
       vi: `🎯 Mục tiêu: Trở thành Trạng Nguyên lịch sử Việt bằng cách trả lời đúng nhiều câu hỏi nhất.
@@ -332,24 +361,29 @@ const QuizHome = () => {
 - After all questions, you’ll receive your score, rank, and title.
 - Your result will be saved in "Quiz History".
 
-🔁 You can replay as many times as you want!`
-    }
+🔁 You can replay as many times as you want!`,
+    },
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resPeriod = await axios.get(`${process.env.REACT_APP_API_URL}/CategoryHistorical`)
-        setPeriods(resPeriod.data)
-        const resHis = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/${localStorage.getItem('userId')}/GetAllResult`)
-        setHistory(resHis.data)
+        const resPeriod = await axios.get(
+          `${process.env.REACT_APP_API_URL}/CategoryHistorical`
+        );
+        setPeriods(resPeriod.data);
+        const resHis = await axios.get(
+          `${process.env.REACT_APP_API_URL}/Quiz/${localStorage.getItem(
+            "userId"
+          )}/GetAllResult`
+        );
+        setHistory(resHis.data);
+      } catch (err) {
+        console.log(err);
       }
-      catch(err) {
-        console.log(err)
-      }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -358,59 +392,87 @@ const QuizHome = () => {
   }, []);
 
   const handleStart = () => {
-    const periodParam = encodeURIComponent(selectedPeriod);
+    if (!selectedQuizId) {
+      setErrorMessage("⚠ Vui lòng chọn một bài Quiz trước khi bắt đầu.");
+      return;
+    }
+    setErrorMessage("");
     navigate(`/quiz/start/${selectedQuizId}`);
   };
 
   const handleNext = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${selectedPeriod}`)
-      if (res.data && res.data.length>5) {
-        setListQuiz(res.data.filter((quiz, index) => index < 5))
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/Quiz/filter?level=${level}&categoryHistoricalId=${selectedPeriod}`
+      );
+      if (res.data && res.data.length > 5) {
+        setListQuiz(res.data.filter((quiz, index) => index < 5));
+      } else {
+        setListQuiz(res.data);
       }
-      else {
-        setListQuiz(res.data)
+      setIsNext(true);
+    } catch (err) {
+      console.log(err);
+      if (err.status === 404) {
+        setListQuiz([]);
+        setIsNext(true);
       }
-      setIsNext(true)
     }
-    catch(err) {
-      console.log(err)
-      if(err.status === 404) {
-        setListQuiz([])
-        setIsNext(true)
-      }
-    }
-  }
+  };
 
   const handleSelectLevel = (selectedLevel) => {
-    setLevel(selectedLevel)
-    setSelectedPeriod(null)
-    setSelectedQuizId(null)
-  }
+    setLevel(selectedLevel);
+    setSelectedPeriod(null);
+    setSelectedQuizId(null);
+  };
 
   const handleSelectPeriod = (periodId) => {
-    setSelectedPeriod(periodId)
-    setSelectedQuizId(null)
-  }
+    setSelectedPeriod(periodId);
+    setSelectedQuizId(null);
+  };
 
   const handleSelectQuiz = (quizId) => {
-    setSelectedQuizId(quizId)
-  }
+    setSelectedQuizId(quizId);
+  };
 
   const handleSendToAI = () => {
-    navigate(`/quiz/startwithai?level=${level}&period=${selectedPeriod}`)
-  }
+    navigate(`/quiz/startwithai?level=${level}&period=${selectedPeriod}`);
+  };
 
   return (
     <PageWrapper>
       <Decoration src="/image/kid1.png" alt="kid1" className="kid-top-left" />
-      <Decoration src="/image/lantern1.png" alt="lantern1" className="lantern-top-left" />
+      <Decoration
+        src="/image/lantern1.png"
+        alt="lantern1"
+        className="lantern-top-left"
+      />
       <Decoration src="/image/kid2.png" alt="kid2" className="kid-top-right" />
-      <Decoration src="/image/lantern2.png" alt="lantern2" className="lantern-top-right" />
-      <Decoration src="/image/kid3.png" alt="kid3" className="kid-bottom-left" />
-      <Decoration src="/image/kid4.png" alt="kid4" className="kid-bottom-right" />
-      <Decoration src="/image/cloud-left.png" alt="cloud-left" className="cloud-left" />
-      <Decoration src="/image/cloud-right.png" alt="cloud-right" className="cloud-right" />
+      <Decoration
+        src="/image/lantern2.png"
+        alt="lantern2"
+        className="lantern-top-right"
+      />
+      <Decoration
+        src="/image/kid3.png"
+        alt="kid3"
+        className="kid-bottom-left"
+      />
+      <Decoration
+        src="/image/kid4.png"
+        alt="kid4"
+        className="kid-bottom-right"
+      />
+      <Decoration
+        src="/image/cloud-left.png"
+        alt="cloud-left"
+        className="cloud-left"
+      />
+      <Decoration
+        src="/image/cloud-right.png"
+        alt="cloud-right"
+        className="cloud-right"
+      />
 
       <Title>{t.title[language]}</Title>
 
@@ -419,123 +481,163 @@ const QuizHome = () => {
       </ImageContainer>
 
       <ButtonGroup>
-        <Button onClick={() => setShowStartModal(true)}>{t.start[language]}</Button>
+        <Button onClick={() => setShowStartModal(true)}>
+          {t.start[language]}
+        </Button>
         <Button onClick={() => setShowGuide(true)}>{t.guide[language]}</Button>
-        <Button onClick={() => setShowHistory(true)}>{t.history[language]}</Button>
-        <Button onClick={() => navigate('/')}>Home</Button>
+        <Button onClick={() => setShowHistory(true)}>
+          {t.history[language]}
+        </Button>
+        <Button onClick={() => navigate("/")}>Home</Button>
       </ButtonGroup>
 
       {showStartModal && (
         <ModalOverlay>
           <ModalContentAnimated>
-            <CloseButton onClick={() => {
-              setShowStartModal(false);
-              setLevel(null)
-              setSelectedPeriod(null);
-              setIsNext(false)
-              setSelectedQuizId(null)
-            }}>×</CloseButton>
+            <CloseButton
+              onClick={() => {
+                setShowStartModal(false);
+                setLevel(null);
+                setSelectedPeriod(null);
+                setIsNext(false);
+                setSelectedQuizId(null);
+              }}
+            >
+              ×
+            </CloseButton>
 
             <ModalTitle>CÂU ĐỐ LỊCH SỬ VIỆT NAM</ModalTitle>
 
             {/* Phần chọn Level */}
-            {!isNext && (<>
-              <Subtitle>Chọn Level</Subtitle>
-              <HorizontalGroup>
-                {[1, 2, 3].map(optLevel => (
-                  level === optLevel ? (
-                    <SelectedButton key={optLevel} onClick={() => {
-                      handleSelectLevel()
-                    }}>
-                      Level {optLevel}
-                    </SelectedButton>
-                  ) : (
-                    <Button key={optLevel} onClick={() => {
-                      handleSelectLevel(optLevel)
-                    }}>
-                      Level {optLevel} (học sinh cấp {optLevel})
-                    </Button>
-                  )
-                ))}
-              </HorizontalGroup>
-            </>)}
+            {!isNext && (
+              <>
+                <Subtitle>Chọn Level</Subtitle>
+                <HorizontalGroup>
+                  {[1, 2, 3].map((optLevel) =>
+                    level === optLevel ? (
+                      <SelectedButton
+                        key={optLevel}
+                        onClick={() => {
+                          handleSelectLevel();
+                        }}
+                      >
+                        Level {optLevel}
+                      </SelectedButton>
+                    ) : (
+                      <Button
+                        key={optLevel}
+                        onClick={() => {
+                          handleSelectLevel(optLevel);
+                        }}
+                      >
+                        Level {optLevel} (học sinh cấp {optLevel})
+                      </Button>
+                    )
+                  )}
+                </HorizontalGroup>
+              </>
+            )}
 
             {/* Phần chọn Giai đoạn */}
             {level && !isNext && (
               <>
                 <Subtitle>Chọn Giai đoạn</Subtitle>
                 <HorizontalGroup>
-                  {periods.map(period => (
+                  {periods.map((period) =>
                     selectedPeriod === period.id ? (
-                      <SelectedButton key={period.id} onClick={() => {
-                        handleSelectPeriod(period.id);
-                      }}>
+                      <SelectedButton
+                        key={period.id}
+                        onClick={() => {
+                          handleSelectPeriod(period.id);
+                        }}
+                      >
                         {period.name}
                       </SelectedButton>
                     ) : (
-                      <Button key={period.id} onClick={() => {
-                        handleSelectPeriod(period.id);
-                      }}>
+                      <Button
+                        key={period.id}
+                        onClick={() => {
+                          handleSelectPeriod(period.id);
+                        }}
+                      >
                         {period.name}
                       </Button>
                     )
-                  ))}
+                  )}
                 </HorizontalGroup>
               </>
             )}
 
-            {
-              isNext && (
-                <>
-                  <Subtitle>Chọn Quiz</Subtitle>
-                  <HorizontalGroup>
+            {isNext && (
+              <>
+                <Subtitle>Chọn Quiz</Subtitle>
+                <HorizontalGroup>
                   {listQuiz.length === 0 && (
                     <EmptyQuizNotice>
                       <h5>Hiện không có bài Quiz phù hợp</h5>
                       <h5>Thử với AI nhé!</h5>
                     </EmptyQuizNotice>
                   )}
-                    {listQuiz.map(quiz => (
-                      selectedQuizId === quiz.id ? (
-                        <SelectedButton key={quiz.id} onClick={() => {
-                          handleSelectQuiz()
-                        }}>
-                          {quiz.description}
-                        </SelectedButton>
-                      ) : (
-                        <Button key={quiz.id} onClick={() => {
-                          handleSelectQuiz(quiz.id)
-                        }}>
-                          {quiz.description}
-                        </Button>
-                      )
-                    ))}
-                  </HorizontalGroup>
-                </>
-              )
-            }
+                  {listQuiz.map((quiz) =>
+                    selectedQuizId === quiz.id ? (
+                      <SelectedButton
+                        key={quiz.id}
+                        onClick={() => {
+                          handleSelectQuiz();
+                        }}
+                      >
+                        {quiz.description}
+                      </SelectedButton>
+                    ) : (
+                      <Button
+                        key={quiz.id}
+                        onClick={() => {
+                          handleSelectQuiz(quiz.id);
+                        }}
+                      >
+                        {quiz.description}
+                      </Button>
+                    )
+                  )}
+                </HorizontalGroup>
+              </>
+            )}
 
             {/* Nút chuyển sang danh sách quiz */}
-            {(level && selectedPeriod && !isNext) && (
-              <QuizStartButton onClick={handleNext}>
-                Tiếp tục
-              </QuizStartButton>
+            {level && selectedPeriod && !isNext && (
+              <QuizStartButton onClick={handleNext}>Tiếp tục</QuizStartButton>
             )}
 
             {/* Nút bắt đầu làm quiz */}
-            {(isNext) && (
+            {isNext && (
               <>
-                <QuizStartButton onClick={handleStart}>
-                  Bắt đầu
+                <QuizStartButton onClick={handleStart}>Bắt đầu</QuizStartButton>
+                {errorMessage && (
+                  <p
+                    style={{
+                      color: "red",
+                      marginTop: "8px",
+                      fontWeight: "bold",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {errorMessage}
+                  </p>
+                )}
+                <QuizStartButton onClick={handleSendToAI}>
+                  Tạo quiz với AI
                 </QuizStartButton>
-                <QuizStartButton onClick={() => handleSendToAI()}>Tạo quiz với AI</QuizStartButton>
-                <QuizStartButton onClick={() => setIsNext(false)}>
+                <QuizStartButton
+                  onClick={() => {
+                    setIsNext(false);
+                    setErrorMessage(""); // clear lỗi khi quay lại
+                  }}
+                >
                   Quay lại
                 </QuizStartButton>
               </>
             )}
           </ModalContentAnimated>
-
         </ModalOverlay>
       )}
 
@@ -544,7 +646,15 @@ const QuizHome = () => {
           <ModalContent>
             <CloseButton onClick={() => setShowGuide(false)}>×</CloseButton>
             <ModalTitle>{t.guide[language]}</ModalTitle>
-            <div style={{ fontSize: "16px", lineHeight: 1.7, color: "#333", textAlign: "left", whiteSpace: 'pre-line' }}>
+            <div
+              style={{
+                fontSize: "16px",
+                lineHeight: 1.7,
+                color: "#333",
+                textAlign: "left",
+                whiteSpace: "pre-line",
+              }}
+            >
               {t.guideText[language]}
             </div>
           </ModalContent>
@@ -565,7 +675,7 @@ const QuizHome = () => {
                     <Th>QuizId</Th>
                     <Th>Ngày & Giờ</Th>
                     {/* <Th>Số câu</Th> */}
-                    
+
                     <Th>Điểm</Th>
                     {/* <Th>Xếp Hạng</Th>
                     <Th>Danh Hiệu</Th> */}
@@ -577,7 +687,7 @@ const QuizHome = () => {
                       <Td>{item.quizId}</Td>
                       <Td>{toDateTime(item.completedAt)}</Td>
                       {/* <Td>{item.total}</Td>  */}
-                  
+
                       <Td>{item.score}</Td>
                       {/* <Td>{item.rank}</Td>
                       <Td>{item.title}</Td> */}

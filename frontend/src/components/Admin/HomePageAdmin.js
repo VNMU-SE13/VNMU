@@ -39,6 +39,7 @@ import ChatUser from "./ChatUser";
 import Dashboard from "./DashBoard/DashBoard";
 import SouvenirManager from './SouvenirManager'
 import PaymentStatic from './PaymentStatic'
+import PaymentHistoryAdmin from './PaymentHistoryAdmin'
 
 // Styled-components
 const Container = styled.div`
@@ -197,7 +198,8 @@ const groupedMenuItems = [
     icon: BarChart2,
     items: [
       {name: 'Tổng quan', compo: Dashboard},
-      {name: 'Doanh thu', compo: PaymentStatic}
+      {name: 'Doanh thu', compo: PaymentStatic},
+      {name: 'Đơn hàng', compo: PaymentHistoryAdmin}
     ],
   },
   {

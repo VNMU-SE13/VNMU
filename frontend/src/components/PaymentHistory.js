@@ -5,6 +5,99 @@ import axios from 'axios';
 import toDateTime from '../utils/toDateTime';
 import FullPageLoading from './common/FullPageLoading';
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
+
+const ModalWrapper = styled.div`
+  background: #fff;
+  width: 90%;
+  max-width: 520px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: fadeInScale 0.3s ease-out forwards;
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+`;
+
+const ModalHeader = styled.div`
+  padding: 20px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ModalTitle = styled.h2`
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
+const CloseButton = styled.button`
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  color: #888;
+  cursor: pointer;
+
+  &:hover {
+    color: #333;
+  }
+`;
+
+const ModalContent = styled.div`
+  padding: 24px;
+`;
+
+const ModalItem = styled.p`
+  font-size: 16px;
+  margin: 12px 0;
+  line-height: 1.5;
+`;
+
+const ModalFooter = styled.div`
+  padding: 16px 24px;
+  text-align: right;
+  background: #f1f3f5;
+  border-top: 1px solid #e9ecef;
+`;
+
+const ActionButton = styled.button`
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #0056b3;
+  }
+`;
+
 // Layout container
 const Container = styled.div`
   margin-top: 100px;
@@ -192,6 +285,9 @@ const PaymentHistory = () => {
   const [transactionAcc, setTransactionAcc] = useState()
   const [transactionSou, setTransactionSou] = useState()
   const itemsPerPage = 5;
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   const totalPages = Math.ceil(listTransaction?.length / itemsPerPage);
 
@@ -237,10 +333,10 @@ const PaymentHistory = () => {
 
           <TabGroup>
             <TabButton active={activeTab === 'account'} onClick={() => handleTabChange('account')}>
-              Đơn hàng Tài Khoản
+              Giao dịch Tài Khoản
             </TabButton>
             <TabButton active={activeTab === 'souvenir'} onClick={() => handleTabChange('souvenir')}>
-              Đơn hàng Quà Lưu Niệm
+              Giao dịch Quà Lưu Niệm
             </TabButton>
           </TabGroup>
 
@@ -277,6 +373,31 @@ const PaymentHistory = () => {
                   <Td><Status status={row.status}>{row.status}</Status></Td>
                 </tr>
               )})}
+               {isModalOpen && selectedOrderDetail && (
+                <ModalOverlay>
+                  <ModalWrapper>
+                    <ModalHeader>
+                      <ModalTitle>Chi tiết đơn hàng</ModalTitle>
+                      <CloseButton onClick={() => setIsModalOpen(false)}>&times;</CloseButton>
+                    </ModalHeader>
+
+                    <ModalContent>
+                      <ModalItem><strong>Mã đơn hàng:</strong> {selectedOrderDetail.orderCode}</ModalItem>
+                      <ModalItem><strong>Trạng thái:</strong> {selectedOrderDetail.status}</ModalItem>
+                      <ModalItem><strong>Người nhận:</strong> {selectedOrderDetail.to_name}</ModalItem>
+                      <ModalItem><strong>Địa chỉ:</strong> {selectedOrderDetail.to_address}</ModalItem>
+                      <ModalItem><strong>SĐT:</strong> {selectedOrderDetail.to_phone}</ModalItem>
+                      <ModalItem><strong>Sản phẩm:</strong></ModalItem>
+                      {selectedOrderDetail.items.map(item => <ModalItem>{item.name} x {item.quantity}</ModalItem>)}
+                      <ModalItem><strong>Tổng tiền:</strong> {selectedOrderDetail.totalFee?.toLocaleString()} ₫</ModalItem>
+                    </ModalContent>
+
+                    <ModalFooter>
+                      <ActionButton onClick={() => setIsModalOpen(false)}>Đóng</ActionButton>
+                    </ModalFooter>
+                  </ModalWrapper>
+                </ModalOverlay>
+              )}
             </tbody>
           </Table>
 

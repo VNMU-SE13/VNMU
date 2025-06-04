@@ -91,7 +91,18 @@ const Login = () => {
       const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Cart/GetByUserId`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
-      localStorage.setItem("cartId", res2.data[0].id)
+      if (!res2.data[0]) {
+        console.log('create cart')
+        const res3 = await axios.post(`${process.env.REACT_APP_API_URL}/Cart`, {user: '123'} ,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        localStorage.setItem("cartId", res3.data.id)
+      }
+      else {
+        localStorage.setItem("cartId", res2.data[0].id)
+      }
       
     } catch (error) {
       toast.error(error.response?.data?.message || "Đã xảy ra lỗi.");
