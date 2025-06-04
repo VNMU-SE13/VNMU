@@ -219,23 +219,21 @@ const Status = styled.span`
   font-size: 13px;
   background-color: ${props => {
     switch (props.status) {
-      case 'PAID': return '#d7f5e9';
-      case 'PENDING': return '#fff3cd';
-      case 'CANCELLED': return '#f8d7da';
+      case 'Đã xác nhận': return '#d7f5e9';
+      case 'Đợi xác nhận': return '#fff3cd';
+      case 'Đã hủy': return '#f8d7da';
       case 'Đang Giao': return '#e0f0ff';
       case 'Đã Giao': return '#d1f0d1';
-      case 'Đã Hủy': return '#fdecea';
       default: return '#eee';
     }
   }};
   color: ${props => {
     switch (props.status) {
-      case 'PAIDED': return '#28a745';
-      case 'PENDING': return '#e69500';
-      case 'CANCELED': return '#dc3545';
+      case 'Đã xác nhận': return '#28a745';
+      case 'Đợi xác nhận': return '#e69500';
+      case 'Đã hủy': return '#dc3545';
       case 'Đang Giao': return '#007bff';
       case 'Đã Giao': return '#198754';
-      case 'Đã Hủy': return '#c82333';
       default: return '#333';
     }
   }};
@@ -294,6 +292,36 @@ const DetailButton = styled.button`
   }
 `;
 
+const StatusSelect = styled.select`
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  appearance: none;
+  background-color: ${props => {
+    switch (props.value) {
+      case 'Đã xác nhận': return '#d7f5e9';
+      case 'Đợi xác nhận': return '#fff3cd';
+      case 'Đã hủy': return '#f8d7da';
+      case 'Đang Giao': return '#e0f0ff';
+      case 'Đã Giao': return '#d1f0d1';
+      default: return '#eee';
+    }
+  }};
+  color: ${props => {
+    switch (props.value) {
+      case 'Đã xác nhận': return '#28a745';
+      case 'Đợi xác nhận': return '#e69500';
+      case 'Đã hủy': return '#dc3545';
+      case 'Đang Giao': return '#007bff';
+      case 'Đã Giao': return '#198754';
+      default: return '#333';
+    }
+  }};
+`;
+
+
 
 // Component
 const PaymentHistoryAdmin = () => {
@@ -308,6 +336,7 @@ const PaymentHistoryAdmin = () => {
 
   const totalPages = Math.ceil(listTransaction?.length / itemsPerPage);
 
+  // use Effect
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -326,7 +355,8 @@ const PaymentHistoryAdmin = () => {
     fetchData()
   }, [])
 
-  const handleViewOrderDetail = async (orderCode, totalFee) => {
+  // view modal
+  const handleViewOrderDetail = async (orderCode, totalFee, orderId, status) => {
     try {
       setLoading(true)
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/Ghn/order-detail`, `"${orderCode}"`, {
@@ -334,8 +364,26 @@ const PaymentHistoryAdmin = () => {
           'Content-Type': 'application/json-patch+json',
         }
       })
-      setSelectedOrderDetail({...res.data.data, totalFee, orderCode}); 
+      setSelectedOrderDetail({...res.data.data, totalFee, orderCode, orderId, status}); 
       setIsModalOpen(true); 
+    }
+    catch(err) {
+      console.log(err)
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+  // change status
+  const handleStatusChange = async (e, id) => {
+    try {
+      setLoading(true)
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/Order/${id}?status=${encodeURIComponent(e.target.value)}`)
+      setListTransaction(prev => {
+        return prev.map(item => item.id === id ? {...item, status: e.target.value} : {...item})
+      })
+      setIsModalOpen(false)
     }
     catch(err) {
       console.log(err)
@@ -390,7 +438,7 @@ const PaymentHistoryAdmin = () => {
                   <Td>{row.totalAmount.toLocaleString() + ' ₫'}</Td>
                   <Td><Status status={row.status}>{row.status}</Status></Td>
                   <Td>
-                    <DetailButton onClick={() => handleViewOrderDetail(row.orderCode, row.totalAmount)}>
+                    <DetailButton onClick={() => handleViewOrderDetail(row.orderCode, row.totalAmount, row.id, row.status)}>
                       Chi tiết
                     </DetailButton>
                   </Td>
@@ -407,12 +455,18 @@ const PaymentHistoryAdmin = () => {
 
                     <ModalContent>
                       <ModalItem><strong>Mã đơn hàng:</strong> {selectedOrderDetail.orderCode}</ModalItem>
-                      <ModalItem><strong>Trạng thái:</strong> {selectedOrderDetail.status}</ModalItem>
+                      <ModalItem><strong>Trạng thái:</strong> <StatusSelect value={selectedOrderDetail.status } onChange={(e) => handleStatusChange(e, selectedOrderDetail.orderId)}>
+                          <option value="Đợi xác nhận">Đợi xác nhận</option>
+                          <option value="Đã xác nhận">Đã xác nhận</option>
+                          <option value="Đang Giao">Đang Giao</option>
+                          <option value="Đã Giao">Đã Giao</option>
+                          <option value="Đã Hủy">Đã Hủy</option>
+                        </StatusSelect></ModalItem>
                       <ModalItem><strong>Người nhận:</strong> {selectedOrderDetail.to_name}</ModalItem>
                       <ModalItem><strong>Địa chỉ:</strong> {selectedOrderDetail.to_address}</ModalItem>
                       <ModalItem><strong>SĐT:</strong> {selectedOrderDetail.to_phone}</ModalItem>
                       <ModalItem><strong>Sản phẩm:</strong></ModalItem>
-                      {selectedOrderDetail.items.map(item => <ModalItem>{item.name} x {item.quantity}</ModalItem>)}
+                      {selectedOrderDetail?.items?.map(item => <ModalItem>{item.name} x {item.quantity}</ModalItem>)}
                       <ModalItem><strong>Tổng tiền:</strong> {selectedOrderDetail.totalFee?.toLocaleString()} ₫</ModalItem>
                     </ModalContent>
 

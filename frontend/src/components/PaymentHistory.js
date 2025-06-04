@@ -276,6 +276,21 @@ const PageButton = styled.button`
   }
 `;
 
+const DetailButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
 // Component
 const PaymentHistory = () => {
   const [loading, setLoading] = useState()
@@ -299,7 +314,7 @@ const PaymentHistory = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         setTransactionAcc(res.data.slice().reverse())
-        const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransactionProduct/GetByUserId`, {
+        const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Order/GetByUserId`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         setTransactionSou(res2.data.reverse())
@@ -321,6 +336,25 @@ const PaymentHistory = () => {
     setActiveTab(tab);
     setCurrentPage(1);
   };
+
+  const handleViewOrderDetail = async (orderCode, totalFee) => {
+      try {
+        setLoading(true)
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/Ghn/order-detail`, `"${orderCode}"`, {
+          headers: {
+            'Content-Type': 'application/json-patch+json',
+          }
+        })
+        setSelectedOrderDetail({...res.data.data, totalFee, orderCode}); 
+        setIsModalOpen(true); 
+      }
+      catch(err) {
+        console.log(err)
+      }
+      finally {
+        setLoading(false)
+      }
+    }
 
   if (loading) return <FullPageLoading isLoading={true} />
   return (
@@ -354,10 +388,11 @@ const PaymentHistory = () => {
               <tr>
                 <Th>Thời gian</Th>
                 <Th>Mã đơn hàng</Th>
-                <Th>Sản phẩm</Th>
-                <Th>Số lượng</Th>
+                {activeTab === 'account' ? <Th>Sản phẩm</Th> : <Th></Th>}
+                {activeTab === 'account' ? <Th>Số lượng</Th> :<Th></Th>}
                 <Th>Tổng tiền</Th>
                 <Th>Trạng thái</Th>
+                {activeTab === 'souvenir' ? <Th>Chi tiết</Th> :<Th></Th>}
               </tr>
             </thead>
             <tbody>
@@ -365,12 +400,19 @@ const PaymentHistory = () => {
                 if (index < currentPage*itemsPerPage && index>=(currentPage-1)*itemsPerPage)
                   return (
                 <tr key={index}>
-                  <Td>{toDateTime(row.created)}</Td>
+                  <Td>{activeTab === 'account' ? toDateTime(row.created) : toDateTime(row.createdAt)}</Td>
                   <Td>{row.orderCode}</Td>
-                  <Td>Tài khoản premium</Td>
-                  <Td>x1</Td>
-                  <Td>{activeTab === 'account' ? Number('2000').toLocaleString() + ' ₫' : row.totalPrice.toLocaleString() + ' ₫'}</Td>
+                  {activeTab === 'account' ? <Td>Tài khoản premium</Td> : <Th></Th>}
+                  {activeTab === 'account' ? <Td>x1</Td> :<Th></Th>}
+                  
+                  <Td>{activeTab === 'account' ? Number('2000').toLocaleString() + ' ₫' : row.totalAmount.toLocaleString() + ' ₫'}</Td>
                   <Td><Status status={row.status}>{row.status}</Status></Td>
+
+                  {activeTab === 'souvenir' ? (<Td>
+                    <DetailButton onClick={() => handleViewOrderDetail(row.orderCode, row.totalAmount)}>
+                      Chi tiết
+                    </DetailButton>
+                  </Td>) : <Td></Td>}
                 </tr>
               )})}
                {isModalOpen && selectedOrderDetail && (
@@ -388,7 +430,7 @@ const PaymentHistory = () => {
                       <ModalItem><strong>Địa chỉ:</strong> {selectedOrderDetail.to_address}</ModalItem>
                       <ModalItem><strong>SĐT:</strong> {selectedOrderDetail.to_phone}</ModalItem>
                       <ModalItem><strong>Sản phẩm:</strong></ModalItem>
-                      {selectedOrderDetail.items.map(item => <ModalItem>{item.name} x {item.quantity}</ModalItem>)}
+                      {selectedOrderDetail?.items?.map(item => <ModalItem>{item.name} x {item.quantity}</ModalItem>)}
                       <ModalItem><strong>Tổng tiền:</strong> {selectedOrderDetail.totalFee?.toLocaleString()} ₫</ModalItem>
                     </ModalContent>
 
