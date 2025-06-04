@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { FaLandmark } from "react-icons/fa";
 import Header from "../Home/Header";
-import souvenirs from "./souvenirdata";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import FullPageLoading from "../common/FullPageLoading";
+import Swal from 'sweetalert2'
 
 
 const Souvenir = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(1)
   const [listProduct, setListProduct] = useState()
   const [loading, setLoading] = useState()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
+  const [selectedQuantity, setSelectedQuantity] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +24,6 @@ const Souvenir = () => {
         setLoading(true)
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/Product`)
         setListProduct(res.data)
-        console.log(res.data)
       }
       catch(err) {
         console.log(err)
@@ -33,17 +36,62 @@ const Souvenir = () => {
     fetchData()
   }, [])
 
-  const totalPages = Math.ceil(souvenirs.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = souvenirs.slice(startIndex, startIndex + itemsPerPage);
+  const openQuantityModal = (productId) => {
+    setSelectedProductId(productId)
+    setSelectedQuantity(1)
+    setModalOpen(true)
+  }
 
-  if (loading) return <FullPageLoading isLoading={true} />
+  const closeModal = () => {
+    setModalOpen(false)
+    setSelectedProductId(null)
+  }
+
+  const confirmAddToCart = () => {
+    handleAddCart(selectedProductId, selectedQuantity)
+    closeModal()
+  }
+
+  const handleAddCart = async (id, quantity) => {
+    try {
+      setLoading(true)
+      console.log(quantity)
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/CartItem`, {
+        cartId: localStorage.getItem('cartId'),
+        productId: id,
+        quatity: quantity
+      })
+
+      if (res.status === 200) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Đã thêm vào giỏ hàng!',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      Swal.fire({
+        icon: 'error',
+        title: 'Thêm vào giỏ hàng thất bại!',
+        text: 'Vui lòng thử lại sau.',
+      })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading || !listProduct) return <FullPageLoading isLoading={true} />
   return (
     <>
       <Header />
       <TitleHeader>Một số quà lưu niệm của các bảo tàng</TitleHeader>
       <Container>
-        {currentItems.map((item) => (
+        {listProduct.map((item, index) => {
+          if (index >= itemsPerPage*(currentPage-1) && index < itemsPerPage*currentPage)
+          return (
           <Card key={item.id}>
             <Image src={item.image} alt={item.title} />
             <Content>
@@ -53,15 +101,40 @@ const Souvenir = () => {
                 <FaLandmark style={{ marginRight: 6 }} />
                 {item.museum}
               </Museum>
-              <DetailLink to={`/souvenir/${item.id}`}>
-                <Button>Xem chi tiết</Button>
-              </DetailLink>
+              <ButtonGroup>
+                {/* <DetailLink to={`/souvenir/${item.id}`}>
+                  <Button>Xem chi tiết</Button>
+                </DetailLink> */}
+                <DetailLink>
+                  <Button onClick={() => openQuantityModal(item.id)}>Thêm vào giỏ hàng</Button>
+                </DetailLink>
+                <DetailLink to={`/souvenir/${item.id}`}>
+                  <Button>Mua ngay</Button>
+                </DetailLink>
+              </ButtonGroup>
+
 
 
             </Content>
           </Card>
-        ))}
+        )})}
       </Container>
+      {/* Modal chọn số lượng */}
+      <ModalOverlay show={modalOpen}>
+        <ModalContent>
+          <h2>Chọn số lượng</h2>
+          <QuantityInput
+            type="number"
+            min="1"
+            value={selectedQuantity}
+            onChange={(e) => setSelectedQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+          />
+          <ButtonGroupModal>
+            <ModalButton onClick={confirmAddToCart}>Xác nhận</ModalButton>
+            <ModalButton variant="cancel" onClick={closeModal}>Hủy</ModalButton>
+          </ButtonGroupModal>
+        </ModalContent>
+      </ModalOverlay>
 
       <Pagination>
         <PageButton
@@ -71,11 +144,11 @@ const Souvenir = () => {
           Trang trước
         </PageButton>
         <PageNumber>
-          Trang {currentPage} / {totalPages}
+          Trang {currentPage} / {Math.ceil(listProduct.length / itemsPerPage)}
         </PageNumber>
         <PageButton
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => Math.min(p + 1, Math.ceil(listProduct.length / itemsPerPage)))}
+          disabled={currentPage === Math.ceil(listProduct.length / itemsPerPage)}
         >
           Trang sau
         </PageButton>
@@ -161,6 +234,7 @@ const Button = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease;
+  font-size: 12px;
 
   &:hover {
     background-color: #1e40af;
@@ -228,3 +302,96 @@ const DetailLink = styled(Link)`
   text-decoration: none;
   width: fit-content;
 `;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+`
+
+// Overlay mờ
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: ${({ show }) => (show ? 'flex' : 'none')};
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`
+
+// Hộp nội dung modal
+const ModalContent = styled.div`
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  animation: ${fadeIn} 0.3s ease-in-out;
+  text-align: center;
+`
+
+// Input số lượng
+const QuantityInput = styled.input`
+  width: 80px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  margin-top: 16px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #007bff;
+  }
+`
+
+// Nhóm nút
+const ButtonGroupModal = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 12px;
+`
+
+// Nút xác nhận / hủy
+const ModalButton = styled.button`
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 100px;
+  transition: background-color 0.2s ease;
+
+  ${({ variant }) =>
+    variant === 'cancel'
+      ? `
+        background-color: #ccc;
+        color: #333;
+
+        &:hover {
+          background-color: #bbb;
+        }
+      `
+      : `
+        background-color: #007bff;
+        color: white;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      `}
+`

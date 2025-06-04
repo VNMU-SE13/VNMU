@@ -87,6 +87,12 @@ const Login = () => {
       } else {
         toast.error(response.data.message || "Đăng nhập thất bại.");
       }
+
+      const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/Cart/GetByUserId`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      localStorage.setItem("cartId", res2.data[0].id)
+      
     } catch (error) {
       toast.error(error.response?.data?.message || "Đã xảy ra lỗi.");
     } finally {

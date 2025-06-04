@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Header from './Home/Header';
+import Header from '../Home/Header';
 import axios from 'axios';
-import toDateTime from '../utils/toDateTime';
-import FullPageLoading from './common/FullPageLoading';
-
+import toDateTime from '../../utils/toDateTime';
+import FullPageLoading from '../common/FullPageLoading'
 // Layout container
 const Container = styled.div`
   margin-top: 100px;
@@ -184,7 +183,7 @@ const PageButton = styled.button`
 `;
 
 // Component
-const PaymentHistory = () => {
+const PaymentHistoryAdmin = () => {
   const [loading, setLoading] = useState()
   const [listTransaction, setListTransaction] = useState()
   const [activeTab, setActiveTab] = useState('account');
@@ -199,13 +198,9 @@ const PaymentHistory = () => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransaction/GetByUserId`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransaction`)
         setTransactionAcc(res.data.slice().reverse())
-        const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransactionProduct/GetByUserId`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
+        const res2 = await axios.get(`${process.env.REACT_APP_API_URL}/PaymentTransactionProduct`)
         setTransactionSou(res2.data.reverse())
         setListTransaction(res.data.reverse())
       }
@@ -233,7 +228,7 @@ const PaymentHistory = () => {
       <Container>
         <Card>
           <Title>Lịch sử đơn hàng</Title>
-          <SubTitle>Hiển thị thông tin các giao dịch của bạn tại VNMU</SubTitle>
+          <SubTitle>Hiển thị thông tin các giao dịch tại VNMU</SubTitle>
 
           <TabGroup>
             <TabButton active={activeTab === 'account'} onClick={() => handleTabChange('account')}>
@@ -295,4 +290,4 @@ const PaymentHistory = () => {
   );
 };
 
-export default PaymentHistory;
+export default PaymentHistoryAdmin;

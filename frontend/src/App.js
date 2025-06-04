@@ -37,6 +37,10 @@ import SouvenirDetail from './components/Souvenir/SouvenirDetail';
 import OTP from "./components/Login/ConfirmOTP";
 import PaymentSuccess from "./components/common/PaymentSuccess";
 import PaymentHistory from "./components/PaymentHistory";
+import CartPage from './components/CartPage';
+import CheckoutPage from "./components/CheckOutPage";
+import PaymentStatic from './components/Admin/PaymentStatic';
+import PaymentHistotyAdmin from './components/Admin/PaymentHistoryAdmin';
 
 function App() {
   return (
@@ -77,6 +81,11 @@ function App() {
           <Route path="/otp" element={<OTP />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/admin/payment-histoty" element={<PaymentHistotyAdmin />} />
+          <Route path="/admin/payment-static" element={<PaymentStatic />} />
+
         </Routes>
       </Router>
       <ToastContainer position="top-right" autoClose={3000} />

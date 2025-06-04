@@ -97,6 +97,7 @@ const Header = ({ toggleSearchBar }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem('isPremium')
+    localStorage.removeItem('cartId')
     setUser(null);
     navigate("/");
   };
@@ -236,7 +237,7 @@ const Header = ({ toggleSearchBar }) => {
 
               <div className="dropdown profile-dropdown">
                 <button
-                  className="dropdown-toggle action-button"
+                  className="action-button"
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 >
                   Hồ sơ của tôi
@@ -256,10 +257,14 @@ const Header = ({ toggleSearchBar }) => {
                         Bảo tàng của tôi
                       </a>
                     )}
+                    <a onClick={() => navigate("/payment-history")} className="dropdown-item">
+                      {"Lịch sử thanh toán"}
+                    </a>
                   </div>
                 )}
               </div>
-
+              
+            
               <button className="action-button logout-button" onClick={handleLogout}>
                 {translated.logout || "Đăng Xuất"}
               </button>

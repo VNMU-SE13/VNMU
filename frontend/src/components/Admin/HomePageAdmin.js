@@ -37,6 +37,8 @@ import CategoryFigureManager from "./CategoryFigure/CategoryFigureManager";
 import CategoryProductManager from "./CategoryProduct/CategoryProductManager";
 import ChatUser from "./ChatUser";
 import Dashboard from "./DashBoard/DashBoard";
+import SouvenirManager from './SouvenirManager'
+import PaymentStatic from './PaymentStatic'
 
 // Styled-components
 const Container = styled.div`
@@ -173,6 +175,7 @@ const groupedMenuItems = [
     icon: Settings,
     items: [
       { name: "Quản lý hiện vật", compo: ArtifactManager },
+      { name: 'Quản lý quà lưu niệm', compo: SouvenirManager},
       { name: "Quản lý blog", compo: BlogManager },
       { name: "Quản lý bài kiểm tra", compo: QuizManager },
       { name: "Quản lý sự kiện", compo: EventManager },
@@ -193,7 +196,8 @@ const groupedMenuItems = [
     title: "Thống kê",
     icon: BarChart2,
     items: [
-      {name: 'DashBoardDashBoard', compo: Dashboard}
+      {name: 'Tổng quan', compo: Dashboard},
+      {name: 'Doanh thu', compo: PaymentStatic}
     ],
   },
   {
