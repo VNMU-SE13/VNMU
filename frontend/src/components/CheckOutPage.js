@@ -154,8 +154,8 @@ const CheckoutPage = () => {
         }
       })
       const resCheckout = await axios.post(`${process.env.REACT_APP_API_URL}/PayOs/create-payment-forProduct`, {
-        successUrl: 'http://localhost:3000/',
-        cancelUrl: 'http://localhost:3000/payment-success',
+        successUrl: 'https://vnmu-three.vercel.app/',
+        cancelUrl: 'https://vnmu-three.vercel.app/payment-success',
         orderId: orderId,
         items: listProduct,
         totalPrice: total
