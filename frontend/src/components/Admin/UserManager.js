@@ -111,6 +111,9 @@ export default function UserManager() {
                 <b>Role</b>
               </TableCell>
               <TableCell>
+                <b>Premium</b>
+              </TableCell>
+              <TableCell>
                 <b>Lock</b>
               </TableCell>
             </TableRow>
@@ -125,6 +128,7 @@ export default function UserManager() {
                     <TableCell>{item.userName}</TableCell>
                     <TableCell>{item.email}</TableCell>
                     <TableCell>{item.roles.join(", ")}</TableCell>
+                    <TableCell>{item.isPremium ? 'Yes' : 'No'}</TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() =>

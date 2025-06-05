@@ -15,6 +15,7 @@ const CheckoutPage = () => {
   const [wards, setWards] = useState([]);
   const [loading, setLoading] = useState()
   const [shippingFee, setShippingFee] = useState()
+  const [errMsg, setErrMsg] = useState()
 
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -86,10 +87,24 @@ const CheckoutPage = () => {
     }));
   };
 
+  function isValidPhoneNumber(phone) {
+    // Regex kiểm tra số điện thoại Việt Nam hợp lệ
+    const phoneRegex = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+    return phoneRegex.test(phone);
+  }
+
   const handlePlaceOrder = async () => {
-    if (!formData.name || !formData.phone || !selectedDistrictId || !selectedWardId) {
+    if (!formData.name || !formData.phone || !selectedDistrictId || !selectedWardId || !formData.address) {
       alert("Please fill in all billing details.");
       return;
+    }
+
+    if (!isValidPhoneNumber(formData.phone)) {
+      setErrMsg('Số điện thoại không hợp lệ!')
+      return;
+    }
+    else {
+      setErrMsg('')
     }
 
     const orderData = {
@@ -153,8 +168,8 @@ const CheckoutPage = () => {
       }
 
     } catch (error) {
-      console.error("Order Error:", error);
-      alert("An error occurred while placing the order.");
+      console.error("Order Error:", error.response);
+      alert("An error occurred while placing the order: "+ error.response.data.details);
     }
     finally {
       setLoading(false)
@@ -186,6 +201,7 @@ const CheckoutPage = () => {
                 value={formData.phone}
                 onChange={handleChange}
               />
+              <span style={{"color": "red"}}>{errMsg}</span>
               <Label>Province / City</Label>
                 <select value={selectedProvince} onChange={(e) => {
                   setSelectedProvince(e.target.value);
@@ -232,41 +248,7 @@ const CheckoutPage = () => {
             </Form>
           </Section>
 
-          <Section>
-            <Title>Payment</Title>
-            <PaymentMethods>
-              <label>
-                <Radio
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={formData.paymentMethod === "card"}
-                  onChange={handleChange}
-                />
-                Credit / Debit Card
-              </label>
-              <label>
-                <Radio
-                  type="radio"
-                  name="paymentMethod"
-                  value="cod"
-                  checked={formData.paymentMethod === "cod"}
-                  onChange={handleChange}
-                />
-                Cash on Delivery (COD)
-              </label>
-              <label>
-                <Radio
-                  type="radio"
-                  name="paymentMethod"
-                  value="vnpay"
-                  checked={formData.paymentMethod === "vnpay"}
-                  onChange={handleChange}
-                />
-                VnPay / Momo
-              </label>
-            </PaymentMethods>
-          </Section>
+          
 
           <OrderSummary>
             <SummaryTitle>Order Summary</SummaryTitle>
@@ -285,7 +267,7 @@ const CheckoutPage = () => {
 
             <SummaryRow>
               <span>Shipping</span>
-              <strong>{shippingFee ? shippingFee : 'Free'}</strong>
+              <strong>{shippingFee ? Number(shippingFee).toLocaleString() + 'đ' : 'Free'}</strong>
             </SummaryRow>
 
             <SummaryRow>
